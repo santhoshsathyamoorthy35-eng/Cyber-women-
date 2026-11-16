@@ -1,0 +1,1385 @@
+# CYBER WOMEN
+## COMPLETE MASTER PROMPT — NATIVE ANDROID APPLICATION
+### Intelligent Safety. Real-Time Protection. Women's Empowerment.
+
+You are an expert team consisting of:
+
+- Senior Android application architect.
+- Kotlin and Jetpack Compose developer.
+- Full-stack software engineer.
+- Firebase and backend engineer.
+- Artificial Intelligence and Machine Learning engineer.
+- Geospatial intelligence and GIS engineer.
+- Cybersecurity specialist.
+- UI/UX designer.
+- Quality assurance and testing engineer.
+
+Your responsibility is to design, develop, test, and deliver a complete, production-oriented native Android application named:
+
+# CYBER WOMEN
+
+Tagline:
+
+**INTELLIGENT SAFETY. REAL-TIME PROTECTION. WOMEN'S EMPOWERMENT.**
+
+CYBER WOMEN is an integrated women's safety, emergency protection, geospatial intelligence, incident analysis, and AI-powered assistance platform.
+
+It combines three existing systems:
+
+1. CRIMEMAP 3D — Geospatial crime intelligence and incident analysis.
+2. SAFEHER — Women's safety, awareness, support services, legal information, and educational resources.
+3. THE SHIELD — Emergency SOS, trusted contacts, location sharing, and emergency response coordination.
+
+It also includes:
+
+4. MEENA — An AI-powered safety assistant that provides information, guidance, and access to appropriate resources.
+
+These must become modules of ONE unified Android application.
+
+Do not develop four separate applications.
+
+Do not simply wrap the existing websites in a WebView.
+
+Build a genuine native Android application.
+
+---
+
+# PART 1 — SOURCE CODE ANALYSIS AND PRESERVATION
+
+I will upload the original CrimeMap 3D and SafeHer source code.
+
+These source files are essential.
+
+Before writing the application, inspect all uploaded source files, assets, data structures, styles, components, and existing functionality.
+
+## 1.1 CRIMEMAP 3D — PRIMARY SOURCE
+
+CrimeMap 3D is the primary foundation of CYBER WOMEN.
+
+Preserve its existing functionality and important visual identity.
+
+Existing functionality includes:
+
+- Interactive geospatial map.
+- 3D map buildings.
+- Map navigation.
+- Incident markers.
+- Crime heatmaps.
+- Incident categories.
+- Geographic incident analysis.
+- Time-based incident analysis.
+- Detection cards.
+- Emerging hotspot indicators.
+- Analytics dashboards.
+- Graphs and charts.
+- Patrol planning.
+- Route visualisation.
+- CCTV and camera simulation panels.
+- Notifications.
+- Reports.
+- Incident information.
+- Map layers.
+- Simulation features.
+
+STRICT RULE:
+
+Do not delete, replace, simplify, or arbitrarily redesign the original CrimeMap functionality.
+
+Since this is a native Android application, translate the existing web functionality into appropriate native Android components.
+
+Use a suitable Android map SDK and reproduce the original functionality as closely as possible.
+
+Where a browser-specific capability cannot be reproduced exactly, implement an equivalent native solution and document the differences.
+
+Create a feature preservation checklist and verify each original feature against the final Android application.
+
+Do not claim a feature has been preserved unless it actually works.
+
+## 1.2 SAFEHER — SECONDARY SOURCE
+
+Inspect the original SafeHer source code and import its useful content and functionality.
+
+Integrate:
+
+- Helpline contacts.
+- Support organisations.
+- Legal rights.
+- Legal awareness.
+- Safety education.
+- Meena assistant.
+- Safety guidance.
+- Existing safety tools.
+- Educational articles.
+- Personal safety resources.
+- Emergency guidance.
+- User feedback.
+- Tamil Nadu-specific information.
+
+Preserve the meaning and structure of the existing educational material.
+
+Do not discard useful information.
+
+Do not invent helpline numbers, organisations, addresses, government partnerships, or official legal references.
+
+Clearly classify resources into:
+
+- National resources.
+- Puducherry resources.
+- Tamil Nadu resources.
+- Other state-specific resources.
+
+Never present Tamil Nadu services as Puducherry-specific services.
+
+Keep the original source attribution and verification status wherever available.
+
+## 1.3 THE SHIELD
+
+The Shield must become an integrated emergency response module within CYBER WOMEN.
+
+It must connect with:
+
+- Android location services.
+- Trusted contacts.
+- Firebase or the selected backend.
+- Push notifications.
+- Configured SMS and voice providers.
+- Emergency history.
+- Direct 112 calling.
+
+It must be a functional emergency workflow rather than a decorative SOS interface.
+
+---
+
+# PART 2 — NATIVE ANDROID TECHNOLOGY
+
+Develop a real Android Studio-compatible project.
+
+Required technology stack:
+
+**Frontend**
+- Kotlin.
+- Jetpack Compose.
+- Material 3.
+- Single Activity architecture.
+- Navigation Compose.
+- MVVM.
+- Kotlin Coroutines.
+- StateFlow and Flow.
+- Repository pattern.
+- Dependency injection where appropriate.
+
+**Local storage**
+- Room Database.
+- DataStore.
+- Secure local handling of sensitive information.
+
+**Networking**
+- Retrofit or equivalent.
+- OkHttp.
+- JSON serialization.
+- HTTPS communication.
+
+**Maps and location**
+- Google Maps SDK or another suitable Android mapping SDK.
+- Android Location Services.
+- Geospatial data support.
+
+**Backend**
+- Firebase Authentication.
+- Cloud Firestore where appropriate.
+- Firebase Cloud Messaging.
+- Cloud Functions or Cloud Run.
+- PostgreSQL/PostGIS where advanced geospatial queries require it.
+- Redis/BullMQ or an equivalent queue where appropriate.
+
+**AI**
+- Gemini through Firebase AI Logic or a secure backend integration.
+- Explainable analytical models for incident pattern analysis.
+
+Use current stable and mutually compatible dependencies.
+
+Do not hardcode API keys or production credentials.
+
+Do not use Java or XML layouts.
+
+Use Kotlin and Jetpack Compose throughout the Android application.
+
+---
+
+# PART 3 — CYBER WOMEN BRAND AND DESIGN
+
+Create a premium, professional, trustworthy, modern public-safety interface.
+
+The application must feel like an advanced safety and intelligence platform.
+
+Design direction:
+
+- Dark navy and charcoal background.
+- Cyan and emerald accents.
+- Controlled amber warnings.
+- Red for critical emergency conditions.
+- Clean typography.
+- Strong visual hierarchy.
+- Premium dashboard cards.
+- Interactive maps.
+- Smooth transitions.
+- Accessible controls.
+- Consistent iconography.
+- Responsive layouts.
+
+Avoid:
+
+- Excessive neon effects.
+- Cheap gradients.
+- Random animations.
+- Overcrowded interfaces.
+- Tiny unreadable text.
+- Generic AI-generated UI.
+- Excessive decorative graphics.
+- Fake live data.
+
+Create a professional logo and app icon concept using the CYBER WOMEN identity.
+
+The app should have a recognisable visual identity across:
+
+- Splash screen.
+- Login.
+- Dashboard.
+- Maps.
+- Safety Hub.
+- Emergency interface.
+- Profile.
+- Notifications.
+
+The application should be easy to operate during stressful situations.
+
+Support:
+
+- English.
+- Tamil.
+
+Structure the language system so additional languages can be added later.
+
+Dark mode is the primary experience.
+
+---
+
+# PART 4 — APPLICATION STRUCTURE AND NAVIGATION
+
+Create a unified application navigation system.
+
+Primary navigation:
+
+1. Home.
+2. Safety Map.
+3. Emergency SOS.
+4. Safety Hub.
+5. Profile.
+
+Additional screens and modules:
+
+- CrimeMap Intelligence.
+- Incident Analytics.
+- AI Risk Assessment.
+- Meena Assistant.
+- Helpline Directory.
+- Support Organisations.
+- Legal Awareness.
+- Safety Learning.
+- Safety Tools.
+- Trusted Contacts.
+- Emergency History.
+- Notifications.
+- Settings.
+- Incident Reporting.
+
+Do not overcrowd the bottom navigation.
+
+Use appropriate secondary navigation, drawers, tabs, or contextual screens.
+
+All modules must share the same account, backend, navigation architecture, and design system.
+
+---
+
+# PART 5 — HOME DASHBOARD
+
+Create a useful home dashboard containing:
+
+- CYBER WOMEN branding.
+- User greeting.
+- Current location status.
+- Location permission status.
+- Current safety overview.
+- Prominent SOS action.
+- Nearby safety resources.
+- Relevant incident information.
+- Historical risk insights.
+- Recent safety alerts.
+- Meena assistant shortcut.
+- Helpline shortcut.
+- Safety recommendations.
+- Trusted contact shortcut.
+
+The dashboard should be location-aware.
+
+If GPS permission is unavailable, provide manual location selection.
+
+Explain location permissions before requesting them.
+
+Do not publicly expose the user's precise location.
+
+---
+
+# PART 6 — CRIMEMAP 3D ANDROID MODULE
+
+Recreate the existing CrimeMap 3D system as a native Android geospatial intelligence module.
+
+## 6.1 Interactive map
+
+Implement:
+
+- Map navigation.
+- Zoom.
+- Rotation.
+- Location selection.
+- Incident markers.
+- Category filters.
+- Heatmap overlays.
+- Time filters.
+- Geographic filters.
+- Incident details.
+- Map legend.
+- Layer controls.
+- Nearby safety resources.
+
+## 6.2 Incident categories
+
+Support configurable categories such as:
+
+- Harassment.
+- Stalking.
+- Assault.
+- Theft.
+- Public disturbance.
+- Other safety-related incidents.
+
+Allow authorised administrators to configure categories.
+
+## 6.3 Map layers
+
+Include:
+
+- Reported incidents.
+- Historical incidents.
+- Heatmaps.
+- Safety resources.
+- Verified support locations.
+- Emergency service locations.
+- Risk assessment overlays.
+- Synthetic simulation data.
+
+Clearly distinguish real records from synthetic records.
+
+Synthetic records must never appear as verified real-world incidents.
+
+## 6.4 Incident analytics
+
+Include:
+
+- Area-wise incident distribution.
+- Time-wise incident distribution.
+- Category-wise statistics.
+- Historical trends.
+- Area comparisons.
+- Time comparisons.
+- Incident frequency charts.
+- Data quality indicators.
+
+Preserve the original CrimeMap analytics wherever possible.
+
+## 6.5 Patrol planning
+
+Preserve the original patrol planning functionality.
+
+Include:
+
+- Route visualisation.
+- Selected area.
+- Relevant incident concentration.
+- Suggested patrol coverage.
+- Map-based route planning.
+
+Do not represent suggested patrol routes as actual police deployments.
+
+Do not imply that CYBER WOMEN is officially connected to police unless a verified partnership and integration exist.
+
+---
+
+# PART 7 — AI-ASSISTED SAFETY RISK ASSESSMENT
+
+This is one of the central intelligent features of CYBER WOMEN.
+
+Build an analytical system that studies historical incident patterns across geographical locations and time periods.
+
+The objective is to identify areas and time windows where historical reports show relatively higher concentrations of incidents.
+
+Example:
+
+An area has repeatedly recorded incidents between 8 PM and 11 PM.
+
+The system should provide an insight such as:
+
+"Historical reports indicate a higher concentration of reported incidents in this area between 8 PM and 11 PM. Consider using a well-lit alternative route and informing a trusted contact."
+
+This is an aggregate historical risk assessment.
+
+It is NOT a guaranteed prediction of future crime.
+
+## 7.1 Data dimensions
+
+Analyse:
+
+- Geographic location.
+- Historical incident frequency.
+- Time of day.
+- Day of week.
+- Incident category.
+- Reporting frequency.
+- Data recency.
+- Data completeness.
+- Geographic concentration.
+- Historical trends.
+
+## 7.2 Analytical methods
+
+Where appropriate, implement:
+
+- Time-series analysis.
+- Geographic clustering.
+- Density analysis.
+- Historical frequency comparison.
+- Time-of-day analysis.
+- Day-of-week analysis.
+- Statistical anomaly detection.
+
+## 7.3 Risk assessment outputs
+
+Display:
+
+- Relative risk category.
+- Geographic area.
+- Relevant time window.
+- Supporting historical data.
+- Confidence or reliability indicator.
+- Data sufficiency status.
+- Recommended precautions.
+- Date of last data update.
+
+Do not manufacture confidence scores.
+
+If data is insufficient, show:
+
+"Insufficient verified historical data to calculate a reliable risk assessment."
+
+## 7.4 Data transparency
+
+Clearly classify:
+
+1. Verified historical reports.
+2. Unverified user reports.
+3. Synthetic demonstration records.
+4. AI-generated insights.
+
+Never mix synthetic records into real-world statistics without an explicitly labelled simulation mode.
+
+Never describe an AI-generated insight as an official police warning.
+
+Never claim AI can predict individual crimes.
+
+---
+
+# PART 8 — THE SHIELD: EMERGENCY SOS
+
+Build a functional emergency protection system.
+
+This module must be accessible directly from the main navigation.
+
+## 8.1 SOS interface
+
+Include:
+
+- One-touch SOS.
+- Press-and-hold SOS.
+- Emergency cancellation.
+- Trusted contacts.
+- Current location.
+- Emergency message.
+- Emergency status.
+- Emergency history.
+- Direct 112 calling.
+
+The SOS interface must be easy to use.
+
+Avoid unnecessary steps.
+
+Provide an appropriate cancellation mechanism to reduce accidental activations.
+
+## 8.2 SOS workflow
+
+When SOS is activated:
+
+1. Generate a unique incident ID.
+2. Record the activation timestamp.
+3. Obtain the latest permitted location.
+4. Record location accuracy.
+5. Identify configured trusted contacts.
+6. Generate an emergency message.
+7. Submit the event to the secure backend.
+8. Send alerts through configured providers.
+9. Track provider responses.
+10. Display the current emergency status.
+11. Preserve the incident in emergency history.
+
+Example message:
+
+"EMERGENCY ALERT: I need assistance. My current location is [location]. Please contact me immediately. Emergency reference: [incident ID]."
+
+## 8.3 Emergency status
+
+Implement:
+
+- Created.
+- Queued.
+- Sent.
+- Delivered.
+- Acknowledged.
+- Assistance in progress.
+- Resolved.
+- Failed.
+- Cancelled.
+
+Only display Delivered when a provider confirms delivery.
+
+Only display Acknowledged when a recipient has actually acknowledged the alert.
+
+Never fabricate a successful alert.
+
+## 8.4 Trusted contacts
+
+Users must be able to:
+
+- Add contacts.
+- Edit contacts.
+- Remove contacts.
+- Verify contact details.
+- Configure notification preferences.
+- Review emergency notification history.
+
+Protect all contact information.
+
+## 8.5 Location sharing
+
+Display:
+
+- Latitude.
+- Longitude.
+- Address where available.
+- Timestamp.
+- Accuracy.
+- Map preview.
+
+Distinguish one-time location sharing from continuous location sharing.
+
+For continuous sharing, implement the required Android location permissions and foreground service with a visible notification and user consent.
+
+Do not track a person without consent.
+
+## 8.6 Emergency calling
+
+Provide a direct action to call India's emergency number 112.
+
+Do not claim that a call was placed until the Android operating system actually initiates the call.
+
+Do not attempt to bypass Android calling restrictions.
+
+## 8.7 Production restrictions
+
+A native application cannot guarantee silent SMS, automatic calls, or continuous background tracking under all circumstances.
+
+Use a secure backend for external SMS and voice integrations.
+
+Never store provider secrets inside the APK.
+
+If credentials are missing, use a clearly labelled test environment.
+
+Do not present a test notification as a real emergency alert.
+
+---
+
+# PART 9 — SAFEHER: WOMEN'S SAFETY HUB
+
+Create a comprehensive women's safety and empowerment module.
+
+## 9.1 Helpline directory
+
+Integrate the original SafeHer contacts.
+
+Organise:
+
+- National resources.
+- Puducherry resources.
+- Tamil Nadu resources.
+- Other state resources.
+
+Each listing should include:
+
+- Name.
+- Verified number.
+- Service category.
+- Geographic coverage.
+- Operating hours, if verified.
+- Official source.
+- Last verification date.
+
+Provide direct calling actions where supported.
+
+Never invent contact information.
+
+## 9.2 Support organisations
+
+Include:
+
+- Organisation name.
+- Description.
+- Service category.
+- Geographic coverage.
+- Official website.
+- Verified contact information.
+- Verification status.
+- Source.
+
+Only list organisations supported by the original content or verified additional research.
+
+## 9.3 Legal awareness
+
+Integrate the original SafeHer legal information.
+
+Include:
+
+- Relevant Indian laws.
+- Women's rights.
+- Simple legal explanations.
+- Practical guidance.
+- Official legal references.
+- Government sources.
+- Last updated date.
+
+Do not present AI-generated legal content as formal legal advice.
+
+## 9.4 Safety learning
+
+Create organised learning modules:
+
+- Recognising harassment.
+- Stalking awareness.
+- Online harassment.
+- Digital privacy.
+- Blackmail and extortion awareness.
+- Personal safety.
+- Seeking assistance.
+- Reporting incidents.
+- Emergency response.
+
+Support Tamil and English.
+
+---
+
+# PART 10 — MEENA AI ASSISTANT
+
+Create Meena as an integrated AI-powered safety assistant.
+
+Use Gemini through Firebase AI Logic or a secure backend.
+
+Meena should:
+
+- Understand English.
+- Understand Tamil.
+- Answer safety-related questions.
+- Explain legal awareness content.
+- Help locate appropriate helplines.
+- Explain how SOS works.
+- Provide practical safety guidance.
+- Guide users towards support organisations.
+- Summarise educational content.
+- Help users understand emergency options.
+
+## Emergency handling
+
+When a user describes immediate danger:
+
+1. Recognise the emergency context.
+2. Display clear emergency options.
+3. Offer The Shield SOS activation.
+4. Provide direct 112 calling.
+5. Display relevant support resources.
+6. Avoid lengthy ordinary conversation.
+
+Meena must never:
+
+- Pretend to be emergency services.
+- Claim to have contacted police.
+- Claim to have dispatched assistance.
+- Guarantee personal safety.
+- Invent legal provisions.
+- Invent helpline numbers.
+- Request unnecessary sensitive personal information.
+
+Use an appropriate fallback if Gemini is unavailable.
+
+Never expose API keys inside the Android application.
+
+---
+
+# PART 11 — SAFETY TOOLS
+
+Integrate useful SafeHer safety tools.
+
+Potential features:
+
+- Emergency SOS.
+- Location sharing.
+- Fake call interface.
+- Quick exit.
+- Safe zone information.
+- Shake-to-SOS, where technically reliable.
+- Trusted contacts.
+- Emergency guidance.
+- Personal safety checklist.
+
+Every feature must work within Android's permissions and operating-system limitations.
+
+A fake call must not be represented as a real incoming call.
+
+Do not implement deceptive features that compromise user security.
+
+Explain permissions clearly.
+
+---
+
+# PART 12 — LOCATION-BASED SAFETY SERVICES
+
+Implement:
+
+- Current location.
+- Nearby verified support resources.
+- Nearby organisations.
+- Relevant helplines.
+- Safety map.
+- Route awareness.
+- Historical area risk assessment.
+
+Use Android's location services.
+
+Provide manual location selection.
+
+Background location must only be requested when necessary.
+
+Explain the reason for every location permission.
+
+Never share a user's location without consent.
+
+---
+
+# PART 13 — INCIDENT REPORTING
+
+Allow users to report safety incidents.
+
+Possible fields:
+
+- Incident category.
+- Date.
+- Approximate time.
+- Location.
+- Description.
+- Optional supporting evidence.
+- Anonymous or identified reporting preference where legally and technically appropriate.
+
+Provide reporting statuses:
+
+- Submitted.
+- Under review.
+- Verified.
+- Rejected.
+- Closed.
+
+A user-submitted report must not automatically be treated as a verified crime.
+
+Protect survivor identity.
+
+Restrict access to uploaded evidence.
+
+Provide clear consent and privacy information.
+
+---
+
+# PART 14 — NOTIFICATIONS AND EMERGENCY HISTORY
+
+Create a dedicated notifications screen.
+
+Include:
+
+- SOS updates.
+- Trusted contact responses.
+- Safety announcements.
+- Relevant location-based information.
+- System notifications.
+
+Create emergency history containing:
+
+- Incident ID.
+- Date and time.
+- Activation method.
+- Location-sharing status.
+- Recipients.
+- Delivery status.
+- Acknowledgement status.
+- Resolution status.
+
+Allow users to view their own records.
+
+Restrict access to sensitive records.
+
+---
+
+# PART 15 — USER ACCOUNTS AND ROLES
+
+Implement secure authentication.
+
+Suggested user roles:
+
+- Standard user.
+- Support organisation user.
+- Administrator.
+- Authorised emergency response operator.
+
+Use role-based access control.
+
+Do not expose administrative functionality to ordinary users.
+
+Support appropriate account management:
+
+- Registration.
+- Login.
+- Logout.
+- Profile.
+- Password recovery.
+- Session management.
+- Account deletion.
+
+Use Firebase Authentication or an appropriate secure identity system.
+
+---
+
+# PART 16 — FULL-STACK BACKEND
+
+IMPORTANT:
+
+Google AI Studio's Android application generation does not automatically mean that a production backend, external providers, or Firebase project are configured.
+
+Create a clear full-stack architecture and the required integration interfaces.
+
+Recommended architecture:
+
+ANDROID CLIENT
+Kotlin + Jetpack Compose
+       |
+       | HTTPS
+       |
+BACKEND
+Cloud Run / Firebase Cloud Functions / secure API server
+       |
+       |-------------------------------|
+       |                               |
+FIREBASE                         DATABASE
+Authentication                   Firestore
+FCM                              or PostgreSQL/PostGIS
+App Check
+       |
+       |-------------------------------|
+       |                               |
+EMERGENCY PROVIDERS               AI SERVICES
+SMS / Voice                       Gemini
+Notification delivery             Risk analytics
+       |
+       |
+EMERGENCY EVENT PROCESSING
+
+## Backend requirements
+
+Implement or document:
+
+- Authentication.
+- User management.
+- Trusted contacts.
+- Incident reports.
+- Emergency incidents.
+- Alert delivery.
+- Alert acknowledgements.
+- Emergency history.
+- Helpline directory.
+- Organisation directory.
+- Educational content.
+- AI risk assessment.
+- Incident analytics.
+- Notifications.
+- Audit logs.
+
+Use appropriate database indexes and access policies.
+
+Use a secure API architecture.
+
+Create API documentation.
+
+Create environment configuration templates.
+
+Never hardcode credentials.
+
+If production integrations are not configured, create clearly labelled development implementations rather than pretending they are active.
+
+---
+
+# PART 17 — SECURITY AND PRIVACY
+
+Security is a core requirement.
+
+Implement:
+
+- Secure authentication.
+- Protected API endpoints.
+- Firebase Security Rules.
+- App Check where supported.
+- Input validation.
+- Secure token handling.
+- Encryption in transit.
+- Restricted access to emergency records.
+- Audit logging.
+- Rate limiting.
+- Abuse prevention.
+- Data minimisation.
+- Account deletion.
+- Data deletion workflows.
+
+Protect:
+
+- Phone numbers.
+- Trusted contact details.
+- Precise locations.
+- Survivor identities.
+- Incident descriptions.
+- Uploaded evidence.
+- Emergency records.
+
+Public maps must use aggregated and appropriately anonymised information.
+
+Do not expose private reports.
+
+Do not permit unrestricted administrator access.
+
+---
+
+# PART 18 — OFFLINE SUPPORT
+
+Implement useful offline functionality.
+
+Where appropriate, cache:
+
+- Emergency helpline directory.
+- Safety guidance.
+- Legal awareness content.
+- Learning materials.
+- Essential user preferences.
+
+When connectivity is unavailable:
+
+- Display offline status.
+- Preserve locally created records.
+- Queue eligible requests.
+- Show whether an alert is still pending.
+- Provide direct 112 calling.
+- Explain when the user needs to seek help manually.
+
+Never claim a queued SOS alert has been delivered.
+
+Never guarantee that a pending emergency alert will eventually reach its recipient.
+
+---
+
+# PART 19 — ADMIN DASHBOARD AND CONTENT MANAGEMENT
+
+Design backend administration capabilities for authorised personnel.
+
+Include:
+
+- Incident management.
+- Verification workflows.
+- Helpline management.
+- Organisation management.
+- Educational content management.
+- Risk assessment configuration.
+- Notification management.
+- Data quality monitoring.
+- Audit history.
+
+Use appropriate role restrictions.
+
+The ordinary Android user interface must not expose unrestricted administrator functions.
+
+If a separate web administration interface is required, document it as a separate deliverable.
+
+---
+
+# PART 20 — PERFORMANCE AND ACCESSIBILITY
+
+Ensure:
+
+- Smooth navigation.
+- Responsive screens.
+- Efficient map rendering.
+- Efficient network requests.
+- Appropriate caching.
+- Graceful error handling.
+- Accessible touch targets.
+- Screen reader support.
+- High contrast.
+- Readable typography.
+- Tamil language support.
+- Low-bandwidth usability.
+
+Avoid unnecessary battery consumption.
+
+Do not continuously request GPS updates without a clear purpose and consent.
+
+---
+
+# PART 21 — TESTING
+
+Do not stop after generating the user interface.
+
+Test the complete Android project.
+
+## Build testing
+
+- Gradle sync.
+- Kotlin compilation.
+- Dependency compatibility.
+- Application launch.
+- Navigation.
+
+## Feature testing
+
+- Authentication.
+- Profile.
+- Map loading.
+- Map interaction.
+- Incident filters.
+- Heatmaps.
+- Analytics.
+- Risk assessment.
+- Helplines.
+- Organisations.
+- Legal awareness.
+- Meena.
+- Safety tools.
+- Trusted contacts.
+- SOS activation.
+- SOS cancellation.
+- Location permissions.
+- Notifications.
+- Emergency history.
+
+## Reliability testing
+
+- Network failure.
+- GPS unavailable.
+- Permission denied.
+- Backend unavailable.
+- Invalid input.
+- Offline mode.
+- Authentication failure.
+- Notification failure.
+
+## Security testing
+
+- Unauthorised access.
+- Invalid requests.
+- Sensitive data exposure.
+- API access restrictions.
+- Role-based permissions.
+
+Use safe test environments.
+
+Never send actual emergency notifications during ordinary development tests.
+
+Clearly label simulated data and test alerts.
+
+Fix compilation and runtime errors before delivery.
+
+---
+
+# PART 22 — REQUIRED DELIVERABLES
+
+Generate a complete Android Studio-compatible project.
+
+The project must include:
+
+1. Kotlin source code.
+2. Jetpack Compose UI.
+3. MainActivity.
+4. Navigation architecture.
+5. ViewModels.
+6. Repository layer.
+7. Data models.
+8. Local database implementation.
+9. Firebase integration.
+10. Backend API integration.
+11. Authentication.
+12. Location services.
+13. Map implementation.
+14. CrimeMap module.
+15. Analytics module.
+16. AI risk assessment module.
+17. SafeHer module.
+18. Meena AI module.
+19. The Shield SOS module.
+20. Trusted contacts.
+21. Notifications.
+22. Emergency history.
+23. Security configuration.
+24. AndroidManifest.xml.
+25. Gradle build files.
+26. Resource files.
+27. Unit tests.
+28. UI tests.
+29. README.md.
+30. API documentation.
+31. Firebase setup guide.
+32. Environment variable template.
+33. Backend deployment instructions.
+34. Testing report.
+
+Provide a complete ZIP export that can be opened in Android Studio.
+
+Do not provide only disconnected code snippets.
+
+Do not omit required configuration files.
+
+---
+
+# PART 23 — IMPLEMENTATION STAGES
+
+Follow these stages in order.
+
+## STAGE 1: SOURCE ANALYSIS
+
+Inspect all uploaded CrimeMap and SafeHer files.
+
+Produce:
+
+- Source inventory.
+- Feature inventory.
+- Existing architecture summary.
+- Asset inventory.
+- Feature preservation checklist.
+- Missing dependency list.
+
+Do not discard existing functionality.
+
+## STAGE 2: APPLICATION ARCHITECTURE
+
+Create the Android architecture.
+
+Map each existing source feature to an Android module.
+
+Identify backend dependencies.
+
+Identify required permissions.
+
+Identify external credentials and integrations.
+
+## STAGE 3: UI DEVELOPMENT
+
+Build:
+
+- Splash screen.
+- Authentication.
+- Home dashboard.
+- Main navigation.
+- Safety Map.
+- Safety Hub.
+- SOS screen.
+- Profile.
+- Meena.
+
+Maintain the CYBER WOMEN identity.
+
+## STAGE 4: CORE FUNCTIONALITY
+
+Implement:
+
+- CrimeMap.
+- Incident management.
+- Analytics.
+- Risk assessment.
+- Helplines.
+- Support organisations.
+- Legal awareness.
+- Safety education.
+- Safety tools.
+
+## STAGE 5: THE SHIELD
+
+Implement:
+
+- SOS.
+- Trusted contacts.
+- Location sharing.
+- Emergency notifications.
+- Delivery status.
+- Acknowledgement.
+- Cancellation.
+- Emergency history.
+- Direct 112 calling.
+
+## STAGE 6: AI
+
+Implement:
+
+- Meena.
+- English and Tamil support.
+- AI safety guidance.
+- Historical pattern analysis.
+- Explainable risk assessment.
+
+## STAGE 7: BACKEND
+
+Implement and document:
+
+- Firebase.
+- Secure APIs.
+- Database.
+- Notification services.
+- Emergency provider integrations.
+- Access control.
+
+## STAGE 8: TESTING
+
+Compile and test the project.
+
+Fix all identified issues.
+
+## STAGE 9: DELIVERY
+
+Provide:
+
+- Complete project ZIP.
+- Setup instructions.
+- Configuration checklist.
+- Backend deployment guide.
+- Testing results.
+- Remaining production limitations.
+
+Do not stop after creating mockups.
+
+---
+
+# PART 24 — NON-NEGOTIABLE DEVELOPMENT RULES
+
+1. The official application name is CYBER WOMEN.
+2. Build ONE unified native Android application.
+3. Use Kotlin and Jetpack Compose.
+4. Do not use WebView as a substitute for native development.
+5. Preserve original CrimeMap functionality.
+6. Integrate the original SafeHer content.
+7. Implement The Shield as a functional emergency workflow.
+8. Integrate Meena as the AI assistant.
+9. Do not fabricate crime statistics.
+10. Do not fabricate helpline numbers.
+11. Do not fabricate official partnerships.
+12. Do not fabricate successful emergency delivery.
+13. Do not claim AI predicts individual crimes.
+14. Do not expose API keys.
+15. Do not silently collect location.
+16. Do not expose survivor information.
+17. Do not leave important buttons non-functional.
+18. Do not mark incomplete functionality as completed.
+19. Distinguish development simulations from production features.
+20. Prefer real functionality over impressive but empty screens.
+21. Document unavailable external services.
+22. Fix build errors before delivery.
+23. Preserve existing source functionality wherever possible.
+24. Use sound engineering judgement without asking for approval on every minor decision.
+25. Clearly identify every assumption and implementation limitation.
+
+---
+
+# PART 25 — FINAL ACCEPTANCE CRITERIA
+
+CYBER WOMEN is considered successfully generated only when:
+
+- It is a native Android project.
+- It builds successfully.
+- It launches correctly.
+- Navigation works.
+- CrimeMap functionality is ported and preserved.
+- SafeHer content is integrated.
+- The Shield SOS workflow is implemented.
+- Trusted contacts work.
+- Location permissions are handled correctly.
+- The map functions correctly.
+- Analytics work with clearly identified data.
+- AI risk assessments explain their evidence and limitations.
+- Meena provides useful safety guidance.
+- English and Tamil support are implemented.
+- Offline behaviour is handled honestly.
+- Security protections are implemented.
+- External integrations are documented.
+- Tests are executed and reported.
+- The project can be opened and continued in Android Studio.
+
+If a feature cannot be completed because an API key, Firebase project, provider account, or deployment environment is unavailable, implement the integration structure and clearly explain the exact configuration required.
+
+Do not pretend the missing service is operational.
+
+---
+
+# FINAL PRODUCT IDENTITY
+
+APPLICATION NAME:
+
+CYBER WOMEN
+
+TAGLINE:
+
+INTELLIGENT SAFETY. REAL-TIME PROTECTION. WOMEN'S EMPOWERMENT.
+
+INTERNAL MODULES:
+
+CRIMEMAP 3D — Geospatial Intelligence.
+
+SAFEHER — Women's Safety and Awareness.
+
+THE SHIELD — Emergency Protection.
+
+MEENA — AI Safety Assistant.
+
+PRODUCT OBJECTIVE:
+
+Create a unified, intelligent, reliable, privacy-conscious Android platform that combines women's safety resources, emergency protection, geospatial intelligence, historical incident analysis, and AI-powered guidance.
+
+The result must be a functional Android application, not merely a visual prototype.
+
+BEGIN NOW.
+
+First inspect all uploaded source files and generate the feature preservation checklist and technical implementation plan.
+
+Then proceed with building the complete CYBER WOMEN native Android application.

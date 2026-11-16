@@ -1,0 +1,3606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<!-- This site is hosted on Netlify. Anyone can build and deploy a site
+     like this one for free: https://netlify.new/?utm_campaign=loops&utm_source=ai-legible&utm_medium=owned&utm_content=comment&utm_id=595f7aa8-d7f9-4e3d-9c6e-c79f09b957b5
+     Netlify hosting facts for this site: static/SSR served via Netlify Edge. -->
+<title>CRIMEMAP 3D — Puducherry Police Command | Santhosh</title>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet"/>
+<script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
+<style>
+:root{
+  --bg:#06090f; --panel:#0b1220; --panel2:#111b30; --panel3:#16223c;
+  --line:#1c2a44; --line2:#243355;
+  --fg:#eaf0fb; --muted:#7e91b8; --muted2:#5f7096;
+  --accent:#ff3b5c; --accent2:#3ba3ff; --gold:#ffcc4d; --ok:#26c281;
+  --purple:#a06bff; --orange:#ff7a3c;
+}
+*{box-sizing:border-box;-webkit-font-smoothing:antialiased}
+html,body{margin:0;height:100%;font-family:Inter,-apple-system,system-ui,"Segoe UI",Roboto,sans-serif;
+          background:var(--bg);color:var(--fg);overflow:hidden;font-size:14px}
+button{font-family:inherit}
+input,select,textarea{font-family:inherit}
+
+/* LOADER */
+#loader{position:fixed;inset:0;background:radial-gradient(ellipse at center,#0b1220,#06090f);
+        z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;
+        gap:22px;transition:opacity .6s}
+#loader.hide{opacity:0;pointer-events:none}
+.spin{width:60px;height:60px;border:3px solid var(--line);border-top-color:var(--accent);
+      border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.lTitle{font-size:22px;font-weight:900;letter-spacing:3px}
+.lTitle span{color:var(--accent)}
+.lText{color:var(--muted);font-size:12.5px;letter-spacing:1.5px;text-transform:uppercase}
+.lBar{width:280px;height:3px;background:var(--line);border-radius:3px;overflow:hidden}
+.lBar > div{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--gold));
+            transition:width .35s}
+
+/* APP SHELL */
+#app{display:grid;grid-template-rows:60px 46px 1fr 28px;height:100vh}
+
+/* HEADER */
+header{display:flex;align-items:center;justify-content:space-between;
+       padding:0 20px;background:linear-gradient(90deg,#06090f,#0f1a30 50%,#1a0a18);
+       border-bottom:1px solid var(--line);position:relative;z-index:20}
+header::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;
+              background:linear-gradient(90deg,var(--accent),var(--accent2),var(--gold),transparent)}
+.brand{display:flex;align-items:center;gap:14px}
+.logo{width:38px;height:38px;border-radius:10px;
+      background:linear-gradient(135deg,var(--accent),#7a0016);
+      display:grid;place-items:center;font-weight:900;color:#fff;font-size:19px;
+      box-shadow:0 0 20px rgba(255,59,92,.45)}
+.title{font-weight:800;letter-spacing:.5px;font-size:15.5px;line-height:1.1}
+.title span{color:var(--accent)}
+.subtitle{font-size:10.5px;color:var(--muted);margin-top:2px;letter-spacing:.4px}
+.subtitle b{color:var(--gold);font-weight:700}
+.headerRight{display:flex;align-items:center;gap:12px}
+.search{position:relative}
+.search input{background:#0b1730;border:1px solid var(--line);color:var(--fg);
+              border-radius:8px;padding:7px 12px 7px 34px;font-size:12.5px;width:220px;
+              transition:border-color .15s,width .2s}
+.search input:focus{outline:none;border-color:var(--accent2);width:260px}
+.search::before{content:"🔍";position:absolute;left:10px;top:50%;transform:translateY(-50%);
+                font-size:12px;opacity:.6}
+.bell{position:relative;background:#0b1730;border:1px solid var(--line);border-radius:8px;
+      padding:7px 10px;cursor:pointer;font-size:14px;color:var(--fg)}
+.bell:hover{border-color:var(--accent2)}
+.bell .dot{position:absolute;top:-4px;right:-4px;background:var(--accent);color:#fff;
+           border-radius:99px;font-size:9px;font-weight:700;padding:1px 5px;
+           border:2px solid var(--bg)}
+.clock{font-size:11.5px;color:var(--muted);text-align:right;line-height:1.4;
+       font-variant-numeric:tabular-nums;letter-spacing:.3px}
+
+/* TABS */
+nav.tabs{display:flex;gap:2px;padding:0 20px;background:var(--panel);
+         border-bottom:1px solid var(--line);align-items:flex-end;overflow-x:auto}
+nav.tabs button{background:none;border:none;color:var(--muted);padding:10px 16px 12px;
+                font-size:12.5px;font-weight:600;cursor:pointer;letter-spacing:.4px;
+                border-bottom:2px solid transparent;transition:color .15s,border-color .15s;
+                display:flex;align-items:center;gap:7px;white-space:nowrap}
+nav.tabs button:hover{color:var(--fg)}
+nav.tabs button.active{color:var(--accent);border-bottom-color:var(--accent)}
+nav.tabs button.live.active{color:#ff5c78;border-bottom-color:#ff5c78}
+nav.tabs .key{font-size:9px;padding:1px 5px;border-radius:4px;background:#0b1730;
+              border:1px solid var(--line);color:var(--muted2);font-weight:700}
+nav.tabs .liveDot{width:7px;height:7px;border-radius:50%;background:var(--accent);
+                  box-shadow:0 0 8px var(--accent);animation:pulse 1.4s infinite}
+
+/* MAIN GRID */
+main{display:grid;grid-template-columns:300px 1fr 340px;height:100%;overflow:hidden;
+     position:relative}
+.leftPanel,.rightPanel{overflow-y:auto;background:var(--panel);
+                       border-right:1px solid var(--line);padding-bottom:20px}
+.rightPanel{border-right:none;border-left:1px solid var(--line)}
+.leftPanel::-webkit-scrollbar,.rightPanel::-webkit-scrollbar{width:6px}
+.leftPanel::-webkit-scrollbar-thumb,.rightPanel::-webkit-scrollbar-thumb{
+  background:#243355;border-radius:3px}
+.leftPanel::-webkit-scrollbar-track,.rightPanel::-webkit-scrollbar-track{background:transparent}
+
+.panelSet{display:none}
+.panelSet.active{display:block}
+
+/* CARDS */
+.card{background:var(--panel2);margin:12px;border-radius:12px;padding:14px;
+      border:1px solid var(--line);box-shadow:0 2px 10px rgba(0,0,0,.25)}
+.card h3{margin:0 0 12px;font-size:10.5px;letter-spacing:1.2px;color:var(--muted);
+         text-transform:uppercase;font-weight:700;display:flex;align-items:center;gap:8px}
+.card h3::before{content:"";width:3px;height:12px;background:var(--accent);border-radius:2px}
+.card h3 .right{margin-left:auto;font-size:9px;color:var(--muted2);font-weight:600}
+
+/* STAT */
+.stat{display:flex;justify-content:space-between;align-items:center;padding:8px 0;
+      border-bottom:1px dashed var(--line);font-size:13px}
+.stat:last-child{border:none;padding-bottom:0}
+.stat span{color:var(--muted)}
+.stat b{color:var(--fg);font-variant-numeric:tabular-nums;font-size:14px}
+.stat b.gold{color:var(--gold)}
+.stat b.accent{color:var(--accent)}
+.stat b.ok{color:var(--ok)}
+
+/* KPI CARD */
+.kpi{padding:12px;border-radius:10px;background:linear-gradient(135deg,var(--panel3),var(--panel2));
+     border:1px solid var(--line);margin-bottom:8px}
+.kpi .label{font-size:10px;letter-spacing:1px;color:var(--muted);text-transform:uppercase;
+            font-weight:600;margin-bottom:4px}
+.kpi .value{font-size:26px;font-weight:800;font-variant-numeric:tabular-nums;
+            letter-spacing:-.5px;line-height:1}
+.kpi .delta{font-size:11px;color:var(--ok);margin-top:4px;font-weight:600}
+.kpi .delta.down{color:var(--accent)}
+.kpi.red .value{color:var(--accent)}
+.kpi.gold .value{color:var(--gold)}
+.kpi.blue .value{color:var(--accent2)}
+.kpi.green .value{color:var(--ok)}
+.kpi.purple .value{color:var(--purple)}
+
+/* INPUTS */
+label.lbl{font-size:11px;color:var(--muted);display:block;margin:10px 0 5px;
+          letter-spacing:.4px;font-weight:500}
+select,input[type="text"],input[type="number"],textarea{
+  width:100%;background:#080f1e;color:var(--fg);border:1px solid var(--line);
+  border-radius:8px;padding:8px 10px;font-size:12.5px;transition:border-color .15s}
+select:focus,input:focus,textarea:focus{outline:none;border-color:var(--accent2)}
+textarea{resize:vertical;min-height:52px}
+input[type="range"]{width:100%;accent-color:var(--accent);cursor:pointer}
+
+/* BUTTONS */
+button.act{cursor:pointer;background:linear-gradient(135deg,var(--accent),#a3081f);
+           border:none;font-weight:700;letter-spacing:.3px;color:#fff;
+           padding:10px 14px;border-radius:8px;font-size:12.5px;
+           transition:transform .1s,filter .15s;width:100%}
+button.act:hover{filter:brightness(1.15)}
+button.act:active{transform:scale(.98)}
+button.act.sec{background:linear-gradient(135deg,var(--accent2),#1a4b8a)}
+button.act.ok{background:linear-gradient(135deg,var(--ok),#0d7a4d)}
+button.act.ghost{background:transparent;border:1px solid var(--line);color:var(--fg)}
+button.act.ghost:hover{border-color:var(--accent2);color:var(--accent2);filter:none}
+button.act.sm{padding:7px 10px;font-size:11.5px}
+.row{display:flex;gap:8px;margin-top:10px}
+.row > *{flex:1}
+
+/* TOGGLE */
+.toggle{display:flex;align-items:center;gap:9px;padding:7px 0;font-size:12.5px;cursor:pointer;
+        user-select:none;transition:color .15s}
+.toggle:hover{color:var(--accent2)}
+.toggle input{width:auto;accent-color:var(--accent);cursor:pointer;margin:0}
+
+/* MAP */
+.mapWrap{position:relative;overflow:hidden;background:#02040a;perspective:1400px}
+#map{width:100%;height:100%;filter:saturate(1.18) contrast(1.07) brightness(1.04)}
+.mapOverlayTop{position:absolute;left:14px;top:14px;z-index:5;
+  background:rgba(6,9,15,.85);backdrop-filter:blur(10px);
+  border:1px solid var(--line);border-radius:10px;padding:8px 12px;
+  font-size:11.5px;display:flex;gap:8px;flex-wrap:wrap;max-width:75%}
+.mapOverlayBottom{position:absolute;right:14px;bottom:14px;z-index:5;
+  background:rgba(6,9,15,.85);backdrop-filter:blur(10px);
+  border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-size:11px}
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;padding:3px 9px;
+      border-radius:99px;background:#0a1424;color:var(--muted);
+      border:1px solid var(--line);font-variant-numeric:tabular-nums;font-weight:600}
+.pill.on{color:var(--gold);border-color:#3a2c10;background:#1a1508}
+.pill.live::before{content:"";width:6px;height:6px;border-radius:50%;
+                   background:var(--ok);box-shadow:0 0 6px var(--ok);
+                   animation:pulse 1.6s infinite}
+.pill.red{color:#ff8ba0;border-color:#3a0c16;background:#1a0810}
+.pill.blue{color:var(--accent2);border-color:#0f2f52;background:#08172b}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.legend{display:flex;align-items:center;gap:8px;margin:3px 0;font-size:11px}
+.legend .sw{width:14px;height:10px;border-radius:3px;flex-shrink:0}
+
+/* LIST ITEMS */
+.hot{display:flex;justify-content:space-between;align-items:center;
+     padding:9px 11px;margin:6px 0;background:#080f1e;border-radius:9px;
+     border-left:3px solid var(--accent);font-size:12px;cursor:pointer;
+     transition:background .15s,transform .1s}
+.hot:hover{background:#0f1a30;transform:translateX(2px)}
+.hot .l{flex:1;min-width:0}
+.hot .l b{display:block;font-size:12.5px;margin-bottom:3px;color:var(--fg)}
+.hot .l .meta{color:var(--muted);font-size:10.5px}
+.hot .r{color:var(--gold);font-weight:800;font-size:17px;
+        font-variant-numeric:tabular-nums;letter-spacing:-.5px}
+
+.badge{font-size:9.5px;padding:2px 7px;border-radius:99px;
+       background:#0a1424;border:1px solid var(--line);color:var(--muted);
+       display:inline-block;margin-right:3px;margin-top:3px;font-weight:600}
+.badge.ok{color:var(--ok);border-color:#0c3a24;background:#081a10}
+.badge.warn{color:var(--gold);border-color:#3a2c10;background:#1a1508}
+.badge.red{color:var(--accent);border-color:#3a0c16;background:#1a0810}
+.badge.blue{color:var(--accent2);border-color:#0f2f52;background:#08172b}
+
+.alert{background:linear-gradient(90deg,#2a0f18,#180a10);
+       border-left:3px solid var(--accent);padding:10px 12px;
+       border-radius:8px;margin:7px 0;font-size:11.5px;line-height:1.45;
+       cursor:pointer;transition:transform .1s}
+.alert:hover{transform:translateX(2px)}
+.alert b{color:#ff8ba0}
+.alert .mut{color:var(--muted);font-size:10.5px}
+.alert.gold{background:linear-gradient(90deg,#1f1a08,#12100a);border-left-color:var(--gold)}
+.alert.gold b{color:var(--gold)}
+
+/* DETECTION CARDS */
+.detCard{background:linear-gradient(90deg,#22080f,#0f0a12);
+         border-left:3px solid var(--accent);border-radius:9px;
+         padding:10px 12px;margin:7px 0;font-size:11.5px;line-height:1.5;
+         cursor:pointer;transition:transform .12s,background .12s;position:relative}
+.detCard:hover{transform:translateX(2px);background:linear-gradient(90deg,#2c0b14,#140c17)}
+.detCard.dispatched{border-left-color:var(--ok);background:linear-gradient(90deg,#082016,#0a1410)}
+.detCard.ack{border-left-color:var(--accent2);background:linear-gradient(90deg,#08192b,#0a111c);opacity:.78}
+.detCard .ttl{font-weight:800;color:#ff8ba0;font-size:12.5px;display:flex;
+              align-items:center;gap:6px;margin-bottom:3px}
+.detCard.dispatched .ttl{color:#63e0a8}
+.detCard.ack .ttl{color:#7cc4ff}
+.detCard .meta{color:var(--muted);font-size:10.5px}
+.detCard .acts{display:flex;gap:6px;margin-top:8px}
+.detCard .acts button{flex:1;font-size:10px;padding:5px 6px;border-radius:6px;
+  border:1px solid var(--line);background:#0a1424;color:var(--fg);cursor:pointer;
+  font-weight:700;letter-spacing:.3px}
+.detCard .acts button:hover{border-color:var(--accent2);color:var(--accent2)}
+.detCard .acts button.go{border-color:#0c3a24;background:#081a10;color:var(--ok)}
+.detCard .acts button.go:hover{border-color:var(--ok)}
+.confBar{height:4px;background:#0a1424;border-radius:3px;overflow:hidden;margin-top:6px}
+.confBar > div{height:100%;background:linear-gradient(90deg,var(--accent),var(--gold))}
+
+/* REPORT LIST */
+.report{padding:9px 0;border-bottom:1px dashed var(--line);font-size:11.5px;cursor:pointer}
+.report:last-child{border:none}
+.report:hover{color:var(--accent2)}
+.report b{color:var(--fg);display:block;margin-bottom:3px}
+.report .desc{color:var(--muted);display:block;margin-bottom:4px;line-height:1.4}
+.report .badges{margin-top:4px}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;font-size:11.5px}
+.tbl th{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);
+        color:var(--muted);font-size:10px;letter-spacing:.8px;text-transform:uppercase;
+        font-weight:700}
+.tbl td{padding:8px 6px;border-bottom:1px dashed var(--line);
+        font-variant-numeric:tabular-nums}
+.tbl tr:hover td{background:#0f1a30}
+.tbl tr:last-child td{border:none}
+
+/* CHARTS */
+.chartBox{background:#080f1e;border-radius:9px;padding:10px;
+          border:1px solid var(--line);margin-bottom:10px}
+.chartBox h4{margin:0 0 8px;font-size:10px;color:var(--muted);
+             letter-spacing:.9px;text-transform:uppercase;font-weight:700}
+
+/* NOTIFICATIONS DRAWER */
+.notifDrawer{position:absolute;top:60px;right:16px;width:340px;max-height:70vh;
+             background:var(--panel2);border:1px solid var(--line2);border-radius:12px;
+             box-shadow:0 12px 40px rgba(0,0,0,.6);z-index:50;overflow:hidden;
+             transform-origin:top right;transform:scale(.95);opacity:0;
+             pointer-events:none;transition:all .18s}
+.notifDrawer.show{transform:scale(1);opacity:1;pointer-events:auto}
+.notifDrawer h4{margin:0;padding:12px 14px;background:var(--panel3);
+                border-bottom:1px solid var(--line);font-size:11.5px;
+                letter-spacing:1px;text-transform:uppercase;color:var(--muted);
+                display:flex;justify-content:space-between;align-items:center}
+.notifList{max-height:calc(70vh - 44px);overflow-y:auto;padding:8px}
+.notif{padding:10px 12px;margin-bottom:6px;background:#080f1e;border-radius:8px;
+       border-left:3px solid var(--accent2);font-size:11.5px;line-height:1.4}
+.notif.red{border-left-color:var(--accent)}
+.notif.gold{border-left-color:var(--gold)}
+.notif.green{border-left-color:var(--ok)}
+.notif .t{color:var(--muted2);font-size:10px;margin-top:4px}
+
+/* TOAST */
+#toast{position:fixed;bottom:44px;left:50%;transform:translateX(-50%) translateY(20px);
+       background:var(--panel2);border:1px solid var(--ok);color:var(--fg);
+       padding:12px 22px;border-radius:10px;font-size:13px;opacity:0;
+       transition:opacity .3s,transform .3s;z-index:999;pointer-events:none;
+       box-shadow:0 10px 40px rgba(0,0,0,.6);max-width:80vw;text-align:center;
+       font-weight:500}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#toast.err{border-color:var(--accent)}
+#toast.warn{border-color:var(--gold)}
+
+/* FOOTER */
+footer{padding:6px 20px;font-size:10.5px;color:var(--muted);
+       border-top:1px solid var(--line);background:#06090f;
+       display:flex;justify-content:space-between;align-items:center;
+       font-variant-numeric:tabular-nums}
+footer .status{display:flex;gap:14px;align-items:center}
+footer .status b{color:var(--ok)}
+footer .credits b{color:var(--gold)}
+
+/* ==================================================================
+   CINEMATIC HUD (kept — professional look, no cinema button)
+   ================================================================== */
+.vignette{position:absolute;inset:0;pointer-events:none;z-index:3;
+  background:
+    radial-gradient(ellipse 78% 68% at 50% 50%, rgba(0,0,0,0) 38%, rgba(0,0,0,.66) 100%),
+    repeating-linear-gradient(0deg, rgba(140,200,255,.030) 0 1px, rgba(0,0,0,0) 1px 3px)}
+.vignette::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(90deg, rgba(255,59,92,.055), rgba(0,0,0,0) 22%,
+             rgba(0,0,0,0) 78%, rgba(59,163,255,.065))}
+
+.letterbox{position:absolute;left:0;right:0;height:0;background:#000;z-index:9;
+  pointer-events:none;transition:height .9s cubic-bezier(.5,0,.2,1)}
+.letterbox.top{top:0;border-bottom:1px solid rgba(255,255,255,.07)}
+.letterbox.bottom{bottom:0;border-top:1px solid rgba(255,255,255,.07)}
+.cinema .letterbox{height:11%}
+
+.hudCorners{position:absolute;inset:8px;z-index:6;pointer-events:none;opacity:.55}
+.hudCorners .c{position:absolute;width:26px;height:26px;border:2px solid var(--accent2)}
+.hudCorners .tl{top:0;left:0;border-right:0;border-bottom:0}
+.hudCorners .tr{top:0;right:0;border-left:0;border-bottom:0}
+.hudCorners .bl{bottom:0;left:0;border-right:0;border-top:0}
+.hudCorners .br{bottom:0;right:0;border-left:0;border-top:0}
+
+.scanline{position:absolute;left:0;right:0;height:130px;z-index:4;pointer-events:none;
+  opacity:.5;
+  background:linear-gradient(180deg, rgba(59,163,255,0), rgba(59,163,255,.09) 62%,
+             rgba(59,163,255,.30) 100%);
+  border-bottom:1px solid rgba(59,163,255,.55);
+  animation:scan 7.5s linear infinite}
+@keyframes scan{0%{top:-130px}100%{top:100%}}
+
+.reticle{position:absolute;left:50%;top:50%;width:150px;height:150px;
+  margin:-75px 0 0 -75px;z-index:8;pointer-events:none;opacity:0;
+  transform:scale(1.55) rotate(-9deg);
+  transition:opacity .35s, transform .55s cubic-bezier(.2,.8,.2,1)}
+.reticle.show{opacity:1;transform:scale(1) rotate(0)}
+.reticle .ring{position:absolute;inset:0;border:1px solid rgba(255,59,92,.55);
+  border-radius:50%;animation:spinSlow 9s linear infinite}
+.reticle .ring::before{content:"";position:absolute;inset:15px;border-radius:50%;
+  border:1px dashed rgba(255,59,92,.35)}
+.reticle .dot{position:absolute;left:50%;top:50%;width:6px;height:6px;
+  margin:-3px 0 0 -3px;background:var(--accent);border-radius:50%;
+  box-shadow:0 0 16px var(--accent)}
+.reticle .cn{position:absolute;width:22px;height:22px;border:2px solid var(--accent)}
+.reticle .cn.tl{top:0;left:0;border-right:0;border-bottom:0}
+.reticle .cn.tr{top:0;right:0;border-left:0;border-bottom:0}
+.reticle .cn.bl{bottom:0;left:0;border-right:0;border-top:0}
+.reticle .cn.br{bottom:0;right:0;border-left:0;border-top:0}
+.reticleLabel{position:absolute;left:50%;top:105%;transform:translateX(-50%);
+  font-size:10px;letter-spacing:3px;font-weight:800;color:var(--accent);
+  white-space:nowrap;text-shadow:0 0 12px rgba(255,59,92,.9)}
+@keyframes spinSlow{to{transform:rotate(360deg)}}
+
+.hudReadout{position:absolute;left:14px;bottom:54px;z-index:6;pointer-events:none;
+  font-family:ui-monospace,Menlo,Consolas,monospace;font-size:10px;line-height:1.75;
+  letter-spacing:1.4px;color:rgba(160,190,230,.78);
+  text-shadow:0 0 8px rgba(0,0,0,.95)}
+.hudReadout b{color:var(--accent2)}
+
+.camBar{position:absolute;left:50%;transform:translateX(-50%);bottom:16px;z-index:10;
+  display:flex;gap:5px;padding:6px;border-radius:12px;
+  background:rgba(6,9,15,.80);backdrop-filter:blur(14px);
+  border:1px solid var(--line2);box-shadow:0 8px 30px rgba(0,0,0,.55)}
+.camBtn{background:transparent;border:1px solid transparent;color:var(--muted);
+  font-size:10.5px;font-weight:700;letter-spacing:.7px;padding:7px 12px;
+  border-radius:8px;cursor:pointer;white-space:nowrap;
+  transition:color .18s,background .18s,box-shadow .18s}
+.camBtn:hover{color:var(--fg);background:#111b30}
+.camBtn.on{color:#06090f;background:linear-gradient(135deg,var(--accent2),#1a4b8a);
+  box-shadow:0 0 16px rgba(59,163,255,.45)}
+
+/* ==================================================================
+   ALERT BANNER + FLASH (real-time detection)
+   ================================================================== */
+.alertBanner{position:absolute;top:0;left:0;right:0;z-index:12;
+  background:linear-gradient(90deg,#3a0010,#7a0016 45%,#3a0010);
+  border-bottom:2px solid var(--accent);
+  display:flex;align-items:center;gap:14px;padding:9px 18px;
+  transform:translateY(-110%);transition:transform .45s cubic-bezier(.2,.9,.2,1);
+  box-shadow:0 10px 40px rgba(255,0,50,.35)}
+.alertBanner.show{transform:translateY(0)}
+.alertBanner .abIcon{font-size:20px;animation:recPulse 1s infinite}
+.alertBanner .abText{flex:1;font-size:12.5px;line-height:1.4}
+.alertBanner .abText b{color:#fff;font-size:13.5px;letter-spacing:.4px}
+.alertBanner .abText span{color:#ffc9d3}
+.alertBanner button{background:#fff;color:#7a0016;border:none;font-weight:800;
+  font-size:10.5px;letter-spacing:.6px;padding:7px 13px;border-radius:7px;cursor:pointer;
+  transition:transform .1s,filter .15s}
+.alertBanner button:hover{filter:brightness(.92)}
+.alertBanner button.ghostB{background:transparent;border:1px solid rgba(255,255,255,.45);
+  color:#fff}
+.alertBanner button.ghostB:hover{background:rgba(255,255,255,.12)}
+@keyframes recPulse{0%,100%{filter:brightness(1)}50%{filter:brightness(1.5)}}
+
+.flash{position:absolute;inset:0;pointer-events:none;z-index:11;opacity:0;
+  background:radial-gradient(ellipse at center, rgba(255,59,92,.55), rgba(255,0,40,0) 68%);
+  transition:opacity .55s ease-out}
+.flash.on{opacity:1;transition:opacity .05s}
+
+/* ==================================================================
+   CCTV MODAL
+   ================================================================== */
+.cctvModal{position:fixed;inset:0;background:rgba(2,4,10,.88);backdrop-filter:blur(8px);
+  z-index:400;display:none;align-items:center;justify-content:center;padding:20px}
+.cctvModal.show{display:flex}
+.cctvInner{width:min(1100px,96vw);max-height:92vh;overflow:auto;
+  background:var(--panel);border:1px solid var(--line2);border-radius:14px;
+  box-shadow:0 30px 80px rgba(0,0,0,.75)}
+.cctvHead{display:flex;align-items:center;gap:12px;padding:12px 16px;
+  background:var(--panel3);border-bottom:1px solid var(--line)}
+.cctvHead .ttl{font-weight:800;font-size:13px;letter-spacing:.6px;flex:1;
+  display:flex;align-items:center;gap:9px}
+.cctvHead .rec{display:inline-flex;align-items:center;gap:6px;font-size:10px;
+  color:#ff8ba0;font-weight:800;letter-spacing:1px}
+.cctvHead .rec::before{content:"";width:8px;height:8px;border-radius:50%;
+  background:var(--accent);box-shadow:0 0 10px var(--accent);animation:pulse 1.1s infinite}
+.cctvHead button{background:transparent;border:1px solid var(--line);color:var(--fg);
+  border-radius:8px;padding:5px 12px;cursor:pointer;font-size:12px;font-weight:700}
+.cctvHead button:hover{border-color:var(--accent);color:var(--accent)}
+
+.wallGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px}
+.feedBox{position:relative;background:#000;border:1px solid var(--line);border-radius:10px;
+  overflow:hidden}
+.feedBox.active{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent),
+  inset 0 0 40px rgba(255,59,92,.15)}
+.feedBox canvas{display:block;width:100%;height:auto;background:#000}
+.feedBox .fTag{position:absolute;left:8px;top:8px;font-size:9.5px;font-weight:800;
+  letter-spacing:1px;color:#8ecbff;background:rgba(0,0,0,.6);padding:3px 7px;
+  border-radius:5px;font-family:ui-monospace,monospace}
+.feedBox .fAlert{position:absolute;right:8px;top:8px;font-size:9.5px;font-weight:900;
+  letter-spacing:1px;color:#fff;background:var(--accent);padding:3px 8px;border-radius:5px;
+  animation:recPulse 1s infinite}
+
+.cctvMeta{padding:0 16px 12px;font-size:11.5px;color:var(--muted);line-height:1.7}
+.cctvMeta b{color:var(--fg)}
+.cctvActions{display:flex;gap:10px;padding:0 16px 16px}
+.cctvActions button{flex:1}
+
+/* MAPLIBRE OVERRIDES */
+.maplibregl-popup-content{background:#0b1220!important;color:var(--fg)!important;
+  border:1px solid var(--line2)!important;border-radius:12px!important;
+  padding:14px!important;font-size:12px!important;font-family:Inter,sans-serif!important;
+  line-height:1.5!important;box-shadow:0 12px 40px rgba(0,0,0,.65)!important}
+.maplibregl-popup-tip{border-top-color:#0b1220!important;border-bottom-color:#0b1220!important;
+  border-left-color:#0b1220!important;border-right-color:#0b1220!important}
+.maplibregl-popup-close-button{color:var(--muted)!important;font-size:20px!important;
+  padding:2px 8px!important;line-height:1!important}
+.maplibregl-popup-close-button:hover{color:var(--accent)!important;background:transparent!important}
+.maplibregl-ctrl-group{background:#0b1220!important;border:1px solid var(--line)!important;
+  border-radius:8px!important;overflow:hidden}
+.maplibregl-ctrl button{background-color:transparent!important;border-color:var(--line)!important}
+.maplibregl-ctrl button+button{border-top:1px solid var(--line)!important}
+.maplibregl-ctrl button span{filter:invert(1) brightness(1.2)}
+.maplibregl-ctrl-attrib{background:rgba(6,9,15,.75)!important;color:var(--muted)!important;
+  font-size:10px!important}
+.maplibregl-ctrl-attrib a{color:var(--accent2)!important}
+.maplibregl-ctrl-scale{background:rgba(6,9,15,.75)!important;color:var(--muted)!important;
+  border-color:var(--line)!important}
+
+/* RESPONSIVE */
+@media (max-width: 1200px){
+  main{grid-template-columns:260px 1fr 300px}
+}
+@media (max-width: 900px){
+  main{grid-template-columns:1fr}
+  .leftPanel,.rightPanel{position:absolute;top:0;bottom:0;width:280px;z-index:6;
+                          box-shadow:0 0 30px rgba(0,0,0,.6)}
+  .leftPanel{left:0;transform:translateX(-100%);transition:transform .25s}
+  .rightPanel{right:0;transform:translateX(100%);transition:transform .25s}
+  .leftPanel.open,.rightPanel.open{transform:translateX(0)}
+  .search input{width:140px}
+  .search input:focus{width:180px}
+  .camBar{transform:translateX(-50%) scale(.82)}
+  .wallGrid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="spin"></div>
+  <div class="lTitle">CRIME<span>MAP</span></div>
+  <div class="lText" id="lText">Initialising system…</div>
+  <div class="lBar"><div id="lProg"></div></div>
+</div>
+
+<!-- NOTIFICATIONS DRAWER -->
+<div class="notifDrawer" id="notifDrawer">
+  <h4>Notifications <button class="act ghost sm" style="width:auto;padding:3px 10px"
+      onclick="clearNotifs()">Clear</button></h4>
+  <div class="notifList" id="notifList">
+    <div class="notif green">System initialised. All engines online.
+      <div class="t">just now</div></div>
+  </div>
+</div>
+
+<!-- CCTV WALL MODAL -->
+<div class="cctvModal" id="cctvModal">
+  <div class="cctvInner">
+    <div class="cctvHead">
+      <div class="ttl"><span class="rec">LIVE</span><span id="cctvTitle">CAMERA WALL</span></div>
+      <button onclick="closeCCTV()">✕ CLOSE</button>
+    </div>
+    <div class="wallGrid" id="wallGrid"></div>
+    <div class="cctvMeta" id="cctvMeta"></div>
+    <div class="cctvActions">
+      <button class="act" id="cctvDispatch" onclick="dispatchFromCCTV()">🚔 DISPATCH NEAREST UNIT</button>
+      <button class="act ghost" onclick="ackFromCCTV()">✔ MARK ACKNOWLEDGED</button>
+    </div>
+  </div>
+</div>
+
+<div id="app">
+  <header>
+    <div class="brand">
+      <div class="logo">C</div>
+      <div>
+        <div class="title">CRIME<span>MAP</span> · Puducherry Police</div>
+        <div class="subtitle">Developed by <b>Santhosh</b> · Lead Developer</div>
+      </div>
+    </div>
+    <div class="headerRight">
+      <div class="search"><input id="searchBox" type="text" placeholder="Search hotspots, stations, cameras…"/></div>
+      <button class="bell" id="bellBtn" title="Notifications">
+        🔔<span class="dot" id="notifCount">1</span>
+      </button>
+      <div class="clock">
+        <div id="clockDate" style="color:var(--fg);font-weight:600">—</div>
+        <div id="clockTime">—</div>
+      </div>
+    </div>
+  </header>
+
+  <nav class="tabs" id="tabs">
+    <button data-tab="command" class="active">🗺 Command Center <span class="key">1</span></button>
+    <button data-tab="livewatch" class="live">🎥 Live Watch <span class="key">2</span>
+      <span class="liveDot" id="tabLiveDot" style="display:none"></span></button>
+    <button data-tab="analytics">📊 Analytics <span class="key">3</span></button>
+    <button data-tab="patrol">🚔 Patrol Planner <span class="key">4</span></button>
+    <button data-tab="reports">📢 Citizen Reports <span class="key">5</span></button>
+  </nav>
+
+  <main>
+
+    <!-- ================= LEFT PANELS ================= -->
+    <aside class="leftPanel">
+
+      <!-- COMMAND -->
+      <div class="panelSet active" data-panel="command-left">
+        <div class="card">
+          <h3>Command Summary</h3>
+          <div class="stat"><span>Total incidents</span><b id="sTotal">—</b></div>
+          <div class="stat"><span>Last 7 days</span><b id="sLast7" class="gold">—</b></div>
+          <div class="stat"><span>Active hotspots</span><b id="sHot" class="accent">—</b></div>
+          <div class="stat"><span>Live detections</span><b id="sLive" class="accent">0</b></div>
+          <div class="stat"><span>Patrol units</span><b id="sUnits" class="ok">8</b></div>
+        </div>
+
+        <div class="card">
+          <h3>Filters <span class="right" id="filterCount">— shown</span></h3>
+          <label class="lbl">Time window</label>
+          <select id="fDays">
+            <option value="7">Last 7 days</option>
+            <option value="30">Last 30 days</option>
+            <option value="90" selected>Last 90 days</option>
+            <option value="180">Last 180 days</option>
+            <option value="365">Full year</option>
+          </select>
+          <label class="lbl">Crime type</label>
+          <select id="fCrime"><option value="all">All crimes</option></select>
+          <label class="lbl">Police station</label>
+          <select id="fStation"><option value="all">All stations</option></select>
+          <label class="lbl">Minimum severity</label>
+          <select id="fSev">
+            <option value="1">All severities</option>
+            <option value="2">≥ 2</option>
+            <option value="3">≥ 3</option>
+            <option value="4">≥ 4 (serious)</option>
+          </select>
+          <div class="row" style="margin-top:12px">
+            <button class="act ghost sm" onclick="resetFilters()">Reset</button>
+            <button class="act sec sm" onclick="exportCSV()">Export CSV</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Map Layers</h3>
+          <label class="toggle"><input type="checkbox" id="lHeat" checked/> Heatmap</label>
+          <label class="toggle"><input type="checkbox" id="lPoints" checked/> Incident points</label>
+          <label class="toggle"><input type="checkbox" id="lHot" checked/> Hotspot clusters</label>
+          <label class="toggle"><input type="checkbox" id="lPredict"/> Predicted risk (7-day)</label>
+          <label class="toggle"><input type="checkbox" id="lEmerging"/> Emerging alerts</label>
+          <label class="toggle"><input type="checkbox" id="lStations" checked/> Police stations</label>
+          <label class="toggle"><input type="checkbox" id="lPatrol"/> Patrol routes</label>
+          <label class="toggle"><input type="checkbox" id="lUser"/> My location</label>
+          <label class="toggle"><input type="checkbox" id="lBeams" checked/> Data beams</label>
+          <label class="toggle"><input type="checkbox" id="lTowers" checked/> 3D risk towers</label>
+          <label class="toggle"><input type="checkbox" id="lCams" checked/> CCTV network</label>
+          <label class="toggle"><input type="checkbox" id="lFov" checked/> Camera FOV cones</label>
+          <label class="toggle"><input type="checkbox" id="lDet" checked/> Live detections</label>
+        </div>
+      </div>
+
+      <!-- LIVE WATCH -->
+      <div class="panelSet" data-panel="livewatch-left">
+        <div class="card">
+          <h3>AI Detection Engine <span class="right" id="engineStatus">RUNNING</span></h3>
+          <label class="toggle"><input type="checkbox" id="detRun" checked/> Detection engine active</label>
+          <label class="toggle"><input type="checkbox" id="detAutoFly" checked/> Auto-focus on detection</label>
+          <label class="toggle"><input type="checkbox" id="detAudio" checked/> Audible alarm</label>
+          <label class="toggle"><input type="checkbox" id="detAutoDispatch"/> Auto-dispatch nearest unit</label>
+
+          <label class="lbl">Detection sensitivity <b id="sensVal" style="color:var(--accent2)">MEDIUM</b></label>
+          <input type="range" id="detSens" min="0" max="100" value="50"/>
+
+          <div class="row" style="margin-top:12px">
+            <button class="act" onclick="forceDetection()">⚠ SIMULATE DETECTION</button>
+          </div>
+          <div class="row">
+            <button class="act ghost sm" onclick="openCCTVWall()">🎥 OPEN CAMERA WALL</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Camera Network <span class="right" id="camCount">—</span></h3>
+          <div class="stat"><span>Online</span><b id="camOnline" class="ok">—</b></div>
+          <div class="stat"><span>PTZ units</span><b id="camPTZ" class="gold">—</b></div>
+          <div class="stat"><span>Fixed units</span><b id="camFixed" class="blue">—</b></div>
+          <div style="max-height:260px;overflow:auto;margin-top:10px" id="camList"></div>
+        </div>
+      </div>
+
+      <!-- ANALYTICS -->
+      <div class="panelSet" data-panel="analytics-left">
+        <div class="card">
+          <h3>Key Indicators</h3>
+          <div class="kpi red">
+            <div class="label">Incidents (90d)</div>
+            <div class="value" id="kInc">—</div>
+            <div class="delta" id="kIncD">—</div>
+          </div>
+          <div class="kpi gold">
+            <div class="label">Hotspots detected</div>
+            <div class="value" id="kHot">—</div>
+            <div class="delta">Clustered via DBSCAN-style</div>
+          </div>
+          <div class="kpi blue">
+            <div class="label">Peak hour</div>
+            <div class="value" id="kPeak">—</div>
+            <div class="delta">Most incidents occur here</div>
+          </div>
+          <div class="kpi green">
+            <div class="label">Top crime</div>
+            <div class="value" id="kTop" style="font-size:18px">—</div>
+            <div class="delta">By volume</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PATROL -->
+      <div class="panelSet" data-panel="patrol-left">
+        <div class="card">
+          <h3>Patrol Configuration</h3>
+          <label class="lbl">Patrol units available</label>
+          <input id="pUnits" type="number" value="8" min="1" max="15"/>
+          <label class="lbl">Time budget per unit (minutes)</label>
+          <input id="pHorizon" type="number" value="120" min="30" max="480"/>
+          <label class="lbl">Prioritize by</label>
+          <select id="pPriority">
+            <option value="risk">Highest risk first</option>
+            <option value="recent">Most recent activity</option>
+            <option value="severity">Highest severity</option>
+          </select>
+          <div class="row">
+            <button class="act" onclick="runPatrol()">⚡ Optimize Routes</button>
+          </div>
+          <div class="row">
+            <button class="act ghost sm" onclick="clearPatrol()">Clear Routes</button>
+            <button class="act ghost sm" onclick="exportRoutes()">Export Routes</button>
+          </div>
+          <div id="patrolInfo" style="font-size:11.5px;color:var(--muted);margin-top:12px;line-height:1.6"></div>
+        </div>
+      </div>
+
+      <!-- REPORTS -->
+      <div class="panelSet" data-panel="reports-left">
+        <div class="card">
+          <h3>Citizen Report</h3>
+          <label class="lbl">Category</label>
+          <select id="rCat">
+            <option>Traffic obstruction</option>
+            <option>Unauthorized parking</option>
+            <option>Suspicious activity</option>
+            <option>Unsafe area / poor lighting</option>
+            <option>Noise / public nuisance</option>
+            <option>Stray animal hazard</option>
+            <option>Other</option>
+          </select>
+          <label class="lbl">Description</label>
+          <textarea id="rDesc" placeholder="Describe what you observed…"></textarea>
+          <div class="row">
+            <button class="act ghost sm" onclick="useMyLocation()">📍 Use my location</button>
+          </div>
+          <div class="row">
+            <button class="act ok" onclick="sendReport()">📤 Submit Report</button>
+          </div>
+          <div id="rMsg" style="font-size:11.5px;color:var(--ok);margin-top:8px;min-height:14px"></div>
+        </div>
+
+        <div class="card">
+          <h3>Report Statistics</h3>
+          <div class="stat"><span>Total reports</span><b id="rTotal">0</b></div>
+          <div class="stat"><span>Today</span><b id="rToday" class="gold">0</b></div>
+          <div class="stat"><span>Last 7 days</span><b id="rWeek" class="ok">0</b></div>
+          <div class="stat"><span>Pending review</span><b id="rPend" class="accent">0</b></div>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- ================= MAP ================= -->
+    <section class="mapWrap" id="mapWrap">
+      <div id="map"></div>
+
+      <div class="vignette"></div>
+      <div class="scanline"></div>
+      <div class="letterbox top"></div>
+      <div class="letterbox bottom"></div>
+      <div class="flash" id="flash"></div>
+
+      <div class="hudCorners">
+        <span class="c tl"></span><span class="c tr"></span>
+        <span class="c bl"></span><span class="c br"></span>
+      </div>
+
+      <div class="reticle" id="reticle">
+        <div class="ring"></div>
+        <div class="dot"></div>
+        <div class="cn tl"></div><div class="cn tr"></div>
+        <div class="cn bl"></div><div class="cn br"></div>
+        <div class="reticleLabel" id="reticleLabel">TARGET LOCK</div>
+      </div>
+
+      <div class="hudReadout">
+        <div id="hudCoord">LAT — · LON — · Z— · BRG —</div>
+        <div id="hudMode">MODE: <b>ORBITAL RECON</b></div>
+      </div>
+
+      <!-- REAL-TIME ALERT BANNER -->
+      <div class="alertBanner" id="alertBanner">
+        <span class="abIcon">🚨</span>
+        <div class="abText" id="alertText">
+          <b>VIOLENCE DETECTED</b><br/><span>—</span>
+        </div>
+        <button id="abDispatch">DISPATCH</button>
+        <button class="ghostB" id="abFeed">VIEW FEED</button>
+        <button class="ghostB" id="abDismiss">DISMISS</button>
+      </div>
+
+      <div class="camBar">
+        <button class="camBtn on" id="btnOrbit" title="Auto-orbit when idle">🛰 ORBIT</button>
+        <button class="camBtn on" id="btn3D" title="Real 3D city buildings">🏙 3D</button>
+        <button class="camBtn on" id="btnTilt" title="Toggle camera tilt">⛰ TILT</button>
+        <button class="camBtn on" id="btnRadar" title="Radar sweep">📡 RADAR</button>
+        <button class="camBtn" id="btnCamFov" title="Toggle CCTV field-of-view cones">🎥 CAM FOV</button>
+      </div>
+
+      <div class="mapOverlayTop">
+        <span class="pill live">Live</span>
+        <span class="pill" id="pillCount">— incidents</span>
+        <span class="pill on" id="pillHot">— hotspots</span>
+        <span class="pill blue" id="pillCam">— cameras</span>
+        <span class="pill red" id="pillDet" style="display:none">0 detections</span>
+      </div>
+
+      <div class="mapOverlayBottom">
+        <div style="color:var(--muted);font-size:10px;letter-spacing:.9px;
+                    margin-bottom:6px;text-transform:uppercase;font-weight:700">Risk Level</div>
+        <div class="legend"><div class="sw" style="background:#26c281"></div>Low</div>
+        <div class="legend"><div class="sw" style="background:#ffcc4d"></div>Medium</div>
+        <div class="legend"><div class="sw" style="background:#ff7a3c"></div>High</div>
+        <div class="legend"><div class="sw" style="background:#ff3b5c"></div>Critical</div>
+        <div class="legend" style="margin-top:8px">
+          <div class="sw" style="background:#ff3b5c;box-shadow:0 0 8px #ff3b5c"></div>
+          <b style="color:#ff8ba0">AI Detection</b></div>
+      </div>
+    </section>
+
+    <!-- ================= RIGHT PANELS ================= -->
+    <aside class="rightPanel">
+
+      <!-- COMMAND -->
+      <div class="panelSet active" data-panel="command-right">
+        <div class="card" style="border-color:#3a0c16">
+          <h3 style="color:#ff8ba0">Live AI Detections <span class="right" id="detCountCmd">0</span></h3>
+          <div id="detFeedCmd">
+            <div style="color:var(--muted);font-size:11.5px">No active detections. Engine monitoring.</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Top Hotspots <span class="right">click to lock on</span></h3>
+          <div id="hotList" style="max-height:300px;overflow:auto">
+            <div style="color:var(--muted);font-size:12px">Computing…</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Recent Citizen Reports</h3>
+          <div id="recentReports">
+            <div style="color:var(--muted);font-size:11.5px">No reports yet.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LIVE WATCH -->
+      <div class="panelSet" data-panel="livewatch-right">
+        <div class="card" style="border-color:#3a0c16">
+          <h3 style="color:#ff8ba0">Detection Feed <span class="right" id="detCountLive">0</span></h3>
+          <div id="detFeedLive">
+            <div style="color:var(--muted);font-size:11.5px">Awaiting detections…</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Emerging Hotspot Alerts</h3>
+          <div id="emergeBox" style="max-height:220px;overflow:auto">
+            <div style="color:var(--muted);font-size:11.5px">Analysing week-over-week growth…</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ANALYTICS -->
+      <div class="panelSet" data-panel="analytics-right">
+        <div class="card">
+          <h3>Crime Type Distribution</h3>
+          <div class="chartBox">
+            <div id="chartDonut"></div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Station Leaderboard</h3>
+          <div id="stationTable"></div>
+        </div>
+      </div>
+
+      <!-- PATROL -->
+      <div class="panelSet" data-panel="patrol-right">
+        <div class="card">
+          <h3>Optimized Routes <span class="right" id="routeCount">—</span></h3>
+          <div id="routeList">
+            <div style="color:var(--muted);font-size:11.5px">
+              Configure units on the left and click <b>Optimize Routes</b>.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- REPORTS -->
+      <div class="panelSet" data-panel="reports-right">
+        <div class="card">
+          <h3>All Reports <span class="right" id="rAllCount">—</span></h3>
+          <div id="allReports">
+            <div style="color:var(--muted);font-size:11.5px">No reports submitted yet.</div>
+          </div>
+        </div>
+      </div>
+
+    </aside>
+  </main>
+
+  <footer>
+    <div class="status">
+      <span>● <b>System online</b></span>
+      <span id="fStatus">Ready</span>
+      <span id="fIncidents">— incidents</span>
+      <span id="fHotspots">— hotspots</span>
+      <span id="fCameras">— cameras</span>
+    </div>
+    <div class="credits">
+      CRIMEMAP v3 · 3D Ops prototype by <b>Santhosh</b> · Synthetic incidents ·
+      Real 3D basemap © OpenFreeMap / OpenStreetMap · Terrain © AWS Terrain Tiles
+    </div>
+  </footer>
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* ==================================================================
+   CRIMEMAP v3 — 3D Geospatial Crime Intelligence (Police Operations)
+   Developer: Santhosh · Single-file prototype
+   ================================================================== */
+
+/* ================= CONFIG ================= */
+const BOUNDS = { latMin: 11.850, latMax: 11.985, lonMin: 79.760, lonMax: 79.865 };
+const GRID_STEP = 0.0025;
+
+const CRIME_WEIGHTS = {
+  "Theft":0.22,"Snatching":0.14,"Assault":0.09,"Traffic Violation":0.16,
+  "Cyber Crime":0.08,"Drug Offence":0.07,"Public Nuisance":0.11,
+  "Burglary":0.07,"Missing Person":0.06
+};
+const CRIME_COLORS = {
+  "Theft":"#ffcc4d","Snatching":"#ff7a3c","Assault":"#ff3b5c",
+  "Traffic Violation":"#3ba3ff","Cyber Crime":"#a06bff","Drug Offence":"#ff4fa3",
+  "Public Nuisance":"#8ea0c4","Burglary":"#ffb03a","Missing Person":"#8ecbff"
+};
+
+const STATIONS = [
+  ["Grand Bazaar PS",11.9330,79.8290],["Orleanpet PS",11.9400,79.8150],
+  ["Mudaliarpet PS",11.9250,79.8050],["Lawspet PS",11.9470,79.8180],
+  ["Villianur PS",11.9130,79.7600],["Bahour PS",11.8730,79.7900],
+  ["Reddiarpalayam PS",11.9280,79.8220],["Kalapet PS",11.9650,79.8550]
+];
+
+const HOTSPOTS = [
+  { n:"Goubert Market",       lat:11.9340, lon:79.8300, w:1.00, c:["Theft","Snatching","Public Nuisance"] },
+  { n:"Puducherry Bus Stand", lat:11.9370, lon:79.8260, w:0.95, c:["Theft","Snatching","Traffic Violation"] },
+  { n:"Rock Beach",           lat:11.9310, lon:79.8360, w:0.90, c:["Public Nuisance","Snatching","Assault"] },
+  { n:"MG Road",              lat:11.9360, lon:79.8330, w:0.85, c:["Theft","Traffic Violation"] },
+  { n:"Railway Station",      lat:11.9270, lon:79.8280, w:0.80, c:["Theft","Snatching"] },
+  { n:"Botanical Garden",     lat:11.9300, lon:79.8330, w:0.55, c:["Public Nuisance"] },
+  { n:"Lawspet Junction",     lat:11.9470, lon:79.8180, w:0.75, c:["Traffic Violation","Assault"] },
+  { n:"Kalapet Beach",        lat:11.9650, lon:79.8550, w:0.70, c:["Public Nuisance","Drug Offence"] },
+  { n:"Mudaliarpet Market",   lat:11.9250, lon:79.8050, w:0.78, c:["Theft","Burglary"] },
+  { n:"Villianur Bypass",     lat:11.9130, lon:79.7600, w:0.60, c:["Traffic Violation","Assault"] },
+  { n:"Reddiarpalayam",       lat:11.9280, lon:79.8220, w:0.68, c:["Burglary","Theft"] },
+  { n:"Auroville Road",       lat:11.9650, lon:79.8200, w:0.45, c:["Traffic Violation"] }
+];
+
+const LOCATION_TYPES = ["market","beach","bus stand","residential","highway",
+  "school zone","tourist spot","commercial","park","slum cluster"];
+const MODUS = ["night-entry","two-wheeler","crowd-cover","repeat-offender",
+  "opportunistic","organized"];
+
+/* ==================================================================
+   CCTV CAMERA NETWORK — Puducherry (real coordinates)
+   ================================================================== */
+const CAMERAS = [
+  { id:'CAM-01', name:'Goubert Market North',   lat:11.9352, lon:79.8296, bearing:200, fov:72, range:150, type:'PTZ'   },
+  { id:'CAM-02', name:'Goubert Market South',   lat:11.9328, lon:79.8305, bearing:20,  fov:65, range:130, type:'Fixed' },
+  { id:'CAM-03', name:'Bus Stand Main Gate',    lat:11.9378, lon:79.8252, bearing:250, fov:80, range:160, type:'PTZ'   },
+  { id:'CAM-04', name:'Bus Stand Platform 3',   lat:11.9364, lon:79.8270, bearing:150, fov:60, range:100, type:'Fixed' },
+  { id:'CAM-05', name:'Rock Beach Promenade',   lat:11.9320, lon:79.8368, bearing:340, fov:90, range:180, type:'PTZ'   },
+  { id:'CAM-06', name:'Rock Beach Parking',     lat:11.9302, lon:79.8350, bearing:60,  fov:70, range:120, type:'Fixed' },
+  { id:'CAM-07', name:'MG Road Junction',       lat:11.9368, lon:79.8336, bearing:180, fov:75, range:140, type:'PTZ'   },
+  { id:'CAM-08', name:'MG Road Retail Strip',   lat:11.9350, lon:79.8324, bearing:270, fov:62, range:110, type:'Fixed' },
+  { id:'CAM-09', name:'Railway Station Entry',  lat:11.9278, lon:79.8286, bearing:120, fov:70, range:135, type:'PTZ'   },
+  { id:'CAM-10', name:'Railway Yard Gate',      lat:11.9258, lon:79.8270, bearing:300, fov:58, range:100, type:'Fixed' },
+  { id:'CAM-11', name:'Lawspet Junction',       lat:11.9476, lon:79.8176, bearing:220, fov:78, range:145, type:'PTZ'   },
+  { id:'CAM-12', name:'Lawspet Market Road',    lat:11.9460, lon:79.8194, bearing:40,  fov:64, range:115, type:'Fixed' },
+  { id:'CAM-13', name:'Kalapet Beach East',     lat:11.9658, lon:79.8562, bearing:330, fov:85, range:170, type:'PTZ'   },
+  { id:'CAM-14', name:'Kalapet Highway Point',  lat:11.9636, lon:79.8536, bearing:190, fov:68, range:150, type:'Fixed' },
+  { id:'CAM-15', name:'Mudaliarpet Market',     lat:11.9256, lon:79.8056, bearing:10,  fov:76, range:140, type:'PTZ'   },
+  { id:'CAM-16', name:'Mudaliarpet Cross',      lat:11.9242, lon:79.8040, bearing:230, fov:60, range:105, type:'Fixed' },
+  { id:'CAM-17', name:'Villianur Bypass',       lat:11.9136, lon:79.7606, bearing:90,  fov:82, range:175, type:'PTZ'   },
+  { id:'CAM-18', name:'Reddiarpalayam Chowk',   lat:11.9286, lon:79.8226, bearing:160, fov:70, range:130, type:'Fixed' },
+  { id:'CAM-19', name:'Botanical Garden Gate',  lat:11.9306, lon:79.8336, bearing:290, fov:66, range:120, type:'Fixed' },
+  { id:'CAM-20', name:'Auroville Road Junction',lat:11.9654, lon:79.8206, bearing:200, fov:74, range:150, type:'PTZ'   },
+  { id:'CAM-21', name:'Orleanpet Signal',       lat:11.9406, lon:79.8156, bearing:30,  fov:68, range:125, type:'Fixed' },
+  { id:'CAM-22', name:'Bahour Road Entry',      lat:11.8736, lon:79.7906, bearing:130, fov:72, range:140, type:'PTZ'   },
+  { id:'CAM-23', name:'Grand Bazaar Lane 4',    lat:11.9338, lon:79.8288, bearing:310, fov:60, range:100, type:'Fixed' },
+  { id:'CAM-24', name:'Beach Road Roundabout',  lat:11.9332, lon:79.8352, bearing:45,  fov:88, range:165, type:'PTZ'   }
+];
+CAMERAS.forEach(c => { c.status = 'online'; });
+
+/* AI detection event taxonomy — realistic IPC/legal mapping */
+const DETECTION_TYPES = {
+  'Physical Assault':      { sev:5, ipc:'IPC 323/325',    color:'#ff3b5c', w:0.16 },
+  'Group Fight':           { sev:5, ipc:'IPC 147/148',    color:'#ff3b5c', w:0.10 },
+  'Weapon Detected':       { sev:5, ipc:'Arms Act 25',    color:'#ff3b5c', w:0.06 },
+  'Chain Snatching':       { sev:4, ipc:'IPC 392',        color:'#ff7a3c', w:0.13 },
+  'Robbery In Progress':   { sev:5, ipc:'IPC 392/397',    color:'#ff3b5c', w:0.07 },
+  'Person Down / Fall':    { sev:4, ipc:'Accident',       color:'#ff7a3c', w:0.09 },
+  'Vehicle Collision':     { sev:4, ipc:'MVA 184',        color:'#ff7a3c', w:0.11 },
+  'Crowd Surge':           { sev:3, ipc:'Preventive',     color:'#ffcc4d', w:0.09 },
+  'Suspicious Loitering':  { sev:2, ipc:'IPC 268',        color:'#ffcc4d', w:0.12 },
+  'Vandalism':             { sev:2, ipc:'IPC 425',        color:'#ffcc4d', w:0.07 }
+};
+
+/* ================= RNG & HELPERS ================= */
+let _seed = 1337;
+function rng(){ _seed |= 0; _seed = _seed + 0x6D2B79F5 | 0;
+  let t = Math.imul(_seed ^ _seed >>> 15, 1 | _seed);
+  t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+  return ((t ^ t >>> 14) >>> 0) / 4294967296;
+}
+function gauss(){
+  const u = (rng()||1e-9), v = (rng()||1e-9);
+  return Math.sqrt(-2*Math.log(u)) * Math.cos(2*Math.PI*v);
+}
+function weightedPick(arr){
+  const total = arr.reduce((a,b)=>a+(b.w||0),0);
+  let r = rng()*total;
+  for (const it of arr){ r -= (it.w||0); if (r <= 0) return it; }
+  return arr[arr.length-1];
+}
+function pick(obj){
+  const e = Object.entries(obj);
+  const total = e.reduce((a,[,w])=>a+w,0);
+  let r = rng()*total;
+  for (const [k,w] of e){ r -= w; if (r <= 0) return k; }
+  return e[0][0];
+}
+function nearestStation(lat,lon){
+  let best = STATIONS[0], bd = Infinity;
+  for (const s of STATIONS){
+    const d = (s[1]-lat)**2 + (s[2]-lon)**2;
+    if (d < bd){ bd = d; best = s; }
+  }
+  return best[0];
+}
+function nearestStationObj(lat,lon){
+  let best = STATIONS[0], bd = Infinity;
+  for (const s of STATIONS){
+    const d = (s[1]-lat)**2 + (s[2]-lon)**2;
+    if (d < bd){ bd = d; best = s; }
+  }
+  return best;
+}
+function haversineKm(a,b,c,d){
+  const R = 6371, p1 = a*Math.PI/180, p2 = c*Math.PI/180;
+  const dp = (c-a)*Math.PI/180, dl = (d-b)*Math.PI/180;
+  const x = Math.sin(dp/2)**2 + Math.cos(p1)*Math.cos(p2)*Math.sin(dl/2)**2;
+  return 2*R*Math.asin(Math.sqrt(x));
+}
+function hourWeight(h){
+  return [0.3,0.2,0.15,0.1,0.1,0.15,0.3,0.4,0.6,0.7,0.8,0.9,
+          0.9,0.85,0.8,0.85,0.95,1.1,1.3,1.4,1.4,1.3,1.1,0.8][h];
+}
+function fmt(n){ return (n||0).toLocaleString(); }
+function riskColor(r){ return r>=75?'#ff3b5c' : r>=50?'#ff7a3c' : r>=25?'#ffcc4d' : '#26c281'; }
+function pad(n,len){ return String(n).padStart(len,'0'); }
+
+/* ================= SYNTHETIC INCIDENT DATA ================= */
+let INCIDENTS = [];
+let citizenReports = JSON.parse(localStorage.getItem("crimemap_reports_v2") || "[]");
+let notifications  = [];
+let caseCounter = 1000;
+
+function newCaseNo(){
+  caseCounter++;
+  const y = new Date().getFullYear();
+  return `PDY/${y}/${pad(caseCounter,5)}`;
+}
+
+function generateIncidents(n){
+  const now = Date.now();
+  const out = [];
+  for (let i=0;i<n;i++){
+    let lat, lon, pool;
+    if (rng() < 0.75){
+      const h = weightedPick(HOTSPOTS.map(x=>({...x, w:x.w})));
+      lat = h.lat + gauss()*0.0035;
+      lon = h.lon + gauss()*0.0035;
+      pool = h.c;
+    } else {
+      lat = BOUNDS.latMin + rng()*(BOUNDS.latMax - BOUNDS.latMin);
+      lon = BOUNDS.lonMin + rng()*(BOUNDS.lonMax - BOUNDS.lonMin);
+      pool = Object.keys(CRIME_WEIGHTS);
+    }
+    lat = Math.min(BOUNDS.latMax, Math.max(BOUNDS.latMin, lat));
+    lon = Math.min(BOUNDS.lonMax, Math.max(BOUNDS.lonMin, lon));
+
+    const hw = []; for (let h=0;h<24;h++) hw.push({ h, w:hourWeight(h) });
+    const hour = weightedPick(hw).h;
+    const daysAgo = Math.floor(rng()*365);
+    const d = new Date(now - daysAgo*86400000);
+    d.setHours(hour, Math.floor(rng()*60), 0, 0);
+
+    let crime = (rng()<0.7 && pool) ? pool[Math.floor(rng()*pool.length)]
+                                     : pick(CRIME_WEIGHTS);
+    const sev = weightedPick([{s:1,w:.15},{s:2,w:.30},{s:3,w:.30},{s:4,w:.18},{s:5,w:.07}]).s;
+    const status = weightedPick([{s:"Reported",w:.4},{s:"Investigating",w:.4},{s:"Closed",w:.2}]).s;
+
+    out.push({
+      id: i+1, crime, sev,
+      caseNo: `PDY/2025/${pad(i+1,5)}`,
+      station: nearestStation(lat,lon),
+      ts: d.getTime(),
+      lat, lon,
+      loc: LOCATION_TYPES[Math.floor(rng()*LOCATION_TYPES.length)],
+      status,
+      mo: MODUS[Math.floor(rng()*MODUS.length)]
+    });
+  }
+  return out;
+}
+
+/* ================= ANALYTICS ================= */
+function detectHotspots(list, minCell=6, minCluster=8){
+  if (!list || list.length < 20) return [];
+  const cellMap = new Map();
+  const k = (i,j)=> i+"|"+j;
+  for (const p of list){
+    const i = Math.floor((p.lat - BOUNDS.latMin)/GRID_STEP);
+    const j = Math.floor((p.lon - BOUNDS.lonMin)/GRID_STEP);
+    const key = k(i,j);
+    if (!cellMap.has(key)) cellMap.set(key, { i, j, pts:[] });
+    cellMap.get(key).pts.push(p);
+  }
+  const cells = [...cellMap.values()].filter(c => c.pts.length >= minCell);
+  if (!cells.length) return [];
+
+  const cellIndex = new Map();
+  for (const c of cells) cellIndex.set(k(c.i,c.j), c);
+
+  const visited = new Set();
+  const clusters = [];
+  for (const start of cells){
+    const sk = k(start.i,start.j);
+    if (visited.has(sk)) continue;
+    const queue = [start]; visited.add(sk);
+    const members = [];
+    while (queue.length){
+      const cur = queue.shift();
+      members.push(cur);
+      for (let di=-1; di<=1; di++) for (let dj=-1; dj<=1; dj++){
+        const nk = k(cur.i+di, cur.j+dj);
+        if (visited.has(nk)) continue;
+        const n = cellIndex.get(nk);
+        if (n){ visited.add(nk); queue.push(n); }
+      }
+    }
+    const allPts = members.flatMap(m=>m.pts);
+    if (allPts.length < minCluster) continue;
+
+    const latC = allPts.reduce((a,p)=>a+p.lat,0)/allPts.length;
+    const lonC = allPts.reduce((a,p)=>a+p.lon,0)/allPts.length;
+    const hours = {}, dow = {}, ctypes = {};
+    let sevSum = 0;
+    for (const p of allPts){
+      const h = new Date(p.ts).getHours();
+      const d = new Date(p.ts).toLocaleDateString('en-US',{weekday:'long'});
+      hours[h] = (hours[h]||0)+1;
+      dow[d] = (dow[d]||0)+1;
+      ctypes[p.crime] = (ctypes[p.crime]||0)+1;
+      sevSum += p.sev;
+    }
+    const peakHour = +Object.entries(hours).sort((a,b)=>b[1]-a[1])[0][0];
+    const peakDay  = Object.entries(dow).sort((a,b)=>b[1]-a[1])[0][0];
+    const topCrime = Object.entries(ctypes).sort((a,b)=>b[1]-a[1])[0][0];
+    const avgSev = sevSum/allPts.length;
+    const risk = Math.min(100, Math.round(allPts.length*1.5 + avgSev*7 + recentBoost(allPts)));
+
+    clusters.push({
+      lat: latC, lon: lonC, count: allPts.length,
+      peakHour, peakDay, topCrime,
+      avgSev: +avgSev.toFixed(2), risk,
+      crimes: Object.fromEntries(Object.entries(ctypes).sort((a,b)=>b[1]-a[1]).slice(0,5))
+    });
+  }
+  clusters.sort((a,b)=>b.risk - a.risk);
+  return clusters;
+}
+function recentBoost(pts){
+  const now = Date.now();
+  const recent = pts.filter(p => now - p.ts < 14*86400000).length;
+  return Math.min(20, recent * 1.2);
+}
+
+function emergingHotspots(){
+  const now = Date.now();
+  const recent = INCIDENTS.filter(p => p.ts >= now - 7*86400000);
+  const base   = INCIDENTS.filter(p => p.ts >= now - 35*86400000 && p.ts < now - 7*86400000);
+  const k = (lat,lon)=> Math.round(lat/GRID_STEP)+"|"+Math.round(lon/GRID_STEP);
+  const rC = new Map(), bC = new Map();
+  recent.forEach(p => { const key = k(p.lat,p.lon); rC.set(key,(rC.get(key)||0)+1); });
+  base.forEach(p => { const key = k(p.lat,p.lon); bC.set(key,(bC.get(key)||0)+1); });
+  const out = [];
+  for (const [key,c] of rC){
+    if (c < 3) continue;
+    const b = (bC.get(key)||0)/4;
+    const growth = (c - b) / Math.max(b, 1);
+    if (growth >= 0.5){
+      const [i,j] = key.split("|").map(Number);
+      out.push({
+        lat: i*GRID_STEP, lon: j*GRID_STEP,
+        recent: c, base: +b.toFixed(1),
+        growth: Math.round(growth*100)
+      });
+    }
+  }
+  out.sort((a,b)=>b.growth - a.growth);
+  return out.slice(0, 20);
+}
+
+function predictRiskGrid(){
+  const now = Date.now();
+  const cellMap = new Map();
+  const k = (lat,lon)=> Math.round(lat/GRID_STEP)+"|"+Math.round(lon/GRID_STEP);
+  for (const p of INCIDENTS){
+    const key = k(p.lat,p.lon);
+    if (!cellMap.has(key)) cellMap.set(key, { pts:[] });
+    cellMap.get(key).pts.push(p);
+  }
+  const out = [];
+  for (const [key, c] of cellMap){
+    const pts = c.pts;
+    if (pts.length < 3) continue;
+    let recentW = 0, olderW = 0, sevSum = 0;
+    for (const p of pts){
+      const ageDays = (now - p.ts)/86400000;
+      const w = Math.exp(-ageDays/90);
+      if (ageDays <= 14) recentW += w;
+      else olderW += w;
+      sevSum += p.sev * w;
+    }
+    const trend = (recentW + 0.001) / (olderW/6 + 0.001);
+    const base = pts.length * 1.1;
+    const score = Math.min(100, Math.round(
+      base + Math.min(trend,3)*14 + recentW*3 + (sevSum/Math.max(pts.length,1))*2
+    ));
+    if (score < 8) continue;
+    const [i,j] = key.split("|").map(Number);
+    out.push({
+      lat: i*GRID_STEP, lon: j*GRID_STEP,
+      risk: score, n: pts.length,
+      reason: `${pts.length} historical · trend ×${trend.toFixed(2)}`
+    });
+  }
+  out.sort((a,b)=>b.risk - a.risk);
+  return out.slice(0, 350);
+}
+
+function optimizePatrols(nUnits, horizonMin, priority){
+  const grid = predictRiskGrid().slice(0, 50);
+  const units = STATIONS.slice(0, Math.min(nUnits, STATIONS.length)).map((s,i)=>({
+    name: "PCR-"+pad(i+1,2),
+    station: s[0], lat: s[1], lon: s[2]
+  }));
+  const visited = new Set();
+  const routes = [];
+  for (const u of units){
+    let cur = { lat: u.lat, lon: u.lon };
+    let tLeft = horizonMin;
+    const path = [{ lat: u.lat, lon: u.lon, risk: 0, stop: 0, name: u.station }];
+    while (tLeft > 8){
+      let bestIdx = -1, bestScore = Infinity;
+      for (let j=0;j<grid.length;j++){
+        if (visited.has(j)) continue;
+        const g = grid[j];
+        const d = haversineKm(cur.lat, cur.lon, g.lat, g.lon);
+        let score = d / Math.max(g.risk, 1);
+        if (priority === 'severity') score = d / Math.max(g.n, 1);
+        if (score < bestScore){ bestScore = score; bestIdx = j; }
+      }
+      if (bestIdx < 0) break;
+      const g = grid[bestIdx];
+      const d = haversineKm(cur.lat, cur.lon, g.lat, g.lon);
+      const tMin = (d/25)*60;
+      if (tMin > tLeft) break;
+      visited.add(bestIdx);
+      tLeft -= tMin;
+      path.push({ lat: g.lat, lon: g.lon, risk: g.risk, stop: path.length });
+      cur = { lat: g.lat, lon: g.lon };
+    }
+    routes.push({
+      unit: u.name, station: u.station,
+      stops: path.length - 1,
+      timeUsed: Math.round(horizonMin - tLeft),
+      path
+    });
+  }
+  return routes;
+}
+
+/* ==================================================================
+   3D ENGINE
+   ================================================================== */
+const CINE = {
+  orbit:true, buildings3d:true, tilted:true, radar:true, fov:true,
+  lastInteract: performance.now(),
+  dashIndex: 0
+};
+
+const DASH_SEQ = [
+  [0,4,3],[0.5,4,2.5],[1,4,2],[1.5,4,1.5],[2,4,1],[2.5,4,0.5],[3,4,0],
+  [0,0.5,3,3.5],[0,1,3,3],[0,1.5,3,2.5],[0,2,3,2],[0,2.5,3,1.5],
+  [0,3,3,1],[0,3.5,3,0.5]
+];
+
+/* ---- geometry ---- */
+function arcCoords(a, b, steps=54, curve=0.16){
+  const out = [];
+  const mx = (a[0]+b[0])/2, my = (a[1]+b[1])/2;
+  const dx = b[0]-a[0], dy = b[1]-a[1];
+  const cx = mx - dy*curve, cy = my + dx*curve;
+  for (let i=0;i<=steps;i++){
+    const t = i/steps, u = 1-t;
+    out.push([
+      u*u*a[0] + 2*u*t*cx + t*t*b[0],
+      u*u*a[1] + 2*u*t*cy + t*t*b[1]
+    ]);
+  }
+  return out;
+}
+
+/* hexagon prism footprint (metres) */
+function hexPoly(lon, lat, radiusM, rot=0){
+  const R = 6371000, pts = [];
+  for (let i=0;i<=6;i++){
+    const a = rot + i*Math.PI/3;
+    const dx = Math.cos(a)*radiusM, dy = Math.sin(a)*radiusM;
+    const dLat = dy/R*180/Math.PI;
+    const dLon = dx/(R*Math.cos(lat*Math.PI/180))*180/Math.PI;
+    pts.push([lon+dLon, lat+dLat]);
+  }
+  return [pts];
+}
+
+/* CCTV field-of-view sector polygon */
+function sectorPoly(lon, lat, bearing, fov, rangeM, steps=18){
+  const R = 6371000, pts = [[lon, lat]];
+  const start = bearing - fov/2;
+  for (let i=0;i<=steps;i++){
+    const a = (start + fov*i/steps) * Math.PI/180;
+    const dx = Math.sin(a)*rangeM, dy = Math.cos(a)*rangeM;
+    const dLat = dy/R*180/Math.PI;
+    const dLon = dx/(R*Math.cos(lat*Math.PI/180))*180/Math.PI;
+    pts.push([lon+dLon, lat+dLat]);
+  }
+  pts.push([lon, lat]);
+  return [pts];
+}
+
+/* ---- animated sources ---- */
+function towerFC(t){
+  return { type:'FeatureCollection', features: state.hotspots.slice(0,14).map((h,i)=>{
+    const pulse = 0.86 + 0.14*Math.sin(t*1.6 + i*0.8);
+    const base  = 45 + h.risk*3.4;      // 45 m → 385 m
+    return {
+      type:'Feature',
+      geometry:{ type:'Polygon', coordinates: hexPoly(h.lon, h.lat, 52 + h.risk*0.35, i*0.4) },
+      properties:{ height: base*pulse, color: riskColor(h.risk) }
+    };
+  })};
+}
+
+function pulseFC(t){
+  const feats = [];
+  state.hotspots.slice(0,8).forEach((h,i)=>{
+    for (let k=0;k<3;k++){
+      const phase = ((t*0.42) + k/3 + i*0.11) % 1;
+      feats.push({
+        type:'Feature',
+        geometry:{ type:'Point', coordinates:[h.lon, h.lat] },
+        properties:{ r: 5 + phase*42, o: (1-phase)*0.62, color: riskColor(h.risk) }
+      });
+    }
+  });
+  return { type:'FeatureCollection', features: feats };
+}
+
+function beamsFC(){
+  const feats = [];
+  state.hotspots.slice(0,6).forEach((h,i)=>{
+    const st = STATIONS[i % STATIONS.length];
+    feats.push({
+      type:'Feature',
+      geometry:{ type:'LineString', coordinates: arcCoords([st[2], st[1]], [h.lon, h.lat]) },
+      properties:{ color: riskColor(h.risk) }
+    });
+  });
+  return { type:'FeatureCollection', features: feats };
+}
+
+function sweepFC(t){
+  const c = map.getCenter();
+  const R = 0.030, spread = 0.40;
+  const a0 = (t*0.75) % (Math.PI*2);
+  const ring = [[c.lng, c.lat]];
+  for (let i=0;i<=16;i++){
+    const a = a0 + spread*(i/16);
+    ring.push([ c.lng + Math.cos(a)*R, c.lat + Math.sin(a)*R*0.72 ]);
+  }
+  ring.push([c.lng, c.lat]);
+  return { type:'FeatureCollection', features:[{
+    type:'Feature', geometry:{ type:'Polygon', coordinates:[ring] }, properties:{}
+  }]};
+}
+
+/* camera FOV source */
+function camFovFC(){
+  return { type:'FeatureCollection', features: CAMERAS.map(c => ({
+    type:'Feature',
+    geometry:{ type:'Polygon', coordinates: sectorPoly(c.lon, c.lat, c.bearing, c.fov, c.range) },
+    properties:{ id:c.id, status:c.status, type:c.type }
+  }))};
+}
+
+function camPointFC(){
+  return { type:'FeatureCollection', features: CAMERAS.map(c => ({
+    type:'Feature',
+    geometry:{ type:'Point', coordinates:[c.lon, c.lat] },
+    properties:{ id:c.id, name:c.name, status:c.status, type:c.type }
+  }))};
+}
+
+/* ---- live detections sources ---- */
+function detTowerFC(t){
+  const now = Date.now();
+  return { type:'FeatureCollection', features: liveDetections
+    .filter(d => d.status !== 'resolved')
+    .map(d => {
+      const age = (now - d.bornAt)/1000;
+      const grow = Math.min(1, age/0.45);
+      const h = (70 + d.severity*22) * grow * (0.92 + 0.08*Math.sin(t*5 + d.seed));
+      return {
+        type:'Feature',
+        geometry:{ type:'Polygon', coordinates: hexPoly(d.lon, d.lat, 34, d.seed) },
+        properties:{
+          height: h,
+          color: d.color,
+          opacity: d.status === 'dispatched' ? 0.58 : 0.86
+        }
+      };
+    })};
+}
+
+function detRingFC(t){
+  const now = Date.now();
+  const feats = [];
+  liveDetections.filter(d => d.status !== 'resolved').forEach(d => {
+    const age = (now - d.bornAt)/1000;
+    for (let k=0;k<4;k++){
+      const phase = ((t*0.85) + k/4 + d.seed) % 1;
+      feats.push({
+        type:'Feature',
+        geometry:{ type:'Point', coordinates:[d.lon, d.lat] },
+        properties:{
+          r: 6 + phase*58,
+          o: Math.max(0, (1-phase) * (age < 0.4 ? age/0.4 : 1) * 0.85),
+          color: d.color
+        }
+      });
+    }
+  });
+  return { type:'FeatureCollection', features: feats };
+}
+
+function detCoreFC(t){
+  const now = Date.now();
+  return { type:'FeatureCollection', features: liveDetections
+    .filter(d => d.status !== 'resolved')
+    .map(d => {
+      const age = (now - d.bornAt)/1000;
+      return {
+        type:'Feature',
+        geometry:{ type:'Point', coordinates:[d.lon, d.lat] },
+        properties:{ color: d.color, o: 0.85, r: 9 + 3*Math.sin(t*6 + d.seed) }
+      };
+    })};
+}
+
+/* ---- layers ---- */
+function addCinematicLayers(){
+  const firstSymbol = (map.getStyle().layers || []).find(l => l.type === 'symbol');
+  const before = firstSymbol ? firstSymbol.id : undefined;
+
+  /* ---------- ROAD NETWORK (real OSM) ---------- */
+  try{
+    map.addLayer({
+      id:'roads-3d', type:'line', source:'ofm', 'source-layer':'transportation',
+      minzoom:12,
+      paint:{
+        'line-color':['match',['get','class'],
+          'motorway','#3f5170','trunk','#3f5170','primary','#364863',
+          'secondary','#2e3d57','tertiary','#27344b','#1f2b40'],
+        'line-width':['interpolate',['linear'],['zoom'],12,0.5,14,1.6,16,3.6,18,7],
+        'line-opacity':0.62
+      }
+    }, before);
+  }catch(e){ console.warn('roads layer:', e); }
+
+  /* ---------- REAL 3D CITY (OSM buildings, two tiers) ---------- */
+  try{
+    // Tier 1 — general city fabric
+    map.addLayer({
+      id:'3d-buildings',
+      type:'fill-extrusion',
+      source:'ofm',
+      'source-layer':'building',
+      minzoom:13,
+      paint:{
+        'fill-extrusion-color':[
+          'interpolate',['linear'],['coalesce',['get','render_height'],8],
+          0,'#0a1120', 8,'#101a2e', 20,'#182640', 45,'#223254',
+          90,'#2d416b', 160,'#3b5286', 280,'#4a63a0'
+        ],
+        'fill-extrusion-height':['coalesce',['get','render_height'],10],
+        'fill-extrusion-base':['coalesce',['get','render_min_height'],0],
+        'fill-extrusion-opacity':0.95,
+        'fill-extrusion-vertical-gradient':true
+      }
+    }, before);
+
+    // Tier 2 — landmark / tall structures with glassy cyan tint
+    map.addLayer({
+      id:'3d-landmarks',
+      type:'fill-extrusion',
+      source:'ofm',
+      'source-layer':'building',
+      minzoom:13.5,
+      filter:['>=', ['coalesce',['get','render_height'],0], 28],
+      paint:{
+        'fill-extrusion-color':'#5f8fd6',
+        'fill-extrusion-height':['coalesce',['get','render_height'],30],
+        'fill-extrusion-base':['coalesce',['get','render_min_height'],0],
+        'fill-extrusion-opacity':0.42,
+        'fill-extrusion-vertical-gradient':false
+      }
+    }, before);
+  }catch(e){ console.warn('3D buildings unavailable:', e); }
+
+  /* ---------- CCTV FOV CONES ---------- */
+  map.addSource('cam-fov', { type:'geojson', data: camFovFC() });
+  map.addLayer({
+    id:'cam-fov-fill', type:'fill', source:'cam-fov',
+    paint:{
+      'fill-color':['case',['==',['get','status'],'online'],'#3ba3ff','#ff3b5c'],
+      'fill-opacity':0.10
+    }
+  });
+  map.addLayer({
+    id:'cam-fov-line', type:'line', source:'cam-fov',
+    paint:{
+      'line-color':['case',['==',['get','status'],'online'],'#3ba3ff','#ff3b5c'],
+      'line-width':0.8,'line-opacity':0.42
+    }
+  });
+
+  /* ---------- CAMERA POSITIONS ---------- */
+  map.addSource('cameras', { type:'geojson', data: camPointFC() });
+  map.addLayer({
+    id:'cameras-halo', type:'circle', source:'cameras',
+    paint:{
+      'circle-radius':9,
+      'circle-color':['case',['==',['get','status'],'online'],'#3ba3ff','#ff3b5c'],
+      'circle-opacity':0.22
+    }
+  });
+  map.addLayer({
+    id:'cameras-dot', type:'circle', source:'cameras',
+    paint:{
+      'circle-radius':3.6,
+      'circle-color':['case',['==',['get','status'],'online'],'#8ecbff','#ff3b5c'],
+      'circle-stroke-color':'#06090f','circle-stroke-width':1.2
+    }
+  });
+
+  /* ---------- DATA BEAMS ---------- */
+  map.addSource('beams', { type:'geojson', data: emptyFC() });
+  map.addLayer({
+    id:'beams-line', type:'line', source:'beams',
+    layout:{ 'line-cap':'round', 'line-join':'round' },
+    paint:{
+      'line-color':['get','color'],
+      'line-width':1.7,'line-opacity':0.55,'line-blur':0.7,
+      'line-dasharray':[0,4,3]
+    }
+  });
+
+  /* ---------- RADAR SWEEP ---------- */
+  map.addSource('sweep', { type:'geojson', data: emptyFC() });
+  map.addLayer({
+    id:'sweep-fill', type:'fill', source:'sweep',
+    paint:{ 'fill-color':'#3ba3ff', 'fill-opacity':0.07 }
+  });
+
+  /* ---------- HOLOGRAPHIC RISK TOWERS ---------- */
+  map.addSource('risk-towers', { type:'geojson', data: emptyFC() });
+  map.addLayer({
+    id:'risk-towers', type:'fill-extrusion', source:'risk-towers',
+    paint:{
+      'fill-extrusion-color':['get','color'],
+      'fill-extrusion-height':['get','height'],
+      'fill-extrusion-base':0,
+      'fill-extrusion-opacity':0.70,
+      'fill-extrusion-vertical-gradient':false
+    }
+  });
+
+  /* ---------- RADAR PULSE RINGS ---------- */
+  map.addSource('pulse', { type:'geojson', data: emptyFC() });
+  map.addLayer({
+    id:'pulse-rings', type:'circle', source:'pulse',
+    paint:{
+      'circle-radius':['get','r'],
+      'circle-color':'rgba(0,0,0,0)',
+      'circle-stroke-color':['get','color'],
+      'circle-stroke-width':1.6,
+      'circle-stroke-opacity':['get','o']
+    }
+  });
+
+  /* ---------- LIVE DETECTIONS (drawn last = always on top) ---------- */
+  map.addSource('det-rings', { type:'geojson', data: emptyFC() });
+  map.addLayer({
+    id:'det-rings', type:'circle', source:'det-rings',
+    paint:{
+      'circle-radius':['get','r'],
+      'circle-color':'rgba(0,0,0,0)',
+      'circle-stroke-color':['get','color'],
+      'circle-stroke-width':2.4,
+      'circle-stroke-opacity':['get','o']
+    }
+  });
+
+  map.addSource('det-core', { type:'geojson', data: emptyFC() });
+  map.addLayer({
+    id:'det-core-glow', type:'circle', source:'det-core',
+    paint:{
+      'circle-radius':['*',['get','r'],2.6],
+      'circle-color':['get','color'],
+      'circle-opacity':0.22,
+      'circle-blur':0.9
+    }
+  });
+  map.addLayer({
+    id:'det-core', type:'circle', source:'det-core',
+    paint:{
+      'circle-radius':['get','r'],
+      'circle-color':['get','color'],
+      'circle-stroke-color':'#ffffff','circle-stroke-width':1.8,
+      'circle-opacity':['get','o']
+    }
+  });
+
+  map.addSource('det-towers', { type:'geojson', data: emptyFC() });
+  map.addLayer({
+    id:'det-towers', type:'fill-extrusion', source:'det-towers',
+    paint:{
+      'fill-extrusion-color':['get','color'],
+      'fill-extrusion-height':['get','height'],
+      'fill-extrusion-base':0,
+      'fill-extrusion-opacity':['get','opacity'],
+      'fill-extrusion-vertical-gradient':false
+    }
+  });
+
+  /* ---------- POPUPS ---------- */
+  map.on('click','hotspots-halo', (e)=>{
+    const p = e.features[0].properties;
+    new maplibregl.Popup({ closeButton:true, maxWidth:280 })
+      .setLngLat(e.lngLat)
+      .setHTML(`<b style="color:#ff3b5c;font-size:13px">⚠ Hotspot Cluster</b>
+        <div style="margin:8px 0 4px">Incidents: <b>${p.count}</b></div>
+        <div style="margin:4px 0">Top crime: <b>${p.topCrime}</b></div>
+        <div style="margin:4px 0">Peak hour: <b>${p.peakHour}:00</b></div>
+        <div style="margin:4px 0">Peak day: <b>${p.peakDay}</b></div>
+        <div style="margin:4px 0">Avg severity: <b>${p.avgSev}</b></div>
+        <div style="margin-top:8px;padding-top:8px;border-top:1px dashed #1c2a44;
+                    color:#ffcc4d;font-weight:700">Risk Score: ${p.risk}/100</div>`)
+      .addTo(map);
+  });
+  map.on('click','predict-fill', (e)=>{
+    const p = e.features[0].properties;
+    new maplibregl.Popup({ closeButton:true, maxWidth:280 })
+      .setLngLat(e.lngLat)
+      .setHTML(`<b style="color:#ffcc4d;font-size:13px">🔮 Predicted Risk: ${p.risk}/100</b>
+        <div style="color:#7e91b8;margin-top:6px;font-size:11.5px">${p.reason}</div>`)
+      .addTo(map);
+  });
+  map.on('click','emerging-ring', (e)=>{
+    const p = e.features[0].properties;
+    new maplibregl.Popup({ closeButton:true, maxWidth:280 })
+      .setLngLat(e.lngLat)
+      .setHTML(`<b style="color:#ffcc4d;font-size:13px">📈 Emerging Hotspot</b>
+        <div style="margin:8px 0 4px">Last 7 days: <b>${p.recent}</b></div>
+        <div style="margin:4px 0">Baseline/week: <b>${p.base}</b></div>
+        <div style="margin:4px 0;color:#ff8ba0;font-weight:700">Growth: +${p.growth}%</div>`)
+      .addTo(map);
+  });
+  map.on('click','incidents-points', (e)=>{
+    const p = e.features[0].properties;
+    const t = new Date(+p.ts).toLocaleString();
+    const col = CRIME_COLORS[p.crime] || '#8ea0c4';
+    new maplibregl.Popup({ closeButton:true, maxWidth:260 })
+      .setLngLat(e.lngLat)
+      .setHTML(`<b style="color:${col};font-size:13px">${p.crime}</b>
+        <div style="margin:6px 0 3px">Severity: <b>${p.sev}/5</b></div>
+        <div style="margin:3px 0">Case: <b>${p.caseNo || '—'}</b></div>
+        <div style="margin:3px 0">Station: <b>${p.station}</b></div>
+        <div style="margin:3px 0">Location: <b>${p.loc}</b></div>
+        <div style="margin:3px 0">Status: <b>${p.status}</b></div>
+        <div style="color:#7e91b8;margin-top:6px;font-size:11px">${t}</div>`)
+      .addTo(map);
+  });
+  map.on('click','cameras-dot', (e)=>{
+    const p = e.features[0].properties;
+    const cam = CAMERAS.find(c => c.id === p.id);
+    new maplibregl.Popup({ closeButton:true, maxWidth:280 })
+      .setLngLat(e.lngLat)
+      .setHTML(`<b style="color:#3ba3ff;font-size:13px">🎥 ${p.name}</b>
+        <div style="margin:6px 0 3px">ID: <b>${p.id}</b></div>
+        <div style="margin:3px 0">Type: <b>${p.type}</b></div>
+        <div style="margin:3px 0">Status: <b style="color:${p.status==='online'?'#26c281':'#ff3b5c'}">
+          ${p.status.toUpperCase()}</b></div>
+        <div style="margin:3px 0">FOV: <b>${cam?cam.fov:''}°</b> · Range: <b>${cam?cam.range:''} m</b></div>
+        <div style="margin-top:8px">
+          <button onclick="openCCTV('${p.id}')"
+            style="background:#3ba3ff;border:none;color:#06090f;font-weight:800;
+                   padding:6px 12px;border-radius:6px;cursor:pointer;font-size:11px">
+            OPEN LIVE FEED</button>
+        </div>`)
+      .addTo(map);
+  });
+  map.on('click','det-core', (e)=>{
+    const p = e.features[0].properties;
+    if (p.detId) openCCTV(p.camId, p.detId);
+  });
+
+  ['hotspots-halo','predict-fill','emerging-ring','incidents-points',
+   'cameras-dot','det-core'].forEach(l=>{
+    map.on('mouseenter', l, ()=> map.getCanvas().style.cursor = 'pointer');
+    map.on('mouseleave', l, ()=> map.getCanvas().style.cursor = '');
+  });
+}
+
+/* ---- cinematic look ---- */
+function applyCinematicLook(){
+  try{
+    if (typeof map.setSky === 'function'){
+      map.setSky({
+        'sky-color':'#05070e',
+        'sky-horizon-blend':0.55,
+        'horizon-color':'#1a2a47',
+        'horizon-fog-blend':0.62,
+        'fog-color':'#070c16',
+        'fog-ground-blend':0.85,
+        'atmosphere-blend':0.85
+      });
+    }
+    if (typeof map.setFog === 'function'){
+      map.setFog({
+        'color':'#070c16','high-color':'#0b1830','space-color':'#02040a',
+        'horizon-blend':0.22,'star-intensity':0.7
+      });
+    }
+    if (typeof map.setLight === 'function'){
+      map.setLight({ anchor:'viewport', color:'#ffd7b0', intensity:0.45, position:[1.2, 210, 35] });
+    }
+  }catch(e){ console.warn('Sky/fog/light not supported:', e); }
+}
+
+/* ---- real terrain + hillshade ---- */
+function addTerrain(){
+  try{
+    map.addSource('terrain-dem', {
+      type:'raster-dem',
+      url:'https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png',
+      encoding:'terrarium',
+      tileSize:256,
+      maxzoom:14
+    });
+    const firstSymbol = (map.getStyle().layers || []).find(l => l.type === 'symbol');
+    map.addLayer({
+      id:'hillshade', type:'hillshade', source:'terrain-dem',
+      paint:{
+        'hillshade-exaggeration':0.28,
+        'hillshade-shadow-color':'#000000',
+        'hillshade-highlight-color':'#3a5a8a',
+        'hillshade-accent-color':'#101a2c'
+      }
+    }, firstSymbol ? firstSymbol.id : undefined);
+    map.setTerrain({ source:'terrain-dem', exaggeration:1.3 });
+  }catch(e){ console.warn('Terrain unavailable:', e); }
+}
+
+/* ---- HUD helpers ---- */
+function showReticle(on, label){
+  const r = document.getElementById('reticle');
+  if (!r) return;
+  r.classList.toggle('show', on);
+  const lb = document.getElementById('reticleLabel');
+  if (lb && label) lb.textContent = label;
+}
+function setHudMode(txt){
+  const m = document.getElementById('hudMode');
+  if (m) m.innerHTML = 'MODE: <b>' + txt + '</b>';
+}
+function flashScreen(){
+  const f = document.getElementById('flash');
+  if (!f) return;
+  f.classList.add('on');
+  setTimeout(()=> f.classList.remove('on'), 70);
+}
+
+/* ---- animation loop ---- */
+function startCineLoop(){
+  let last = performance.now();
+  let dashAcc = 0, pulseAcc = 0, detAcc = 0;
+
+  function frame(now){
+    const dt = Math.min(60, now - last);
+    last = now;
+
+    /* idle auto-orbit */
+    if (CINE.orbit && !map.isMoving() && now - CINE.lastInteract > 7000){
+      map.setBearing((map.getBearing() + dt * 0.0016) % 360);
+    }
+
+    /* energy-flow dashes */
+    dashAcc += dt;
+    if (dashAcc > 110){
+      dashAcc = 0;
+      CINE.dashIndex = (CINE.dashIndex + 1) % DASH_SEQ.length;
+      try{
+        if (map.getLayer('patrol-lines'))
+          map.setPaintProperty('patrol-lines','line-dasharray', DASH_SEQ[CINE.dashIndex]);
+        if (map.getLayer('beams-line'))
+          map.setPaintProperty('beams-line','line-dasharray',
+            DASH_SEQ[(CINE.dashIndex + 5) % DASH_SEQ.length]);
+      }catch(e){}
+    }
+
+    /* 18 fps — radar pulses, towers, detections */
+    pulseAcc += dt;
+    if (pulseAcc > 55){
+      pulseAcc = 0;
+      const t = now / 1000;
+      try{
+        if (map.getSource('pulse'))       map.getSource('pulse').setData(pulseFC(t));
+        if (map.getSource('risk-towers') && CINE.buildings3d)
+          map.getSource('risk-towers').setData(towerFC(t));
+        if (map.getSource('sweep') && CINE.radar)
+          map.getSource('sweep').setData(sweepFC(t));
+      }catch(e){}
+    }
+
+    /* detections need a faster refresh for the "shoot up" animation */
+    detAcc += dt;
+    if (detAcc > 33){
+      detAcc = 0;
+      const t = now / 1000;
+      try{
+        if (map.getSource('det-rings'))  map.getSource('det-rings').setData(detRingFC(t));
+        if (map.getSource('det-core'))   map.getSource('det-core').setData(detCoreFC(t));
+        if (map.getSource('det-towers')) map.getSource('det-towers').setData(detTowerFC(t));
+      }catch(e){}
+    }
+
+    /* detection engine tick */
+    tickDetectionEngine(now);
+
+    /* cctv wall render */
+    tickCCTVWall(now);
+
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
+
+/* ---- intro fly-in ---- */
+function introCinematic(){
+  const wrap = document.getElementById('mapWrap');
+  wrap.classList.add('cinema');
+  map.jumpTo({ center:[79.8260, 11.9330], zoom:9.2, pitch:0, bearing:-55 });
+  setHudMode('ORBITAL RECON');
+
+  setTimeout(() => {
+    map.flyTo({
+      center:[79.8260, 11.9330], zoom:14.8, pitch:64, bearing:22,
+      duration:6200, essential:true,
+      easing: t => t < 0.5 ? 2*t*t : 1 - Math.pow(-2*t + 2, 2)/2
+    });
+  }, 450);
+
+  setTimeout(() => {
+    wrap.classList.remove('cinema');
+    showReticle(true, 'SECTOR SCAN');
+    setTimeout(() => showReticle(false), 1900);
+  }, 6800);
+}
+
+/* ==================================================================
+   AI DETECTION ENGINE
+   ================================================================== */
+const DETECT = {
+  running: true,
+  sensitivity: 0.5,
+  autoFly: true,
+  audio: true,
+  autoDispatch: false,
+  nextAt: 0
+};
+
+let liveDetections = [];
+let detSeq = 0;
+let dispatchFeatures = [];
+let activeDetectionId = null;   // the one shown in banner / modal
+
+function scheduleNextDetection(now){
+  const s = DETECT.sensitivity;
+  const base = 34000 - s*28000;                 // 34 s (low) → 6 s (high)
+  const jitter = base * (0.45 + Math.random()*0.9);
+  DETECT.nextAt = now + jitter;
+}
+
+function tickDetectionEngine(now){
+  if (!DETECT.running) return;
+  if (DETECT.nextAt === 0){ scheduleNextDetection(now); return; }
+  if (now >= DETECT.nextAt){
+    spawnDetection();
+    scheduleNextDetection(now);
+  }
+}
+
+function pickDetectionType(){
+  const arr = Object.entries(DETECTION_TYPES).map(([k,v]) => ({ k, w:v.w }));
+  return weightedPick(arr).k;
+}
+
+function spawnDetection(forcedCamId){
+  const online = CAMERAS.filter(c => c.status === 'online');
+  if (!online.length) return null;
+
+  const cam = forcedCamId
+    ? (CAMERAS.find(c => c.id === forcedCamId) || online[0])
+    : online[Math.floor(Math.random()*online.length)];
+
+  const typeName = pickDetectionType();
+  const spec = DETECTION_TYPES[typeName];
+
+  /* position: inside the camera's FOV cone, part-way out */
+  const dist = (0.35 + Math.random()*0.55) * cam.range;
+  const ang  = (cam.bearing + (Math.random()-0.5)*cam.fov*0.85) * Math.PI/180;
+  const R = 6371000;
+  const dx = Math.sin(ang)*dist, dy = Math.cos(ang)*dist;
+  const lat = cam.lat + (dy/R)*180/Math.PI;
+  const lon = cam.lon + (dx/(R*Math.cos(cam.lat*Math.PI/180)))*180/Math.PI;
+
+  const det = {
+    id: 'DET-' + pad(++detSeq, 4),
+    camId: cam.id,
+    camName: cam.name,
+    lat, lon,
+    type: typeName,
+    severity: spec.sev,
+    ipc: spec.ipc,
+    color: spec.color,
+    confidence: +(0.74 + Math.random()*0.25).toFixed(2),
+    bornAt: Date.now(),
+    status: 'new',
+    caseNo: newCaseNo(),
+    unit: null,
+    station: nearestStation(lat, lon),
+    seed: Math.random()*6.28
+  };
+
+  liveDetections.unshift(det);
+  if (liveDetections.length > 60) liveDetections.pop();
+
+  /* --- also register it into the operational incident database --- */
+  INCIDENTS.push({
+    id: 900000 + detSeq,
+    crime: mapDetTypeToCrime(typeName),
+    sev: spec.sev,
+    caseNo: det.caseNo,
+    station: det.station,
+    ts: det.bornAt,
+    lat, lon,
+    loc: 'CCTV detection',
+    status: 'Reported',
+    mo: 'camera-ai',
+    source: 'CCTV',
+    camId: cam.id
+  });
+  scheduleDataRefresh();
+
+  /* --- visual + audio alarm --- */
+  onDetectionRaised(det);
+  return det;
+}
+
+function mapDetTypeToCrime(t){
+  switch(t){
+    case 'Physical Assault':
+    case 'Group Fight':        return 'Assault';
+    case 'Weapon Detected':    return 'Assault';
+    case 'Chain Snatching':
+    case 'Robbery In Progress':return 'Snatching';
+    case 'Vehicle Collision':
+    case 'Person Down / Fall': return 'Traffic Violation';
+    case 'Crowd Surge':        return 'Public Nuisance';
+    case 'Suspicious Loitering':return 'Public Nuisance';
+    case 'Vandalism':          return 'Public Nuisance';
+    default:                   return 'Theft';
+  }
+}
+
+function onDetectionRaised(det){
+  /* 1. dramatic red flash + reticle */
+  flashScreen();
+  showReticle(true, det.severity >= 4 ? 'THREAT DETECTED' : 'EVENT DETECTED');
+  setTimeout(() => showReticle(false), 2200);
+
+  /* 2. alarm tone */
+  if (DETECT.audio) playAlarm(det.severity);
+
+  /* 3. banner */
+  activeDetectionId = det.id;
+  showAlertBanner(det);
+
+  /* 4. notification */
+  addNotification(
+    `🚨 ${det.type} — ${det.camName} (${Math.round(det.confidence*100)}% conf.)`,
+    det.severity >= 4 ? 'red' : 'gold'
+  );
+
+  /* 5. toast */
+  toast(`🚨 ${det.type} detected · ${det.camId}`, 'err');
+
+  /* 6. camera shake pulse on tab indicator */
+  const dot = document.getElementById('tabLiveDot');
+  if (dot) dot.style.display = 'inline-block';
+
+  /* 7. refresh detection panels */
+  renderDetections();
+
+  /* 8. camera fly (respects user toggle) */
+  if (DETECT.autoFly){
+    flyTo(det.lat, det.lon, 17.2);
+  }
+
+  /* 9. auto-dispatch if enabled */
+  if (DETECT.autoDispatch && det.severity >= 4){
+    setTimeout(() => dispatchToDetection(det.id, true), 900);
+  }
+}
+
+/* ---- audio alarm (Web Audio API, no files) ---- */
+let audioCtx = null;
+function unlockAudio(){
+  try{
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+  }catch(e){}
+}
+document.addEventListener('click', unlockAudio, { once:false });
+
+function playAlarm(severity){
+  try{
+    unlockAudio();
+    if (!audioCtx) return;
+    const now = audioCtx.currentTime;
+    const beeps = severity >= 4 ? 3 : 2;
+
+    for (let i=0;i<beeps;i++){
+      const t0 = now + i*0.26;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(i % 2 === 0 ? 920 : 660, t0);
+      gain.gain.setValueAtTime(0.0001, t0);
+      gain.gain.exponentialRampToValueAtTime(0.075, t0 + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.20);
+      osc.connect(gain).connect(audioCtx.destination);
+      osc.start(t0);
+      osc.stop(t0 + 0.24);
+    }
+  }catch(e){ /* silently ignore */ }
+}
+
+/* ---- alert banner ---- */
+function showAlertBanner(det){
+  const banner = document.getElementById('alertBanner');
+  const txt = document.getElementById('alertText');
+  if (!banner || !txt) return;
+
+  txt.innerHTML =
+    `<b>${det.type.toUpperCase()}${det.severity >= 4 ? ' — VIOLENCE DETECTED' : ''}</b><br/>
+     <span>${det.camId} · ${det.camName} · confidence ${Math.round(det.confidence*100)}% ·
+     ${det.ipc} · CASE ${det.caseNo}</span>`;
+
+  banner.classList.add('show');
+
+  document.getElementById('abDispatch').onclick = () => dispatchToDetection(det.id);
+  document.getElementById('abFeed').onclick     = () => openCCTV(det.camId, det.id);
+  document.getElementById('abDismiss').onclick  = () => banner.classList.remove('show');
+
+  clearTimeout(showAlertBanner._t);
+  showAlertBanner._t = setTimeout(() => banner.classList.remove('show'),
+    det.severity >= 4 ? 16000 : 10000);
+}
+
+/* ---- dispatch ---- */
+function dispatchToDetection(id, silent){
+  const det = liveDetections.find(d => d.id === id);
+  if (!det) return;
+  if (det.status === 'dispatched'){
+    if (!silent) toast('Unit already dispatched to this location', 'warn');
+    return;
+  }
+
+  const st = nearestStationObj(det.lat, det.lon);
+  const unitNo = Math.floor(Math.random()*8) + 1;
+  det.status = 'dispatched';
+  det.unit = 'PCR-' + pad(unitNo, 2);
+  det.dispatchedAt = Date.now();
+  det.etaMin = Math.max(2, Math.round(haversineKm(st[1], st[2], det.lat, det.lon) / 25 * 60));
+
+  dispatchFeatures.push({
+    type:'Feature',
+    geometry:{ type:'LineString',
+      coordinates: arcCoords([st[2], st[1]], [det.lon, det.lat], 44, 0.12) },
+    properties:{ color:'#26c281' }
+  });
+  updateDispatchLayer();
+
+  /* record the response in the incident DB */
+  const inc = INCIDENTS.find(i => i.caseNo === det.caseNo);
+  if (inc){ inc.status = 'Investigating'; inc.unit = det.unit; }
+
+  renderDetections();
+  updateSummary(state.filteredIncidents);
+
+  toast(`🚔 ${det.unit} dispatched from ${st[0]} — ETA ${det.etaMin} min`);
+  addNotification(`Unit ${det.unit} dispatched to ${det.camName} · ETA ${det.etaMin} min`, 'green');
+
+  showReticle(true, 'UNIT DISPATCHED');
+  map.easeTo({ pitch: 68, duration: 1100, essential:true });
+  setTimeout(() => showReticle(false), 2000);
+
+  const banner = document.getElementById('alertBanner');
+  if (banner) banner.classList.remove('show');
+}
+
+function updateDispatchLayer(){
+  if (!map.getSource('dispatch')) return;
+  map.getSource('dispatch').setData({
+    type:'FeatureCollection',
+    features: dispatchFeatures.slice(-30)
+  });
+}
+
+function acknowledgeDetection(id){
+  const det = liveDetections.find(d => d.id === id);
+  if (!det) return;
+  if (det.status === 'dispatched'){ toast('Already dispatched', 'warn'); return; }
+  det.status = 'ack';
+  det.ackedAt = Date.now();
+  renderDetections();
+  toast('✔ Detection acknowledged');
+}
+
+function resolveDetection(id){
+  const det = liveDetections.find(d => d.id === id);
+  if (!det) return;
+  det.status = 'resolved';
+  renderDetections();
+  updateSummary(state.filteredIncidents);
+  toast('Detection resolved');
+}
+
+function clearResolved(){
+  liveDetections = liveDetections.filter(d => d.status !== 'resolved');
+  renderDetections();
+  updateSummary(state.filteredIncidents);
+  toast('Resolved detections cleared');
+}
+
+/* ---- detection rendering ---- */
+function renderDetections(){
+  const active = liveDetections.filter(d => d.status !== 'resolved');
+  const counts = {
+    cmd:  document.getElementById('detCountCmd'),
+    live: document.getElementById('detCountLive')
+  };
+  if (counts.cmd)  counts.cmd.textContent  = active.length;
+  if (counts.live) counts.live.textContent = active.length;
+
+  const pillDet = document.getElementById('pillDet');
+  if (pillDet){
+    pillDet.style.display = active.length ? 'inline-flex' : 'none';
+    pillDet.textContent = active.length + ' detection' + (active.length === 1 ? '' : 's');
+  }
+  const sLive = document.getElementById('sLive');
+  if (sLive) sLive.textContent = active.length;
+
+  const dot = document.getElementById('tabLiveDot');
+  if (dot) dot.style.display = active.some(d => d.status === 'new') ? 'inline-block' : 'none';
+
+  const html = (det) => `
+    <div class="detCard ${det.status==='dispatched'?'dispatched':''} ${det.status==='ack'?'ack':''}"
+         onclick="focusDetection('${det.id}')">
+      <div class="ttl">${det.severity>=4?'🔴':'🟠'} ${det.type}</div>
+      <div class="meta">
+        ${det.camId} · ${det.camName}<br/>
+        ${new Date(det.bornAt).toLocaleTimeString('en-IN',{hour12:false})} ·
+        ${det.station.replace(' PS','')} jurisdiction<br/>
+        Case ${det.caseNo} · ${det.ipc}
+      </div>
+      <div class="confBar"><div style="width:${Math.round(det.confidence*100)}%"></div></div>
+      <div class="meta" style="margin-top:4px">
+        AI confidence <b style="color:var(--accent2)">${Math.round(det.confidence*100)}%</b>
+        ${det.unit ? ` · <b style="color:var(--ok)">${det.unit} en route (ETA ${det.etaMin}m)</b>` : ''}
+      </div>
+      <div class="acts">
+        ${det.status==='new'
+          ? `<button class="go" onclick="event.stopPropagation();dispatchToDetection('${det.id}')">
+               🚔 DISPATCH</button>`
+          : det.status==='dispatched'
+            ? `<button onclick="event.stopPropagation();resolveDetection('${det.id}')">
+                 ✔ RESOLVE</button>`
+            : `<button class="go" onclick="event.stopPropagation();dispatchToDetection('${det.id}')">
+                 🚔 DISPATCH</button>`}
+        <button onclick="event.stopPropagation();openCCTV('${det.camId}','${det.id}')">
+          🎥 FEED</button>
+        ${det.status==='new'
+          ? `<button onclick="event.stopPropagation();acknowledgeDetection('${det.id}')">
+               ✔ ACK</button>`
+          : `<button onclick="event.stopPropagation();resolveDetection('${det.id}')">
+               ✔ RESOLVE</button>`}
+      </div>
+    </div>`;
+
+  const cmdBox = document.getElementById('detFeedCmd');
+  if (cmdBox){
+    cmdBox.innerHTML = active.length
+      ? active.slice(0,4).map(html).join('')
+      : '<div style="color:var(--muted);font-size:11.5px">No active detections. Engine monitoring.</div>';
+  }
+  const liveBox = document.getElementById('detFeedLive');
+  if (liveBox){
+    liveBox.innerHTML = liveDetections.length
+      ? liveDetections.slice(0,25).map(html).join('')
+      : '<div style="color:var(--muted);font-size:11.5px">Awaiting detections…</div>';
+  }
+}
+
+function focusDetection(id){
+  const det = liveDetections.find(d => d.id === id);
+  if (!det) return;
+  flyTo(det.lat, det.lon, 17.4);
+  openCCTV(det.camId, det.id);
+}
+
+function forceDetection(){
+  const det = spawnDetection();
+  if (det) toast('⚠ Simulated detection: ' + det.type, 'warn');
+}
+
+/* ==================================================================
+   CCTV WALL / LIVE FEED
+   ================================================================== */
+let wallCameras = [];
+let wallDetId = null;
+let noisePattern = null;
+
+function makeNoisePattern(){
+  const c = document.createElement('canvas');
+  c.width = c.height = 128;
+  const ctx = c.getContext('2d');
+  const img = ctx.createImageData(128,128);
+  for (let i=0;i<img.data.length;i+=4){
+    const v = Math.random()*255;
+    img.data[i] = v; img.data[i+1] = v; img.data[i+2] = v;
+    img.data[i+3] = Math.random()*34;
+  }
+  ctx.putImageData(img,0,0);
+  return c;
+}
+
+function openCCTVWall(){
+  const online = CAMERAS.filter(c => c.status === 'online');
+  wallCameras = [];
+  for (let i=0;i<4;i++) wallCameras.push(online[(i*5) % online.length]);
+  wallDetId = null;
+  buildWall();
+  document.getElementById('cctvModal').classList.add('show');
+  document.getElementById('cctvTitle').textContent = 'CAMERA WALL · 4-UP';
+  document.getElementById('cctvMeta').innerHTML =
+    `<b>${online.length}</b> cameras online · Puducherry CCTV grid · AI analytics active on all feeds`;
+  document.getElementById('cctvDispatch').style.display = 'none';
+}
+
+function openCCTV(camId, detId){
+  const cam = CAMERAS.find(c => c.id === camId);
+  if (!cam){ toast('Camera not found', 'err'); return; }
+
+  const online = CAMERAS.filter(c => c.status === 'online' && c.id !== camId);
+  // main feed + 3 neighbours (nearest by distance)
+  const sorted = online.slice().sort((a,b)=>
+    (haversineKm(cam.lat,cam.lon,a.lat,a.lon)) - (haversineKm(cam.lat,cam.lon,b.lat,b.lon))
+  );
+  wallCameras = [cam, ...sorted.slice(0,3)];
+  wallDetId = detId || null;
+
+  buildWall();
+  document.getElementById('cctvModal').classList.add('show');
+  document.getElementById('cctvTitle').textContent =
+    `${cam.id} · ${cam.name} · LIVE FEED`;
+
+  const det = detId ? liveDetections.find(d => d.id === detId) : null;
+  document.getElementById('cctvMeta').innerHTML = det
+    ? `<b style="color:#ff8ba0">${det.type}</b> detected · Case <b>${det.caseNo}</b> ·
+       ${det.ipc} · AI confidence <b>${Math.round(det.confidence*100)}%</b><br/>
+       Jurisdiction: <b>${det.station}</b> ·
+       ${det.unit ? `Unit <b style="color:#26c281">${det.unit}</b> en route (ETA ${det.etaMin} min)`
+                  : 'No unit dispatched'}`
+    : `Live feed · ${cam.type} unit · FOV ${cam.fov}° · range ${cam.range} m ·
+       bearing ${cam.bearing}°`;
+
+  const btn = document.getElementById('cctvDispatch');
+  if (det && det.status === 'new'){
+    btn.style.display = 'block';
+    btn.onclick = () => { dispatchToDetection(det.id); closeCCTV(); };
+  } else {
+    btn.style.display = 'none';
+  }
+}
+
+function buildWall(){
+  const grid = document.getElementById('wallGrid');
+  grid.innerHTML = wallCameras.map((c,i) => `
+    <div class="feedBox ${i===0?'active':''}" id="feedBox${i}">
+      <canvas id="feedCv${i}" width="640" height="360"></canvas>
+      <div class="fTag">${c.id} · ${c.name}</div>
+      <div class="fAlert" id="feedAlert${i}" style="display:none">⚠ ALERT</div>
+    </div>`).join('');
+}
+
+function closeCCTV(){
+  document.getElementById('cctvModal').classList.remove('show');
+  wallCameras = [];
+  wallDetId = null;
+}
+
+function dispatchFromCCTV(){
+  if (wallDetId) dispatchToDetection(wallDetId);
+}
+function ackFromCCTV(){
+  if (wallDetId) acknowledgeDetection(wallDetId);
+}
+
+/* ---- per-frame CCTV render ---- */
+let wallFrame = 0;
+function tickCCTVWall(now){
+  if (!wallCameras.length) return;
+  if (now - wallFrame < 66) return;   // ~15 fps
+  wallFrame = now;
+  if (!noisePattern) noisePattern = makeNoisePattern();
+
+  wallCameras.forEach((cam, i) => {
+    const cv = document.getElementById('feedCv' + i);
+    if (!cv) return;
+    const alertBox = document.getElementById('feedAlert' + i);
+    const det = liveDetections.find(d =>
+      d.camId === cam.id && d.status !== 'resolved' &&
+      (Date.now() - d.bornAt) < 120000);
+
+    if (alertBox) alertBox.style.display = det ? 'block' : 'none';
+    drawFeed(cv, cam, det, now);
+  });
+}
+
+function drawFeed(canvas, cam, det, now){
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const t = now/1000;
+
+  /* base */
+  ctx.fillStyle = '#04070d';
+  ctx.fillRect(0,0,W,H);
+
+  /* pseudo street scene — road */
+  const horizon = H*0.52;
+  const grad = ctx.createLinearGradient(0,horizon-40,0,H);
+  grad.addColorStop(0,'#0a1018');
+  grad.addColorStop(1,'#05080d');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0,horizon-40,W,H-horizon+40);
+
+  /* buildings silhouettes */
+  ctx.fillStyle = '#0b1320';
+  for (let b=0;b<9;b++){
+    const bw = 50 + ((b*37)%70);
+    const bh = 40 + ((b*53)%90);
+    const bx = (b*78 + Math.sin(t*0.06 + b)*3) % (W+80) - 40;
+    ctx.fillRect(bx, horizon-bh, bw, bh);
+    /* windows */
+    ctx.fillStyle = 'rgba(120,180,255,0.10)';
+    for (let wy=horizon-bh+8; wy<horizon-8; wy+=14){
+      for (let wx=bx+7; wx<bx+bw-8; wx+=13){
+        if (((wx*wy)>>4) % 3 === 0) ctx.fillRect(wx, wy, 5, 6);
+      }
+    }
+    ctx.fillStyle = '#0b1320';
+  }
+
+  /* road markings */
+  ctx.strokeStyle = 'rgba(180,200,230,0.16)';
+  ctx.lineWidth = 3;
+  ctx.setLineDash([26,20]);
+  ctx.lineDashOffset = -(t*70) % 46;
+  ctx.beginPath();
+  ctx.moveTo(0, H*0.78);
+  ctx.lineTo(W, H*0.78);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  /* moving figures */
+  const figures = [];
+  for (let p=0;p<3;p++){
+    const speed = 0.18 + p*0.09;
+    const px = ((t*speed*90 + p*230) % (W+120)) - 60;
+    const py = H*0.72 + p*22 + Math.sin(t*3 + p)*3;
+    const sc = 0.65 + p*0.28;
+    figures.push({ x:px, y:py, s:sc, id:p });
+    ctx.fillStyle = 'rgba(150,175,210,0.30)';
+    ctx.beginPath();
+    ctx.ellipse(px, py, 7*sc, 15*sc, 0, 0, Math.PI*2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(px, py-19*sc, 6*sc, 0, Math.PI*2);
+    ctx.fill();
+  }
+
+  /* motion blur streaks */
+  ctx.fillStyle = 'rgba(120,160,220,0.035)';
+  for (let s=0;s<4;s++){
+    const sy = (t*40 + s*90) % H;
+    ctx.fillRect(0, sy, W, 2);
+  }
+
+  /* noise overlay */
+  if (noisePattern){
+    const pat = ctx.createPattern(noisePattern, 'repeat');
+    ctx.save();
+    ctx.globalAlpha = 0.55;
+    ctx.translate(Math.random()*128, Math.random()*128);
+    ctx.fillStyle = pat;
+    ctx.fillRect(-128,-128,W+256,H+256);
+    ctx.restore();
+  }
+
+  /* scanline */
+  const scanY = (t*130) % H;
+  ctx.fillStyle = 'rgba(140,200,255,0.055)';
+  ctx.fillRect(0, scanY, W, 2);
+
+  /* AI bounding box */
+  if (det){
+    const bx = W*0.36 + Math.sin(t*1.7)*9;
+    const by = H*0.40 + Math.cos(t*2.1)*6;
+    const bw = W*0.26, bh = H*0.50;
+
+    ctx.strokeStyle = '#ff3b5c';
+    ctx.lineWidth = 3;
+    ctx.strokeRect(bx, by, bw, bh);
+
+    /* corner ticks */
+    ctx.lineWidth = 4;
+    const tick = 18;
+    ctx.beginPath();
+    ctx.moveTo(bx, by+tick); ctx.lineTo(bx, by); ctx.lineTo(bx+tick, by);
+    ctx.moveTo(bx+bw-tick, by); ctx.lineTo(bx+bw, by); ctx.lineTo(bx+bw, by+tick);
+    ctx.moveTo(bx, by+bh-tick); ctx.lineTo(bx, by+bh); ctx.lineTo(bx+tick, by+bh);
+    ctx.moveTo(bx+bw-tick, by+bh); ctx.lineTo(bx+bw, by+bh); ctx.lineTo(bx+bw, by+bh-tick);
+    ctx.stroke();
+
+    /* label */
+    ctx.fillStyle = '#ff3b5c';
+    ctx.fillRect(bx, by-24, 220, 22);
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 13px ui-monospace, monospace';
+    ctx.fillText(det.type.toUpperCase() + ' ' + Math.round(det.confidence*100) + '%', bx+8, by-8);
+
+    /* target lines */
+    ctx.strokeStyle = 'rgba(255,59,92,0.45)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(0, by+bh/2); ctx.lineTo(bx, by+bh/2);
+    ctx.moveTo(bx+bw, by+bh/2); ctx.lineTo(W, by+bh/2);
+    ctx.stroke();
+  }
+
+  /* HUD overlay */
+  ctx.fillStyle = 'rgba(0,0,0,0.55)';
+  ctx.fillRect(0,0,W,26);
+  ctx.font = 'bold 12px ui-monospace, monospace';
+  ctx.fillStyle = '#8ecbff';
+  ctx.fillText(cam.id + '  ' + cam.name, 10, 17);
+
+  ctx.textAlign = 'right';
+  ctx.fillStyle = '#eaf0fb';
+  ctx.fillText(new Date().toLocaleString('en-IN', {
+    day:'2-digit', month:'2-digit', year:'numeric',
+    hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false
+  }), W-10, 17);
+  ctx.textAlign = 'left';
+
+  /* rec dot */
+  ctx.fillStyle = (Math.floor(t*2) % 2) ? '#ff3b5c' : 'rgba(255,59,92,0.25)';
+  ctx.beginPath();
+  ctx.arc(W-16, H-16, 6, 0, Math.PI*2);
+  ctx.fill();
+
+  /* subtle vignette */
+  const vg = ctx.createRadialGradient(W/2,H/2,H*0.25, W/2,H/2, H*0.85);
+  vg.addColorStop(0,'rgba(0,0,0,0)');
+  vg.addColorStop(1,'rgba(0,0,0,0.55)');
+  ctx.fillStyle = vg;
+  ctx.fillRect(0,0,W,H);
+}
+
+/* ==================================================================
+   MAP INIT
+   ================================================================== */
+let map;
+let userMarker = null;
+
+function initMap(){
+  map = new maplibregl.Map({
+    container: 'map',
+    style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
+    center: [79.8260, 11.9330],
+    zoom: 12.2,
+    pitch: 62,
+    bearing: -22,
+    maxPitch: 80,
+    minZoom: 9,
+    maxZoom: 19,
+    antialias: true,
+    attributionControl: false
+  });
+  map.addControl(new maplibregl.NavigationControl({ showCompass:true, visualizePitch:true }), 'top-right');
+  map.addControl(new maplibregl.ScaleControl({ maxWidth:120, unit:'metric' }), 'bottom-left');
+  map.addControl(new maplibregl.FullscreenControl(), 'top-right');
+
+  map.on('load', () => {
+    /* real vector source for 3D buildings + roads */
+    try{
+      map.addSource('ofm', { type:'vector', url:'https://tiles.openfreemap.org/planet' });
+    }catch(e){ console.warn('OFM source:', e); }
+
+    addSourcesAndLayers();
+    applyCinematicLook();
+    addTerrain();
+    addDispatchLayer();
+    refreshAll();
+    wireUI();
+    wireCinematicUI();
+    renderCameraList();
+    renderDetections();
+    startCineLoop();
+    scheduleNextDetection(performance.now());
+    hideLoader();
+    introCinematic();
+    addNotification('System initialised. 3D engines online.', 'green');
+    addNotification('CCTV grid linked — ' + CAMERAS.length + ' cameras online', 'gold');
+    toast('👮 CRIMEMAP 3D online — ' + CAMERAS.length + ' cameras linked');
+  });
+}
+
+function emptyFC(){ return { type:'FeatureCollection', features: [] }; }
+
+function addDispatchLayer(){
+  map.addSource('dispatch', { type:'geojson', data: emptyFC() });
+  map.addLayer({
+    id:'dispatch-lines', type:'line', source:'dispatch',
+    paint:{
+      'line-color':'#26c281','line-width':3.6,'line-opacity':0.92,
+      'line-dasharray':[2,1.6],'line-blur':0.4
+    }
+  });
+}
+
+function addSourcesAndLayers(){
+  // INCIDENTS
+  map.addSource('incidents', { type:'geojson', data: emptyFC() });
+  map.addLayer({
+    id:'incidents-heat', type:'heatmap', source:'incidents',
+    paint:{
+      'heatmap-weight':['interpolate',['linear'],['get','sev'],1,0.2,5,1],
+      'heatmap-intensity':['interpolate',['linear'],['zoom'],8,0.6,15,2.2],
+      'heatmap-radius':['interpolate',['linear'],['zoom'],8,12,15,38],
+      'heatmap-opacity':0.85,
+      'heatmap-color':['interpolate',['linear'],['heatmap-density'],
+        0,'rgba(0,0,0,0)',0.15,'#1f4b8a',0.4,'#26c281',
+        0.65,'#ffcc4d',0.85,'#ff7a3c',1,'#ff3b5c']
+    }
+  });
+  map.addLayer({
+    id:'incidents-points', type:'circle', source:'incidents',
+    paint:{
+      'circle-radius':['interpolate',['linear'],['get','sev'],1,3,5,7],
+      'circle-color':['match',['get','crime'],
+        'Theft','#ffcc4d','Snatching','#ff7a3c','Assault','#ff3b5c',
+        'Traffic Violation','#3ba3ff','Cyber Crime','#a06bff',
+        'Drug Offence','#ff4fa3','Burglary','#ffb03a','Missing Person','#8ecbff',
+        '#8ea0c4'],
+      'circle-stroke-color':'#06090f','circle-stroke-width':0.7,
+      'circle-opacity':0.9
+    }
+  });
+
+  // HOTSPOTS
+  map.addSource('hotspots', { type:'geojson', data: emptyFC() });
+  map.addLayer({
+    id:'hotspots-halo', type:'circle', source:'hotspots',
+    paint:{
+      'circle-radius':['interpolate',['linear'],['get','risk'],10,14,100,44],
+      'circle-color':'#ff3b5c','circle-opacity':0.12,
+      'circle-stroke-color':'#ff3b5c','circle-stroke-width':1.6
+    }
+  });
+  map.addLayer({
+    id:'hotspots-label', type:'symbol', source:'hotspots',
+    layout:{
+      'text-field':['concat',['get','topCrime'],' · ',['get','count']],
+      'text-size':11,'text-offset':[0,1.6],'text-anchor':'top',
+      'text-allow-overlap':false,
+      'text-font':['Open Sans Semibold','Arial Unicode MS Bold']
+    },
+    paint:{ 'text-color':'#ffcc4d','text-halo-color':'#06090f','text-halo-width':1.5 }
+  });
+
+  // PREDICTED RISK
+  map.addSource('predict', { type:'geojson', data: emptyFC() });
+  map.addLayer({
+    id:'predict-fill', type:'circle', source:'predict',
+    paint:{
+      'circle-radius':['interpolate',['linear'],['get','risk'],10,8,100,26],
+      'circle-color':['interpolate',['linear'],['get','risk'],
+        10,'#26c281',45,'#ffcc4d',75,'#ff7a3c',95,'#ff3b5c'],
+      'circle-opacity':0.55,'circle-blur':0.6
+    }
+  });
+
+  // EMERGING
+  map.addSource('emerging', { type:'geojson', data: emptyFC() });
+  map.addLayer({
+    id:'emerging-ring', type:'circle', source:'emerging',
+    paint:{
+      'circle-radius':16,'circle-color':'#00000000',
+      'circle-stroke-color':'#ffcc4d','circle-stroke-width':2.5
+    }
+  });
+
+  // STATIONS
+  const stationFC = { type:'FeatureCollection', features: STATIONS.map(s=>({
+    type:'Feature', geometry:{ type:'Point', coordinates:[s[2], s[1]] },
+    properties:{ name: s[0] }
+  }))};
+  map.addSource('stations', { type:'geojson', data: stationFC });
+  map.addLayer({
+    id:'stations-halo', type:'circle', source:'stations',
+    paint:{ 'circle-radius':13,'circle-color':'#3ba3ff','circle-opacity':0.15,
+            'circle-stroke-color':'#3ba3ff','circle-stroke-width':1.4 }
+  });
+  map.addLayer({
+    id:'stations-label', type:'symbol', source:'stations',
+    layout:{
+      'text-field':['concat','🛡 ',['get','name']],
+      'text-size':11,'text-offset':[0,1.2],'text-anchor':'top',
+      'text-allow-overlap':true,
+      'text-font':['Open Sans Semibold','Arial Unicode MS Bold']
+    },
+    paint:{ 'text-color':'#3ba3ff','text-halo-color':'#06090f','text-halo-width':1.5 }
+  });
+
+  // PATROL
+  map.addSource('patrol', { type:'geojson', data: emptyFC() });
+  map.addLayer({
+    id:'patrol-lines', type:'line', source:'patrol',
+    filter:['==',['geometry-type'],'LineString'],
+    paint:{ 'line-color':['get','color'], 'line-width':3.4,
+            'line-opacity':0.9, 'line-dasharray':[2,1] }
+  });
+  map.addLayer({
+    id:'patrol-stops', type:'circle', source:'patrol',
+    filter:['==',['geometry-type'],'Point'],
+    paint:{ 'circle-radius':6, 'circle-color':['get','color'],
+            'circle-stroke-color':'#06090f','circle-stroke-width':1.6 }
+  });
+
+  /* cinematic 3D layers last */
+  addCinematicLayers();
+}
+
+/* ================= STATE ================= */
+let state = {
+  hotspots: [], emerging: [], predict: [], routes: null,
+  filteredIncidents: [], activeTab: 'command'
+};
+
+/* ================= REFRESH ================= */
+let refreshTimer = null;
+function scheduleDataRefresh(){
+  if (refreshTimer) return;
+  refreshTimer = setTimeout(() => {
+    refreshTimer = null;
+    refreshAll();
+  }, 2500);
+}
+
+function getFilters(){
+  return {
+    days: +document.getElementById('fDays').value,
+    crime: document.getElementById('fCrime').value,
+    station: document.getElementById('fStation').value,
+    sev: +document.getElementById('fSev').value
+  };
+}
+function applyFilters(){
+  const f = getFilters();
+  const cutoff = Date.now() - f.days*86400000;
+  return INCIDENTS.filter(p =>
+    p.ts >= cutoff &&
+    (f.crime === 'all' || p.crime === f.crime) &&
+    (f.station === 'all' || p.station === f.station) &&
+    p.sev >= f.sev
+  );
+}
+
+function refreshAll(){
+  const filt = applyFilters();
+  state.filteredIncidents = filt;
+
+  const backup = INCIDENTS;
+  INCIDENTS = filt;
+  state.hotspots = detectHotspots(filt);
+  state.emerging = emergingHotspots();
+  state.predict  = predictRiskGrid();
+  INCIDENTS = backup;
+
+  map.getSource('incidents').setData({ type:'FeatureCollection', features: filt.map(p=>({
+    type:'Feature',
+    geometry:{ type:'Point', coordinates:[p.lon, p.lat] },
+    properties:{ id:p.id, crime:p.crime, sev:p.sev, station:p.station,
+                 ts:p.ts, loc:p.loc, status:p.status, mo:p.mo,
+                 caseNo: p.caseNo || '' }
+  }))});
+
+  map.getSource('hotspots').setData({ type:'FeatureCollection',
+    features: state.hotspots.map(h=>({
+      type:'Feature', geometry:{ type:'Point', coordinates:[h.lon, h.lat] },
+      properties: h
+    }))
+  });
+
+  map.getSource('emerging').setData({ type:'FeatureCollection',
+    features: state.emerging.map(a=>({
+      type:'Feature', geometry:{ type:'Point', coordinates:[a.lon, a.lat] },
+      properties: a
+    }))
+  });
+
+  if (document.getElementById('lPredict').checked){
+    map.getSource('predict').setData({ type:'FeatureCollection',
+      features: state.predict.map(g=>({
+        type:'Feature', geometry:{ type:'Point', coordinates:[g.lon, g.lat] },
+        properties: g
+      }))
+    });
+  }
+
+  updateCineSources();
+  updateSummary(filt);
+  updateHotspotList();
+  updateEmergingList();
+  updateAnalytics(filt);
+  updateReportsUI();
+  updateFooter();
+}
+
+function updateCineSources(){
+  const t = performance.now()/1000;
+  if (map.getSource('risk-towers')) map.getSource('risk-towers').setData(towerFC(t));
+  if (map.getSource('beams'))       map.getSource('beams').setData(beamsFC());
+  if (map.getSource('pulse'))       map.getSource('pulse').setData(pulseFC(t));
+}
+
+function updateSummary(filt){
+  const now = Date.now();
+  const last7 = filt.filter(p => p.ts >= now - 7*86400000).length;
+  document.getElementById('sTotal').textContent = fmt(INCIDENTS.length);
+  document.getElementById('sLast7').textContent = fmt(last7);
+  document.getElementById('sHot').textContent = state.hotspots.length;
+  document.getElementById('sUnits').textContent = document.getElementById('pUnits').value;
+  document.getElementById('filterCount').textContent = fmt(filt.length) + ' shown';
+  document.getElementById('pillCount').textContent = fmt(filt.length) + ' incidents';
+  document.getElementById('pillHot').textContent = state.hotspots.length + ' hotspots';
+}
+
+function updateHotspotList(){
+  const box = document.getElementById('hotList');
+  if (!state.hotspots.length){
+    box.innerHTML = '<div style="color:var(--muted);font-size:12px">No clusters detected for current filters.</div>';
+    return;
+  }
+  box.innerHTML = state.hotspots.slice(0, 12).map(h=>`
+    <div class="hot" onclick="flyTo(${h.lat},${h.lon},16)">
+      <div class="l">
+        <b>${h.topCrime}</b>
+        <span class="badge">${h.count} incidents</span>
+        <span class="badge">${h.peakHour}:00</span>
+        <span class="badge">${h.peakDay.slice(0,3)}</span>
+      </div>
+      <div class="r">${h.risk}</div>
+    </div>`).join('');
+}
+
+function updateEmergingList(){
+  const box = document.getElementById('emergeBox');
+  if (!box) return;
+  if (!state.emerging.length){
+    box.innerHTML = '<div style="color:var(--muted);font-size:11.5px">No emerging hotspots detected.</div>';
+    return;
+  }
+  box.innerHTML = state.emerging.slice(0, 8).map(a=>`
+    <div class="alert gold" onclick="flyTo(${a.lat},${a.lon},16)">
+      <b>+${a.growth}% growth</b><br/>
+      Last 7d: <b>${a.recent}</b> · baseline/wk: ${a.base}<br/>
+      <span class="mut">${a.lat.toFixed(4)}, ${a.lon.toFixed(4)}</span>
+    </div>`).join('');
+}
+
+function updateAnalytics(filt){
+  const days = +document.getElementById('fDays').value;
+  const now = Date.now();
+  const prevPeriod = INCIDENTS.filter(p =>
+    p.ts < now - days*86400000 && p.ts >= now - 2*days*86400000);
+  const incEl = document.getElementById('kInc');
+  if (incEl) incEl.textContent = fmt(filt.length);
+  const deltaEl = document.getElementById('kIncD');
+  if (deltaEl){
+    const change = prevPeriod.length ? Math.round((filt.length - prevPeriod.length)/prevPeriod.length * 100) : 0;
+    deltaEl.textContent = (change >= 0 ? '+' : '') + change + '% vs previous period';
+    deltaEl.className = 'delta' + (change < 0 ? '' : ' down');
+  }
+  const hotEl = document.getElementById('kHot');
+  if (hotEl) hotEl.textContent = state.hotspots.length;
+
+  const hours = new Array(24).fill(0);
+  const crimes = {};
+  for (const p of filt){
+    hours[new Date(p.ts).getHours()]++;
+    crimes[p.crime] = (crimes[p.crime]||0)+1;
+  }
+  let peakH = 0;
+  for (let i=1;i<24;i++) if (hours[i] > hours[peakH]) peakH = i;
+  const peakEl = document.getElementById('kPeak');
+  if (peakEl) peakEl.textContent = pad(peakH,2) + ':00';
+  const topEl = document.getElementById('kTop');
+  if (topEl && Object.keys(crimes).length){
+    topEl.textContent = Object.entries(crimes).sort((a,b)=>b[1]-a[1])[0][0];
+  }
+
+  const donutEl = document.getElementById('chartDonut');
+  if (donutEl){
+    const entries = Object.entries(crimes).sort((a,b)=>b[1]-a[1]).slice(0,8);
+    donutEl.innerHTML = renderDonut(entries.map(([k,v])=>({
+      label:k, value:v, color: CRIME_COLORS[k] || '#8ea0c4'
+    })), 220);
+  }
+
+  const stTable = document.getElementById('stationTable');
+  if (stTable){
+    const st = {};
+    for (const p of filt){
+      st[p.station] = st[p.station] || { count: 0, sev: 0, top: {} };
+      st[p.station].count++;
+      st[p.station].sev += p.sev;
+      st[p.station].top[p.crime] = (st[p.station].top[p.crime]||0)+1;
+    }
+    const rows = Object.entries(st).sort((a,b)=>b[1].count - a[1].count);
+    stTable.innerHTML = `<table class="tbl">
+      <thead><tr><th>Station</th><th>Cases</th><th>Avg Sev</th><th>Top Crime</th></tr></thead>
+      <tbody>${rows.map(([name,d])=>{
+        const top = Object.entries(d.top).sort((a,b)=>b[1]-a[1])[0][0];
+        return `<tr onclick="flyToStation('${name}')">
+          <td>${name.replace(' PS','')}</td>
+          <td>${d.count}</td>
+          <td>${(d.sev/d.count).toFixed(1)}</td>
+          <td>${top}</td>
+        </tr>`;
+      }).join('')}</tbody>
+    </table>`;
+  }
+}
+
+function renderDonut(data, size=200){
+  const total = data.reduce((a,b)=>a+b.value,0) || 1;
+  const r = size/2 - 22;
+  const cx = size/2, cy = size/2;
+  let angle = -Math.PI/2;
+  let arcs = '', legend = '';
+  for (const d of data){
+    const sweep = d.value/total * Math.PI * 2;
+    const x1 = cx + r * Math.cos(angle);
+    const y1 = cy + r * Math.sin(angle);
+    const x2 = cx + r * Math.cos(angle + sweep);
+    const y2 = cy + r * Math.sin(angle + sweep);
+    const large = sweep > Math.PI ? 1 : 0;
+    if (sweep > 0.005){
+      arcs += `<path d="M ${x1} ${y1} A ${r} ${r} 0 ${large} 1 ${x2} ${y2}"
+                      stroke="${d.color}" stroke-width="26" fill="none" stroke-linecap="butt"/>`;
+    }
+    const p = Math.round(d.value/total*100);
+    legend += `<div class="legend" style="justify-content:space-between">
+      <span style="display:flex;align-items:center;gap:8px">
+        <span class="sw" style="background:${d.color}"></span>${d.label}
+      </span>
+      <b style="color:var(--fg)">${d.value} <span style="color:var(--muted)">(${p}%)</span></b>
+    </div>`;
+    angle += sweep;
+  }
+  return `<div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+    <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+      <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#0a1424" stroke-width="26"/>
+      ${arcs}
+      <text x="${cx}" y="${cy-4}" text-anchor="middle" font-size="22" font-weight="800"
+            fill="#eaf0fb" font-family="Inter,sans-serif">${fmt(total)}</text>
+      <text x="${cx}" y="${cy+16}" text-anchor="middle" font-size="10"
+            fill="#7e91b8" font-family="Inter,sans-serif" letter-spacing="1">INCIDENTS</text>
+    </svg>
+    <div style="flex:1;min-width:160px;font-size:11px">${legend}</div>
+  </div>`;
+}
+
+function updateReportsUI(){
+  document.getElementById('rTotal').textContent = citizenReports.length;
+  const today = new Date(); today.setHours(0,0,0,0);
+  const todays = citizenReports.filter(r => new Date(r.createdAt) >= today).length;
+  document.getElementById('rToday').textContent = todays;
+  const week = citizenReports.filter(r => Date.now() - new Date(r.createdAt) < 7*86400000).length;
+  document.getElementById('rWeek').textContent = week;
+  const pending = citizenReports.filter(r => r.status === 'Received').length;
+  document.getElementById('rPend').textContent = pending;
+
+  const rb = document.getElementById('recentReports');
+  if (!citizenReports.length){
+    rb.innerHTML = '<div style="color:var(--muted);font-size:11.5px">No reports yet.</div>';
+  } else {
+    rb.innerHTML = citizenReports.slice(0, 6).map(r => `
+      <div class="report" onclick="flyTo(${r.lat},${r.lon},17)">
+        <b>${r.category}</b>
+        <span class="desc">${r.description.slice(0,60)}${r.description.length>60?'…':''}</span>
+        <span class="badge ${r.status==='Received'?'red':'ok'}">${r.status}</span>
+      </div>`).join('');
+  }
+
+  const ar = document.getElementById('allReports');
+  const cnt = document.getElementById('rAllCount');
+  if (cnt) cnt.textContent = citizenReports.length + ' total';
+  if (ar){
+    if (!citizenReports.length){
+      ar.innerHTML = '<div style="color:var(--muted);font-size:11.5px">No reports submitted yet. Submit one from the left panel.</div>';
+    } else {
+      ar.innerHTML = citizenReports.slice(0, 30).map(r => {
+        const t = new Date(r.createdAt).toLocaleString();
+        return `<div class="report" onclick="flyTo(${r.lat},${r.lon},17)">
+          <b>${r.category}</b>
+          <span class="desc">${r.description}</span>
+          <div class="badges">
+            <span class="badge ${r.status==='Received'?'red':'ok'}">${r.status}</span>
+            <span class="badge blue">${r.lat.toFixed(3)}, ${r.lon.toFixed(3)}</span>
+            <span class="badge">${t}</span>
+          </div>
+          <div style="margin-top:6px">
+            <button class="act ghost sm" style="width:auto;padding:3px 8px;font-size:10px"
+              onclick="event.stopPropagation();ackReport(${r.id})">Acknowledge</button>
+          </div>
+        </div>`;
+      }).join('');
+    }
+  }
+}
+
+function updateFooter(){
+  document.getElementById('fIncidents').textContent = fmt(INCIDENTS.length) + ' incidents';
+  document.getElementById('fHotspots').textContent = state.hotspots.length + ' hotspots';
+  const fc = document.getElementById('fCameras');
+  if (fc) fc.textContent = CAMERAS.filter(c=>c.status==='online').length + ' cameras';
+}
+
+/* ---- camera list ---- */
+function renderCameraList(){
+  const box = document.getElementById('camList');
+  if (!box) return;
+  const online = CAMERAS.filter(c => c.status === 'online').length;
+  const ptz = CAMERAS.filter(c => c.type === 'PTZ').length;
+  document.getElementById('camCount').textContent = CAMERAS.length + ' units';
+  document.getElementById('camOnline').textContent = online + ' / ' + CAMERAS.length;
+  document.getElementById('camPTZ').textContent = ptz;
+  document.getElementById('camFixed').textContent = CAMERAS.length - ptz;
+  const pill = document.getElementById('pillCam');
+  if (pill) pill.textContent = online + ' cameras';
+
+  box.innerHTML = CAMERAS.map(c => `
+    <div class="hot" style="border-left-color:#3ba3ff" onclick="openCCTV('${c.id}')">
+      <div class="l">
+        <b>${c.id} · ${c.name}</b>
+        <span class="meta">${c.type} · FOV ${c.fov}° · ${c.range} m</span>
+      </div>
+      <div class="r" style="font-size:11px;color:${c.status==='online'?'#26c281':'#ff3b5c'}">
+        ●</div>
+    </div>`).join('');
+}
+
+/* ================= INTERACTIONS ================= */
+function flyTo(lat, lon, zoom=15){
+  const wrap = document.getElementById('mapWrap');
+  showReticle(true, 'TARGET LOCK');
+  wrap.classList.add('cinema');
+
+  map.flyTo({
+    center: [lon, lat],
+    zoom,
+    pitch: 68,
+    bearing: map.getBearing() + 24,
+    duration: 2000,
+    curve: 1.42,
+    essential: true,
+    easing: t => 1 - Math.pow(1 - t, 3)
+  });
+
+  clearTimeout(flyTo._t);
+  flyTo._t = setTimeout(() => {
+    showReticle(false);
+    wrap.classList.remove('cinema');
+  }, 2250);
+}
+
+function flyToStation(name){
+  const s = STATIONS.find(x => x[0] === name);
+  if (s) flyTo(s[1], s[2], 15);
+}
+
+function resetFilters(){
+  document.getElementById('fDays').value = '90';
+  document.getElementById('fCrime').value = 'all';
+  document.getElementById('fStation').value = 'all';
+  document.getElementById('fSev').value = '1';
+  refreshAll();
+  toast('Filters reset');
+}
+
+function exportCSV(){
+  const rows = [['case_no','id','crime','severity','station','datetime','lat','lon',
+                 'location','status','modus_operandi','source']];
+  for (const p of state.filteredIncidents){
+    rows.push([p.caseNo||'', p.id, p.crime, p.sev, p.station,
+      new Date(p.ts).toISOString(), p.lat.toFixed(5), p.lon.toFixed(5),
+      p.loc, p.status, p.mo, p.source||'FIR']);
+  }
+  const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  download(csv, 'crimemap_incidents.csv', 'text/csv');
+  toast('✅ Exported ' + state.filteredIncidents.length + ' records to CSV');
+}
+
+function exportRoutes(){
+  if (!state.routes){ toast('Optimize routes first', 'warn'); return; }
+  const rows = [['unit','station','stop','risk','lat','lon']];
+  for (const r of state.routes){
+    for (const p of r.path){
+      rows.push([r.unit, r.station, p.stop, p.risk||0, p.lat.toFixed(5), p.lon.toFixed(5)]);
+    }
+  }
+  const csv = rows.map(r => r.join(',')).join('\n');
+  download(csv, 'crimemap_patrol_routes.csv', 'text/csv');
+  toast('✅ Exported patrol routes');
+}
+
+function download(content, name, mime){
+  const blob = new Blob([content], { type: mime });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = name;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a);
+  setTimeout(()=> URL.revokeObjectURL(url), 1000);
+}
+
+/* ================= PATROL ================= */
+function runPatrol(){
+  const units = Math.max(1, Math.min(15, +document.getElementById('pUnits').value || 8));
+  const horizon = Math.max(30, Math.min(480, +document.getElementById('pHorizon').value || 120));
+  const priority = document.getElementById('pPriority').value;
+  const info = document.getElementById('patrolInfo');
+  info.innerHTML = '<span style="color:var(--accent2)">⚡ Optimizing patrol routes…</span>';
+  document.getElementById('fStatus').textContent = 'Optimizing…';
+  setHudMode('ROUTE OPTIMISATION');
+
+  setTimeout(() => {
+    const routes = optimizePatrols(units, horizon, priority);
+    state.routes = routes;
+
+    const colors = ['#ff3b5c','#3ba3ff','#26c281','#ffcc4d','#a06bff',
+                    '#ff7a3c','#4fd1c5','#ff4fa3','#ffb03a','#8ecbff',
+                    '#c3ff4d','#ff5e5e','#5e8fff','#7fffbf','#ffb0e0'];
+    const features = [];
+    routes.forEach((r, i) => {
+      if (r.path.length < 2) return;
+      const color = colors[i%colors.length];
+      features.push({
+        type:'Feature',
+        geometry:{ type:'LineString', coordinates: r.path.map(p=>[p.lon, p.lat]) },
+        properties:{ color, unit: r.unit, stops: r.stops }
+      });
+      r.path.forEach((p, idx) => {
+        if (idx === 0) return;
+        features.push({
+          type:'Feature',
+          geometry:{ type:'Point', coordinates:[p.lon, p.lat] },
+          properties:{ color, unit: r.unit, risk: p.risk, stop: idx }
+        });
+      });
+    });
+    map.getSource('patrol').setData({ type:'FeatureCollection', features });
+
+    const totalStops = routes.reduce((a,b) => a + b.stops, 0);
+    const totalTime  = routes.reduce((a,b) => a + b.timeUsed, 0);
+    info.innerHTML = `<b style="color:var(--gold)">✅ ${routes.length} units dispatched</b><br/>
+      <b>${totalStops}</b> high-risk stops covered<br/>
+      <b>${totalTime}</b> total patrol minutes<br/>
+      <span class="badge blue">Engine: risk-weighted VRP</span>`;
+    document.getElementById('routeCount').textContent = routes.length + ' units';
+
+    document.getElementById('lPatrol').checked = true;
+    map.setLayoutProperty('patrol-lines','visibility','visible');
+    map.setLayoutProperty('patrol-stops','visibility','visible');
+
+    const rl = document.getElementById('routeList');
+    rl.innerHTML = routes.map((r, i) => `
+      <div class="hot" onclick="zoomToRoute(${i})">
+        <div class="l">
+          <b>${r.unit}</b>
+          <span class="meta">${r.station} · ${r.stops} stops · ${r.timeUsed} min</span>
+          <span class="meta" style="color:var(--muted2);margin-top:2px;display:block">
+            ${r.path.slice(1,4).map(p=>`R${p.risk}`).join(' → ')}${r.path.length>4?' → …':''}
+          </span>
+        </div>
+        <div class="r" style="color:${colors[i%colors.length]}">${r.stops}</div>
+      </div>`).join('');
+
+    document.getElementById('fStatus').textContent = 'Patrol optimized';
+    setHudMode('UNITS DEPLOYED');
+    toast(`✅ ${totalStops} high-risk stops across ${routes.length} units`);
+    addNotification(`Patrol optimized: ${totalStops} stops · ${routes.length} units`, 'gold');
+
+    showReticle(true, 'UNITS DEPLOYED');
+    map.easeTo({ pitch: 72, duration: 1400, essential:true });
+    setTimeout(()=> showReticle(false), 2200);
+  }, 80);
+}
+
+function zoomToRoute(i){
+  if (!state.routes || !state.routes[i]) return;
+  const r = state.routes[i];
+  const lons = r.path.map(p=>p.lon), lats = r.path.map(p=>p.lat);
+  const bounds = [[Math.min(...lons), Math.min(...lats)],
+                  [Math.max(...lons), Math.max(...lats)]];
+  map.fitBounds(bounds, { padding:90, duration:1100, pitch:66, bearing:-18 });
+  showReticle(true, 'ROUTE ' + r.unit);
+  setTimeout(()=> showReticle(false), 1500);
+}
+
+function clearPatrol(){
+  map.getSource('patrol').setData(emptyFC());
+  document.getElementById('patrolInfo').innerHTML = '';
+  document.getElementById('routeList').innerHTML =
+    '<div style="color:var(--muted);font-size:11.5px">Configure units on the left and click <b>Optimize Routes</b>.</div>';
+  document.getElementById('routeCount').textContent = '—';
+  state.routes = null;
+  toast('Routes cleared');
+}
+
+/* ================= CITIZEN REPORTS ================= */
+let userLoc = null;
+function useMyLocation(){
+  if (!navigator.geolocation){ toast('❌ Geolocation not supported', 'err'); return; }
+  toast('📍 Getting your location…');
+  navigator.geolocation.getCurrentPosition(pos => {
+    userLoc = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+    toast(`📍 Captured: ${userLoc.lat.toFixed(4)}, ${userLoc.lon.toFixed(4)}`);
+  }, () => {
+    toast('❌ Could not get location — using approximate', 'warn');
+  });
+}
+
+function sendReport(){
+  const cat = document.getElementById('rCat').value;
+  const desc = document.getElementById('rDesc').value.trim();
+  if (!desc){
+    document.getElementById('rMsg').style.color = '#ff3b5c';
+    document.getElementById('rMsg').textContent = 'Please add a description.';
+    return;
+  }
+  let lat = 11.9340, lon = 79.8300;
+  if (userLoc){ lat = userLoc.lat; lon = userLoc.lon; }
+  else { lat += (Math.random()-0.5)*0.005; lon += (Math.random()-0.5)*0.005; }
+
+  const report = {
+    id: Date.now(),
+    category: cat, description: desc,
+    lat, lon, status: 'Received',
+    createdAt: new Date().toISOString()
+  };
+  citizenReports.unshift(report);
+  citizenReports = citizenReports.slice(0, 100);
+  localStorage.setItem('crimemap_reports_v2', JSON.stringify(citizenReports));
+
+  document.getElementById('rMsg').style.color = '#26c281';
+  document.getElementById('rMsg').textContent = '✅ Report sent to nearest station.';
+  document.getElementById('rDesc').value = '';
+
+  new maplibregl.Marker({ color: '#26c281' }).setLngLat([lon, lat]).addTo(map);
+
+  updateReportsUI();
+  flyTo(lat, lon, 16.5);
+  toast('✅ Citizen report received — routed to station');
+  addNotification(`New citizen report: ${cat}`, 'green');
+}
+
+function ackReport(id){
+  const r = citizenReports.find(x => x.id === id);
+  if (!r) return;
+  r.status = 'Acknowledged';
+  localStorage.setItem('crimemap_reports_v2', JSON.stringify(citizenReports));
+  updateReportsUI();
+  toast('Report acknowledged');
+}
+
+/* ================= NOTIFICATIONS ================= */
+function addNotification(msg, type='green'){
+  notifications.unshift({ msg, type, time: new Date() });
+  notifications = notifications.slice(0, 40);
+  renderNotifs();
+}
+function renderNotifs(){
+  const list = document.getElementById('notifList');
+  list.innerHTML = notifications.map(n => `
+    <div class="notif ${n.type}">
+      ${n.msg}
+      <div class="t">${timeAgo(n.time)}</div>
+    </div>`).join('');
+  const count = notifications.length;
+  const dot = document.getElementById('notifCount');
+  dot.textContent = count;
+  dot.style.display = count ? 'block' : 'none';
+}
+function clearNotifs(){ notifications = []; renderNotifs(); toast('Notifications cleared'); }
+function timeAgo(d){
+  const s = Math.floor((Date.now() - d.getTime())/1000);
+  if (s < 60) return 'just now';
+  if (s < 3600) return Math.floor(s/60) + ' min ago';
+  if (s < 86400) return Math.floor(s/3600) + ' h ago';
+  return Math.floor(s/86400) + ' d ago';
+}
+
+/* ================= TABS ================= */
+function switchTab(tab){
+  state.activeTab = tab;
+  document.querySelectorAll('nav.tabs button').forEach(b => {
+    b.classList.toggle('active', b.dataset.tab === tab);
+  });
+  document.querySelectorAll('.panelSet').forEach(p => {
+    p.classList.toggle('active', p.dataset.panel === tab + '-left' ||
+                                  p.dataset.panel === tab + '-right');
+  });
+  if (tab === 'analytics'){
+    updateAnalytics(state.filteredIncidents);
+  }
+  if (tab === 'livewatch'){
+    renderDetections();
+  }
+  document.getElementById('fStatus').textContent =
+    { command:'Command view', livewatch:'Live surveillance',
+      analytics:'Analytics view', patrol:'Patrol planner',
+      reports:'Citizen reports' }[tab];
+  setHudMode({
+    command:'ORBITAL RECON', livewatch:'AI SURVEILLANCE',
+    analytics:'ANALYTICS MODE', patrol:'PATROL PLANNER',
+    reports:'CITIZEN FEED'
+  }[tab]);
+}
+
+/* ================= UI WIRING ================= */
+function wireUI(){
+  ['fDays','fCrime','fStation','fSev'].forEach(id => {
+    document.getElementById(id).addEventListener('change', refreshAll);
+  });
+
+  document.getElementById('lHeat').onchange = e =>
+    map.setLayoutProperty('incidents-heat','visibility', e.target.checked ? 'visible':'none');
+  document.getElementById('lPoints').onchange = e =>
+    map.setLayoutProperty('incidents-points','visibility', e.target.checked ? 'visible':'none');
+  document.getElementById('lHot').onchange = e => {
+    const v = e.target.checked ? 'visible':'none';
+    map.setLayoutProperty('hotspots-halo','visibility', v);
+    map.setLayoutProperty('hotspots-label','visibility', v);
+  };
+  document.getElementById('lStations').onchange = e => {
+    const v = e.target.checked ? 'visible':'none';
+    map.setLayoutProperty('stations-halo','visibility', v);
+    map.setLayoutProperty('stations-label','visibility', v);
+  };
+  document.getElementById('lPredict').onchange = e => {
+    if (e.target.checked){
+      const fc = { type:'FeatureCollection', features: state.predict.map(g=>({
+        type:'Feature', geometry:{ type:'Point', coordinates:[g.lon, g.lat] },
+        properties: g
+      }))};
+      map.getSource('predict').setData(fc);
+      map.setLayoutProperty('predict-fill','visibility','visible');
+      toast('Predicted risk grid shown (' + state.predict.length + ' cells)');
+    } else {
+      map.setLayoutProperty('predict-fill','visibility','none');
+    }
+  };
+  document.getElementById('lEmerging').onchange = e =>
+    map.setLayoutProperty('emerging-ring','visibility', e.target.checked ? 'visible':'none');
+  document.getElementById('lPatrol').onchange = e => {
+    const v = e.target.checked ? 'visible':'none';
+    map.setLayoutProperty('patrol-lines','visibility', v);
+    map.setLayoutProperty('patrol-stops','visibility', v);
+  };
+  document.getElementById('lUser').onchange = e => {
+    if (e.target.checked){
+      if (userLoc){
+        if (userMarker) userMarker.remove();
+        userMarker = new maplibregl.Marker({ color: '#26c281' })
+          .setLngLat([userLoc.lon, userLoc.lat]).addTo(map);
+        flyTo(userLoc.lat, userLoc.lon, 16);
+      } else {
+        useMyLocation();
+        setTimeout(() => {
+          if (userLoc){
+            userMarker = new maplibregl.Marker({ color: '#26c281' })
+              .setLngLat([userLoc.lon, userLoc.lat]).addTo(map);
+            flyTo(userLoc.lat, userLoc.lon, 16);
+          }
+        }, 1500);
+      }
+    } else if (userMarker){
+      userMarker.remove(); userMarker = null;
+    }
+  };
+  document.getElementById('lBeams').onchange = e =>
+    map.setLayoutProperty('beams-line','visibility', e.target.checked ? 'visible':'none');
+  document.getElementById('lTowers').onchange = e => {
+    const v = e.target.checked ? 'visible':'none';
+    if (map.getLayer('risk-towers')) map.setLayoutProperty('risk-towers','visibility', v);
+  };
+  document.getElementById('lCams').onchange = e => {
+    const v = e.target.checked ? 'visible':'none';
+    if (map.getLayer('cameras-halo')) map.setLayoutProperty('cameras-halo','visibility', v);
+    if (map.getLayer('cameras-dot'))  map.setLayoutProperty('cameras-dot','visibility', v);
+  };
+  document.getElementById('lFov').onchange = e => {
+    const v = e.target.checked ? 'visible':'none';
+    if (map.getLayer('cam-fov-fill')) map.setLayoutProperty('cam-fov-fill','visibility', v);
+    if (map.getLayer('cam-fov-line')) map.setLayoutProperty('cam-fov-line','visibility', v);
+    CINE.fov = e.target.checked;
+    document.getElementById('btnCamFov').classList.toggle('on', CINE.fov);
+  };
+  document.getElementById('lDet').onchange = e => {
+    const v = e.target.checked ? 'visible':'none';
+    ['det-rings','det-core','det-core-glow','det-towers'].forEach(l => {
+      if (map.getLayer(l)) map.setLayoutProperty(l,'visibility', v);
+    });
+  };
+
+  /* detection engine controls */
+  document.getElementById('detRun').onchange = e => {
+    DETECT.running = e.target.checked;
+    document.getElementById('engineStatus').textContent = DETECT.running ? 'RUNNING' : 'PAUSED';
+    toast(DETECT.running ? 'AI detection engine started' : 'AI detection engine paused',
+      DETECT.running ? '' : 'warn');
+  };
+  document.getElementById('detAutoFly').onchange = e => DETECT.autoFly = e.target.checked;
+  document.getElementById('detAudio').onchange = e => {
+    DETECT.audio = e.target.checked;
+    if (DETECT.audio) unlockAudio();
+  };
+  document.getElementById('detAutoDispatch').onchange = e => DETECT.autoDispatch = e.target.checked;
+
+  const sens = document.getElementById('detSens');
+  const sensVal = document.getElementById('sensVal');
+  sens.oninput = e => {
+    DETECT.sensitivity = e.target.value / 100;
+    sensVal.textContent = DETECT.sensitivity < 0.33 ? 'LOW'
+                       : DETECT.sensitivity < 0.67 ? 'MEDIUM' : 'HIGH';
+    scheduleNextDetection(performance.now());
+  };
+
+  /* optional layers hidden initially */
+  map.setLayoutProperty('predict-fill','visibility','none');
+  map.setLayoutProperty('emerging-ring','visibility','none');
+  map.setLayoutProperty('patrol-lines','visibility','none');
+  map.setLayoutProperty('patrol-stops','visibility','none');
+
+  /* populate filters */
+  const cSel = document.getElementById('fCrime');
+  Object.keys(CRIME_WEIGHTS).forEach(c => {
+    const o = document.createElement('option');
+    o.value = c; o.textContent = c;
+    cSel.appendChild(o);
+  });
+  const stSel = document.getElementById('fStation');
+  STATIONS.forEach(s => {
+    const o = document.createElement('option');
+    o.value = s[0]; o.textContent = s[0];
+    stSel.appendChild(o);
+  });
+
+  document.querySelectorAll('nav.tabs button').forEach(b => {
+    b.onclick = () => switchTab(b.dataset.tab);
+  });
+
+  document.getElementById('bellBtn').onclick = e => {
+    e.stopPropagation();
+    document.getElementById('notifDrawer').classList.toggle('show');
+  };
+  document.addEventListener('click', e => {
+    const drawer = document.getElementById('notifDrawer');
+    if (!drawer.contains(e.target) && e.target.id !== 'bellBtn'){
+      drawer.classList.remove('show');
+    }
+  });
+
+  document.getElementById('searchBox').addEventListener('input', e => {
+    const q = e.target.value.trim().toLowerCase();
+    if (q.length < 2) return;
+    const match = STATIONS.find(s => s[0].toLowerCase().includes(q));
+    if (match){ flyTo(match[1], match[2], 15); }
+    const hot = HOTSPOTS.find(h => h.n.toLowerCase().includes(q));
+    if (hot){ flyTo(hot.lat, hot.lon, 16); }
+    const cam = CAMERAS.find(c =>
+      c.id.toLowerCase().includes(q) || c.name.toLowerCase().includes(q));
+    if (cam){ flyTo(cam.lat, cam.lon, 17); openCCTV(cam.id); }
+  });
+
+  /* keyboard shortcuts */
+  document.addEventListener('keydown', e => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    const k = e.key;
+    if (k === '1') switchTab('command');
+    else if (k === '2') switchTab('livewatch');
+    else if (k === '3') switchTab('analytics');
+    else if (k === '4') switchTab('patrol');
+    else if (k === '5') switchTab('reports');
+    else if (k === 'r' || k === 'R'){ switchTab('reports');
+      setTimeout(()=>document.getElementById('rDesc').focus(), 200); }
+    else if (k === 'p' || k === 'P'){ switchTab('patrol'); runPatrol(); }
+    else if (k === 'c' || k === 'C'){ clearPatrol(); }
+    else if (k === 'v' || k === 'V'){ switchTab('livewatch'); openCCTVWall(); }
+    else if (k === 'd' || k === 'D'){ forceDetection(); }
+    else if (k === 'Escape'){
+      document.getElementById('notifDrawer').classList.remove('show');
+      closeCCTV();
+      document.getElementById('alertBanner').classList.remove('show');
+    }
+  });
+
+  setInterval(updateClock, 1000);
+  updateClock();
+}
+
+function updateClock(){
+  const d = new Date();
+  document.getElementById('clockDate').textContent =
+    d.toLocaleDateString('en-IN', { weekday:'short', day:'2-digit', month:'short' });
+  document.getElementById('clockTime').textContent =
+    d.toLocaleTimeString('en-IN', { hour12:false }) + ' IST';
+}
+
+/* ================= 3D CAMERA BUTTONS (no cinema) ================= */
+function wireCinematicUI(){
+  document.getElementById('btnOrbit').onclick = e => {
+    CINE.orbit = !CINE.orbit;
+    CINE.lastInteract = CINE.orbit ? 0 : performance.now();
+    e.currentTarget.classList.toggle('on', CINE.orbit);
+    toast(CINE.orbit ? '🛰 Auto-orbit engaged' : '🛰 Auto-orbit disengaged');
+  };
+
+  document.getElementById('btn3D').onclick = e => {
+    CINE.buildings3d = !CINE.buildings3d;
+    const v = CINE.buildings3d ? 'visible' : 'none';
+    ['3d-buildings','3d-landmarks','risk-towers'].forEach(l => {
+      if (map.getLayer(l)) map.setLayoutProperty(l,'visibility', v);
+    });
+    e.currentTarget.classList.toggle('on', CINE.buildings3d);
+    toast(CINE.buildings3d ? '🏙 3D city model ONLINE' : '🏙 3D city model OFFLINE');
+  };
+
+  document.getElementById('btnTilt').onclick = e => {
+    CINE.tilted = !CINE.tilted;
+    map.easeTo({ pitch: CINE.tilted ? 68 : 0, duration:1200, essential:true });
+    e.currentTarget.classList.toggle('on', CINE.tilted);
+    setHudMode(CINE.tilted ? '3D PERSPECTIVE' : 'PLAN VIEW');
+  };
+
+  document.getElementById('btnRadar').onclick = e => {
+    CINE.radar = !CINE.radar;
+    if (map.getLayer('sweep-fill'))
+      map.setLayoutProperty('sweep-fill','visibility', CINE.radar ? 'visible' : 'none');
+    e.currentTarget.classList.toggle('on', CINE.radar);
+    toast(CINE.radar ? '📡 Radar sweep active' : '📡 Radar sweep offline');
+  };
+
+  const fovBtn = document.getElementById('btnCamFov');
+  fovBtn.classList.add('on');
+  fovBtn.onclick = e => {
+    CINE.fov = !CINE.fov;
+    const v = CINE.fov ? 'visible' : 'none';
+    if (map.getLayer('cam-fov-fill')) map.setLayoutProperty('cam-fov-fill','visibility', v);
+    if (map.getLayer('cam-fov-line')) map.setLayoutProperty('cam-fov-line','visibility', v);
+    document.getElementById('lFov').checked = CINE.fov;
+    e.currentTarget.classList.toggle('on', CINE.fov);
+    toast(CINE.fov ? '🎥 Camera FOV cones visible' : '🎥 Camera FOV cones hidden');
+  };
+
+  map.on('move', () => {
+    const c = map.getCenter();
+    const el = document.getElementById('hudCoord');
+    if (el){
+      el.textContent =
+        'LAT ' + c.lat.toFixed(4) +
+        ' · LON ' + c.lng.toFixed(4) +
+        ' · Z ' + map.getZoom().toFixed(1) +
+        ' · BRG ' + Math.round(map.getBearing()) + '°' +
+        ' · PITCH ' + Math.round(map.getPitch()) + '°';
+    }
+  });
+
+  ['mousedown','touchstart','wheel','dragstart','zoomstart','rotatestart','pitchstart']
+    .forEach(ev => map.on(ev, () => { CINE.lastInteract = performance.now(); }));
+}
+
+/* ================= TOAST / LOADER ================= */
+function toast(msg, kind=''){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'show' + (kind ? ' ' + kind : '');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => t.classList.remove('show'), 2800);
+}
+function progress(p, txt){
+  document.getElementById('lProg').style.width = p + '%';
+  if (txt) document.getElementById('lText').textContent = txt;
+}
+function hideLoader(){
+  progress(100, 'Ready');
+  setTimeout(() => document.getElementById('loader').classList.add('hide'), 350);
+}
+
+/* ================= BOOT ================= */
+function boot(){
+  progress(10, 'Initialising CRIMEMAP…');
+  setTimeout(() => {
+    progress(30, 'Loading incident database…');
+    INCIDENTS = generateIncidents(4200);
+    addNotification('Loaded ' + INCIDENTS.length + ' incident records', 'green');
+  }, 40);
+  setTimeout(() => progress(52, 'Linking CCTV network…'), 250);
+  setTimeout(() => {
+    progress(72, 'Loading 3D city model…');
+    initMap();
+  }, 500);
+  setTimeout(() => progress(90, 'Starting AI detection engine…'), 800);
+}
+boot();
+
+/* ================= EXPORTS ================= */
+window.flyTo = flyTo;
+window.runPatrol = runPatrol;
+window.clearPatrol = clearPatrol;
+window.zoomToRoute = zoomToRoute;
+window.useMyLocation = useMyLocation;
+window.sendReport = sendReport;
+window.ackReport = ackReport;
+window.exportCSV = exportCSV;
+window.exportRoutes = exportRoutes;
+window.resetFilters = resetFilters;
+window.clearNotifs = clearNotifs;
+window.flyToStation = flyToStation;
+window.openCCTV = openCCTV;
+window.openCCTVWall = openCCTVWall;
+window.closeCCTV = closeCCTV;
+window.dispatchFromCCTV = dispatchFromCCTV;
+window.ackFromCCTV = ackFromCCTV;
+window.dispatchToDetection = dispatchToDetection;
+window.acknowledgeDetection = acknowledgeDetection;
+window.resolveDetection = resolveDetection;
+window.focusDetection = focusDetection;
+window.forceDetection = forceDetection;
+window.clearResolved = clearResolved;
+</script>
+</body>
+</html><script async src="/.netlify/scripts/hud?variant=public" data-nf-variant="public" data-netlify-site-id="595f7aa8-d7f9-4e3d-9c6e-c79f09b957b5" data-app-host="app.netlify.com"></script>

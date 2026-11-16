@@ -1,0 +1,6 @@
+{
+  "name": "CYBER WOMEN",
+  "description": "Intelligent women's safety platform combining CrimeMap 3D geospatial intelligence, historical risk assessment, SafeHer helplines and legal awareness, The Shield emergency SOS, and Meena AI safety assistant.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

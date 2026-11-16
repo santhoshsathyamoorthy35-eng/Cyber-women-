@@ -1,0 +1,247 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Authenticated user safety preferences and profile metadata.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Firebase Auth UID of the owner."
+        },
+        "displayName": {
+          "type": "string",
+          "description": "User display name."
+        },
+        "email": {
+          "type": "string",
+          "description": "Optional user email address."
+        },
+        "preferredLanguage": {
+          "type": "string",
+          "enum": ["en", "ta"],
+          "description": "Preferred UI language code (en or ta)."
+        },
+        "selectedCity": {
+          "type": "string",
+          "description": "Active monitoring area or city name."
+        },
+        "shakeToSosEnabled": {
+          "type": "boolean",
+          "description": "Whether shake-to-SOS gesture detection is enabled."
+        },
+        "customSosMessage": {
+          "type": "string",
+          "description": "Custom SOS alert template message."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server creation timestamp written via FieldValue.serverTimestamp()."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server update timestamp written via FieldValue.serverTimestamp()."
+        }
+      },
+      "required": ["userId", "displayName", "preferredLanguage", "selectedCity", "shakeToSosEnabled", "customSosMessage", "createdAt", "updatedAt"]
+    },
+    "TrustedContact": {
+      "title": "TrustedContact",
+      "description": "Emergency trusted contact configured by the user for Shield SOS.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Owner Firebase Auth UID."
+        },
+        "name": {
+          "type": "string",
+          "description": "Contact full name or nickname."
+        },
+        "phone": {
+          "type": "string",
+          "description": "Contact telephone number."
+        },
+        "relationship": {
+          "type": "string",
+          "description": "Relationship label (e.g. Mother, Friend, Partner)."
+        },
+        "priority": {
+          "type": "integer",
+          "description": "Contact escalation priority (1 to 10)."
+        },
+        "isPrimary": {
+          "type": "boolean",
+          "description": "Whether this contact is marked primary."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server creation timestamp via FieldValue.serverTimestamp()."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server update timestamp via FieldValue.serverTimestamp()."
+        }
+      },
+      "required": ["userId", "name", "phone", "relationship", "priority", "isPrimary", "createdAt", "updatedAt"]
+    },
+    "SosEvent": {
+      "title": "SosEvent",
+      "description": "Auditable SOS activation log entry with honest delivery/status lifecycle.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Owner Firebase Auth UID."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["created", "queued_local", "logged_cloud", "cancelled", "resolved"],
+          "description": "Current SOS event status."
+        },
+        "triggerType": {
+          "type": "string",
+          "enum": ["button", "hold", "shake", "ai_escalation"],
+          "description": "How the SOS alert was triggered."
+        },
+        "lat": {
+          "type": "number",
+          "description": "Latitude coordinate at alert time."
+        },
+        "lon": {
+          "type": "number",
+          "description": "Longitude coordinate at alert time."
+        },
+        "accuracyMeters": {
+          "type": "number",
+          "description": "Location accuracy in meters."
+        },
+        "locationLabel": {
+          "type": "string",
+          "description": "Human-readable area or fallback location label."
+        },
+        "message": {
+          "type": "string",
+          "description": "Prepared emergency message text."
+        },
+        "contactIds": {
+          "type": "array",
+          "description": "Bounded list of selected trusted contact IDs (max 10)."
+        },
+        "deliveryNote": {
+          "type": "string",
+          "description": "Transparent status note on cloud logging and external SMS availability."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server creation timestamp via FieldValue.serverTimestamp()."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server update timestamp via FieldValue.serverTimestamp()."
+        }
+      },
+      "required": ["userId", "status", "triggerType", "lat", "lon", "accuracyMeters", "locationLabel", "message", "contactIds", "deliveryNote", "createdAt", "updatedAt"]
+    },
+    "CitizenReport": {
+      "title": "CitizenReport",
+      "description": "User-submitted safety observation or hazard report separate from synthetic simulation records.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Reporter Firebase Auth UID."
+        },
+        "category": {
+          "type": "string",
+          "description": "Incident or safety hazard category."
+        },
+        "description": {
+          "type": "string",
+          "description": "Details observed by the user."
+        },
+        "lat": {
+          "type": "number",
+          "description": "Latitude of reported location."
+        },
+        "lon": {
+          "type": "number",
+          "description": "Longitude of reported location."
+        },
+        "nearestStation": {
+          "type": "string",
+          "description": "Nearest reference police station name."
+        },
+        "severity": {
+          "type": "integer",
+          "description": "Estimated severity 1 to 5."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["received", "acknowledged"],
+          "description": "Report review state."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server creation timestamp via FieldValue.serverTimestamp()."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server update timestamp via FieldValue.serverTimestamp()."
+        }
+      },
+      "required": ["userId", "category", "description", "lat", "lon", "nearestStation", "severity", "status", "createdAt", "updatedAt"]
+    },
+    "UserFeedback": {
+      "title": "UserFeedback",
+      "description": "User safety resource feedback submission.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Author Firebase Auth UID."
+        },
+        "message": {
+          "type": "string",
+          "description": "Feedback content."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server creation timestamp via FieldValue.serverTimestamp()."
+        }
+      },
+      "required": ["userId", "message", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "Owner-only user safety profile and preferences."
+    },
+    "/users/{userId}/trusted_contacts/{contactId}": {
+      "schema": { "$ref": "#/entities/TrustedContact" },
+      "description": "Owner-only trusted emergency contacts."
+    },
+    "/users/{userId}/sos_events/{eventId}": {
+      "schema": { "$ref": "#/entities/SosEvent" },
+      "description": "Owner-only SOS event log with terminal state protection."
+    },
+    "/users/{userId}/citizen_reports/{reportId}": {
+      "schema": { "$ref": "#/entities/CitizenReport" },
+      "description": "Owner-only user-submitted safety incident reports."
+    },
+    "/users/{userId}/feedback/{feedbackId}": {
+      "schema": { "$ref": "#/entities/UserFeedback" },
+      "description": "Owner-only user feedback entries."
+    }
+  }
+}

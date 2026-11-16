@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="description" content="SafeHer — Learn, Protect, Empower. Women's safety helplines, legal rights, child body-safety education, and support organizations across Tamil Nadu and India.">
+    <meta name="theme-color" content="#ff6b6b">
+    <title>SafeHer · Learn · Protect · Empower</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff6b6b;
+            --primary-dark: #e85555;
+            --primary-light: #fff0f0;
+            --secondary: #4ecdc4;
+            --secondary-light: #e8faf8;
+            --accent: #ffe66d;
+            --accent-dark: #f5c518;
+            --success: #6bcf7f;
+            --success-light: #e8f8ec;
+            --danger: #ff4757;
+            --purple: #9b59b6;
+            --purple-light: #f3e8ff;
+            --bg: #fff9f5;
+            --card-bg: #ffffff;
+            --text: #2d2d44;
+            --text-muted: #6b6b80;
+            --border: #ffe0d8;
+            --shadow: 0 8px 24px rgba(255, 107, 107, 0.1);
+            --radius: 1.8rem;
+            --font: 'Baloo 2', 'Comic Sans MS', cursive, sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: var(--font); -webkit-tap-highlight-color: transparent; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            background: linear-gradient(135deg, #fff9f5 0%, #fff0f0 25%, #e8faf8 50%, #f3e8ff 75%, #fff9f5 100%);
+            background-size: 400% 400%;
+            animation: gradientBG 18s ease infinite;
+            color: var(--text); line-height: 1.7; padding: 1rem;
+            min-height: 100vh; overflow-x: hidden;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .floating-shapes {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 0; overflow: hidden;
+        }
+
+        .shape {
+            position: absolute; border-radius: 50%; opacity: 0.12;
+            animation: floatShape linear infinite;
+        }
+
+        @keyframes floatShape {
+            0% { transform: translateY(100vh) rotate(0deg); }
+            100% { transform: translateY(-20vh) rotate(360deg); }
+        }
+
+        .ripple-btn { position: relative; overflow: hidden; }
+        .ripple-btn::after {
+            content: ''; position: absolute; width: 100%; height: 100%;
+            top: 0; left: 0;
+            background: radial-gradient(circle, rgba(255,255,255,0.6) 10%, transparent 10.01%);
+            background-position: center; background-repeat: no-repeat; background-size: 0%;
+            transition: background-size 0.4s; pointer-events: none;
+        }
+        .ripple-btn:active::after { background-size: 1000%; transition: background-size 0s; }
+
+        .app-container {
+            max-width: 1100px; margin: 0 auto;
+            background: rgba(255,255,255,0.92); backdrop-filter: blur(20px);
+            border-radius: 2.5rem; box-shadow: 0 30px 60px -20px rgba(255, 107, 107, 0.2);
+            overflow: hidden; padding: 1.5rem 1.5rem 2rem; position: relative; z-index: 1;
+            border: 2px solid rgba(255,255,255,0.8);
+        }
+
+        /* ===== HEADER ===== */
+        .header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; gap: 0.8rem; }
+        .logo-area { display: flex; align-items: center; gap: 0.7rem; }
+        .logo-icon {
+            width: 64px; height: 64px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border-radius: 22px; display: flex; align-items: center; justify-content: center;
+            font-size: 2rem; color: white; box-shadow: 0 10px 24px -6px rgba(255,107,107,0.5);
+            animation: float 3s ease-in-out infinite; position: relative;
+        }
+        .logo-icon::after {
+            content: '👧'; position: absolute; font-size: 0.9rem; bottom: -4px; right: -4px;
+            background: white; border-radius: 50%; width: 24px; height: 24px;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15); border: 2px solid var(--primary-light);
+        }
+        @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+        .logo-text h1 {
+            font-size: 2rem; font-weight: 800; letter-spacing: -1px;
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary), var(--accent-dark));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .logo-text p { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; }
+        .header-actions { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
+        .quick-exit {
+            background: var(--text); color: white; border: none; padding: 0.6rem 1.1rem;
+            border-radius: 60px; font-weight: 700; font-size: 0.82rem; cursor: pointer;
+            transition: 0.2s; display: flex; align-items: center; gap: 0.4rem;
+        }
+        .quick-exit:hover { background: var(--primary); transform: scale(1.05); }
+        .sos-btn {
+            background: linear-gradient(135deg, var(--danger), var(--primary)); color: white;
+            border: none; width: 58px; height: 58px; border-radius: 50%; font-size: 0.9rem;
+            font-weight: 800; cursor: pointer; box-shadow: 0 0 0 0 rgba(255,71,87,0.7);
+            animation: pulseSOS 1.6s infinite; transition: 0.2s; flex-shrink: 0;
+        }
+        .sos-btn:hover { transform: scale(1.1); }
+        @keyframes pulseSOS {
+            0% { box-shadow: 0 0 0 0 rgba(255,71,87,0.7); }
+            70% { box-shadow: 0 0 0 20px rgba(255,71,87,0); }
+            100% { box-shadow: 0 0 0 0 rgba(255,71,87,0); }
+        }
+
+        /* ===== MEENA GUIDE ===== */
+        .meena-bubble { display: flex; align-items: flex-start; gap: 0.7rem; margin-bottom: 1.2rem; animation: bounceIn 0.6s ease; }
+        .meena-avatar { font-size: 2.5rem; animation: float 2.5s ease-in-out infinite; flex-shrink: 0; }
+        .meena-speech {
+            background: white; border: 2px solid var(--primary-light); border-radius: 1.2rem 1.2rem 1.2rem 0.2rem;
+            padding: 0.8rem 1.1rem; font-size: 0.9rem; box-shadow: var(--shadow);
+            position: relative; max-width: 500px;
+        }
+        .meena-speech strong { color: var(--primary-dark); }
+
+        /* ===== EMERGENCY STRIP ===== */
+        .emergency-strip {
+            background: linear-gradient(135deg, var(--primary-light), #fff5e6);
+            border: 2px dashed var(--primary); border-radius: 1.3rem; padding: 0.8rem 1rem;
+            display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+            margin-bottom: 1.3rem; gap: 0.6rem;
+        }
+        .emergency-strip span { font-weight: 800; color: var(--primary-dark); display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; }
+        .emergency-numbers { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+        .emergency-numbers a {
+            background: white; padding: 0.3rem 0.75rem; border-radius: 40px; font-weight: 800;
+            color: var(--text); text-decoration: none; box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border: 1.5px solid var(--border); font-size: 0.78rem; transition: 0.2s;
+            display: flex; align-items: center; gap: 0.25rem;
+        }
+        .emergency-numbers a i { color: var(--primary); font-size: 0.7rem; }
+        .emergency-numbers a:hover { background: var(--primary); color: white; transform: scale(1.05); }
+        .emergency-numbers a:hover i { color: white; }
+
+        /* ===== NAV TABS ===== */
+        .nav-tabs { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1.2rem; }
+        .nav-tab {
+            background: white; border: 2px solid var(--border); padding: 0.55rem 1rem;
+            font-weight: 800; font-size: 0.82rem; color: var(--text-muted); border-radius: 40px;
+            cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 0.35rem;
+        }
+        .nav-tab.active {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white;
+            border-color: transparent; box-shadow: 0 6px 16px -4px rgba(255,107,107,0.5); transform: scale(1.03);
+        }
+        .nav-tab:hover:not(.active) { border-color: var(--primary); color: var(--primary); }
+
+        /* ===== SEARCH ===== */
+        .search-filter-bar { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 1.2rem; }
+        .search-wrapper { flex: 1; min-width: 200px; position: relative; }
+        .search-wrapper i { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: #b0b0c0; }
+        .search-wrapper input {
+            width: 100%; padding: 0.8rem 1rem 0.8rem 2.8rem; border: 2px solid var(--border);
+            border-radius: 60px; font-size: 0.88rem; font-family: var(--font); background: white; transition: 0.2s;
+        }
+        .search-wrapper input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px rgba(255,107,107,0.12); }
+        .filter-select {
+            padding: 0.8rem 1rem; border-radius: 60px; border: 2px solid var(--border);
+            background: white; font-size: 0.82rem; font-weight: 700; font-family: var(--font); cursor: pointer;
+        }
+
+        /* ===== SECTIONS ===== */
+        .section { display: none; animation: fadeUp 0.35s ease; }
+        .section.active { display: block; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes bounceIn { 0% { transform: scale(0.85); opacity: 0; } 60% { transform: scale(1.04); } 100% { transform: scale(1); opacity: 1; } }
+        .section-title { font-size: 1.3rem; font-weight: 800; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+        .section-title i { color: var(--primary); }
+        .section-sub { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem; margin-top: -0.5rem; }
+
+        /* ===== CARDS ===== */
+        .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 0.85rem; margin-bottom: 1.5rem; }
+        .info-card {
+            background: white; border-radius: var(--radius); padding: 1rem 1.1rem;
+            border: 2px solid var(--border); transition: 0.2s; animation: fadeUp 0.3s ease;
+        }
+        .info-card:hover { border-color: var(--primary); transform: translateY(-3px); box-shadow: 0 12px 28px -12px rgba(255,107,107,0.2); }
+        .card-header { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.35rem; }
+        .card-icon {
+            width: 36px; height: 36px; border-radius: 12px; background: var(--primary-light);
+            display: flex; align-items: center; justify-content: center; color: var(--primary); flex-shrink: 0;
+        }
+        .card-header h3 { font-size: 0.95rem; font-weight: 800; }
+        .card-detail { font-size: 0.82rem; color: #5a5a70; margin-bottom: 0.35rem; }
+        .card-number {
+            display: inline-flex; align-items: center; gap: 0.3rem; background: var(--text); color: white;
+            font-weight: 800; padding: 0.22rem 0.8rem; border-radius: 40px; font-size: 0.8rem;
+            text-decoration: none; transition: 0.15s;
+        }
+        .card-number:hover { background: var(--primary); }
+        .card-tag { font-size: 0.62rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #a0a0b5; display: block; }
+        .badge-gov { background: #e3f0ff; color: #1a5bbf; padding: 0.1rem 0.5rem; border-radius: 30px; font-size: 0.6rem; font-weight: 800; display: inline-block; margin-left: 0.3rem; }
+        .badge-ngo { background: #e6f7ee; color: var(--success); padding: 0.1rem 0.5rem; border-radius: 30px; font-size: 0.6rem; font-weight: 800; display: inline-block; margin-left: 0.3rem; }
+
+        /* ===== STORY / LEARN ===== */
+        .story-panel {
+            background: linear-gradient(135deg, #fff, var(--primary-light)); border-radius: 2rem;
+            padding: 1.5rem; margin-bottom: 1.2rem; border: 2px solid var(--border); animation: bounceIn 0.5s ease;
+        }
+        .pants-diagram { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.8rem; margin: 1rem 0; }
+        .pants-item { background: white; border-radius: 1.2rem; padding: 1rem; border-left: 6px solid var(--primary); box-shadow: 0 4px 12px rgba(0,0,0,0.05); transition: 0.2s; }
+        .pants-item:hover { transform: scale(1.02); }
+        .pants-item .letter { display: inline-flex; width: 40px; height: 40px; background: var(--primary); color: white; border-radius: 50%; align-items: center; justify-content: center; font-weight: 800; font-size: 1.1rem; margin-bottom: 0.4rem; }
+        .pants-item h4 { font-size: 0.9rem; margin-bottom: 0.2rem; }
+        .pants-item p { font-size: 0.78rem; color: var(--text-muted); }
+        .highlight-box { background: var(--success-light); border-left: 5px solid var(--success); border-radius: 1rem; padding: 0.9rem 1rem; margin: 0.9rem 0; font-size: 0.85rem; }
+        .warning-box { background: #fff8e7; border-left: 5px solid var(--accent-dark); border-radius: 1rem; padding: 0.9rem 1rem; margin: 0.9rem 0; font-size: 0.85rem; }
+
+        .diagram-container { background: white; border-radius: 1.5rem; padding: 1.2rem; margin: 1rem 0; border: 2px solid var(--border); text-align: center; overflow-x: auto; }
+        .diagram-container svg { max-width: 100%; height: auto; }
+        .diagram-caption { font-size: 0.78rem; color: var(--text-muted); margin-top: 0.5rem; font-weight: 600; }
+
+        /* ===== QUIZ ===== */
+        .quiz-card { background: linear-gradient(135deg, #fff, var(--purple-light)); border-radius: 1.8rem; padding: 1.4rem; border: 2px solid var(--purple); margin-top: 1.2rem; }
+        .quiz-q { font-size: 1rem; font-weight: 800; margin-bottom: 0.8rem; }
+        .quiz-scene { font-size: 2rem; margin-bottom: 0.5rem; display: block; }
+        .quiz-options { display: flex; gap: 0.7rem; flex-wrap: wrap; }
+        .quiz-btn { flex: 1; min-width: 120px; padding: 0.7rem 1rem; border-radius: 1rem; border: 2px solid var(--border); background: white; font-weight: 800; font-family: var(--font); font-size: 0.85rem; cursor: pointer; transition: 0.2s; }
+        .quiz-btn:hover { border-color: var(--purple); transform: translateY(-2px); }
+        .quiz-btn.correct { background: var(--success-light); border-color: var(--success); color: var(--success); }
+        .quiz-btn.wrong { background: #ffe8e8; border-color: var(--danger); color: var(--danger); }
+        .quiz-feedback { margin-top: 0.7rem; font-size: 0.85rem; font-weight: 700; padding: 0.6rem 0.9rem; border-radius: 0.8rem; display: none; }
+        .quiz-feedback.show { display: block; animation: fadeUp 0.3s ease; }
+        .quiz-feedback.correct { background: var(--success-light); color: var(--success); }
+        .quiz-feedback.wrong { background: #ffe8e8; color: var(--danger); }
+
+        .badge-row { display: flex; gap: 0.5rem; flex-wrap: wrap; margin: 0.8rem 0; }
+        .badge { padding: 0.3rem 0.8rem; border-radius: 40px; font-size: 0.7rem; font-weight: 800; background: #f0f0f0; color: #999; transition: 0.3s; }
+        .badge.earned { background: var(--accent); color: var(--text); box-shadow: 0 2px 8px rgba(245,197,24,0.4); }
+
+        /* ===== TOOLS ===== */
+        .tools-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.85rem; margin-bottom: 1rem; }
+        .tool-card { background: var(--secondary-light); border-radius: 1.4rem; padding: 1.2rem 1rem; text-align: center; border: 2px solid #d0f0ec; cursor: pointer; transition: 0.2s; }
+        .tool-card:hover { border-color: var(--secondary); transform: translateY(-3px); }
+        .tool-card i { font-size: 1.7rem; color: var(--secondary); margin-bottom: 0.4rem; display: block; }
+        .tool-card h4 { font-size: 0.9rem; margin-bottom: 0.2rem; }
+        .tool-card p { font-size: 0.75rem; color: var(--text-muted); }
+        .tool-output { background: var(--secondary-light); border-radius: 1rem; padding: 1rem; margin-top: 0.6rem; font-size: 0.85rem; display: none; border: 2px solid #d0f0ec; }
+        .tool-output.show { display: block; animation: fadeUp 0.3s ease; }
+        .tool-output .highlight { color: var(--primary); font-weight: 800; }
+
+        .case-card { background: white; border: 2px solid var(--border); border-radius: 1.3rem; padding: 1.1rem; margin-bottom: 0.9rem; }
+        .case-card .case-tag { display: inline-block; background: var(--primary-light); color: var(--primary-dark); padding: 0.1rem 0.6rem; border-radius: 30px; font-size: 0.65rem; font-weight: 800; margin-bottom: 0.4rem; }
+        .case-card h4 { font-size: 0.95rem; display: flex; gap: 0.4rem; margin-bottom: 0.3rem; }
+        .case-card p { font-size: 0.83rem; color: #4a4a62; }
+
+        .legal-card { background: var(--primary-light); border-radius: 1rem; padding: 0.9rem 1rem; border-left: 5px solid var(--primary); margin-bottom: 0.7rem; }
+        .legal-card h4 { font-size: 0.9rem; margin-bottom: 0.2rem; }
+        .legal-card p { font-size: 0.82rem; color: #4a4a62; }
+
+        .feedback-box { background: #fff5f0; border-radius: var(--radius); padding: 1.2rem; margin-top: 1.5rem; border: 2px dashed var(--primary); }
+        .feedback-box h3 { font-size: 1rem; margin-bottom: 0.5rem; }
+        .feedback-box textarea { width: 100%; padding: 0.8rem; border-radius: 1rem; border: 2px solid var(--border); font-size: 0.85rem; font-family: var(--font); resize: vertical; min-height: 60px; margin-bottom: 0.5rem; }
+        .feedback-box button { background: var(--primary); color: white; border: none; padding: 0.5rem 1.4rem; border-radius: 40px; font-weight: 800; font-family: var(--font); cursor: pointer; }
+        .feedback-box button:hover { background: var(--primary-dark); }
+        .footer-note { margin-top: 1.5rem; font-size: 0.7rem; text-align: center; color: #b0b0c0; border-top: 2px dashed var(--border); padding-top: 1rem; }
+        .hidden { display: none; }
+
+        /* ===== RESPONSIVE — MOBILE FIRST ===== */
+        @media (max-width: 600px) {
+            body { padding: 0.5rem; }
+            .app-container { padding: 1rem; border-radius: 1.5rem; }
+            .logo-text h1 { font-size: 1.5rem; }
+            .logo-icon { width: 52px; height: 52px; font-size: 1.6rem; }
+            .emergency-strip { flex-direction: column; align-items: flex-start; }
+            .cards-grid { grid-template-columns: 1fr; }
+            .pants-diagram { grid-template-columns: 1fr; }
+            .tools-grid { grid-template-columns: 1fr 1fr; }
+            .nav-tab { font-size: 0.75rem; padding: 0.45rem 0.8rem; }
+            .meena-speech { font-size: 0.82rem; }
+            .sos-btn { width: 50px; height: 50px; font-size: 0.8rem; }
+        }
+
+        @media (max-width: 380px) {
+            .tools-grid { grid-template-columns: 1fr; }
+            .logo-text h1 { font-size: 1.3rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="floating-shapes" id="floatingShapes"></div>
+
+<div class="app-container">
+    <!-- Header -->
+    <div class="header">
+        <div class="logo-area">
+            <div class="logo-icon"><i class="fas fa-shield-heart"></i></div>
+            <div class="logo-text">
+                <h1>SafeHer</h1>
+                <p>Learn · Protect · Empower · India</p>
+            </div>
+        </div>
+        <div class="header-actions">
+            <button class="quick-exit ripple-btn" id="quickExitBtn"><i class="fas fa-door-open"></i> Exit</button>
+            <button class="sos-btn ripple-btn" id="sosBtn">SOS</button>
+        </div>
+    </div>
+
+    <!-- Meena Guide -->
+    <div class="meena-bubble">
+        <div class="meena-avatar">👧</div>
+        <div class="meena-speech" id="meenaText">
+            Hi! I'm <strong>Meena</strong>. I'll help you learn how to stay safe. Tap any card to start! 🌟
+        </div>
+    </div>
+
+    <!-- Emergency Strip -->
+    <div class="emergency-strip">
+        <span><i class="fas fa-phone-volume"></i> Emergency:</span>
+        <div class="emergency-numbers">
+            <a href="tel:112"><i class="fas fa-bolt"></i> 112</a>
+            <a href="tel:181"><i class="fas fa-female"></i> 181</a>
+            <a href="tel:14490"><i class="fas fa-shield-heart"></i> 14490</a>
+            <a href="tel:1091"><i class="fas fa-shield"></i> 1091</a>
+            <a href="tel:1930"><i class="fas fa-laptop"></i> 1930</a>
+            <a href="tel:14416"><i class="fas fa-brain"></i> 14416</a>
+            <a href="tel:1098"><i class="fas fa-child"></i> 1098</a>
+            <a href="tel:1094"><i class="fas fa-search"></i> 1094</a>
+            <a href="tel:15100"><i class="fas fa-gavel"></i> 15100</a>
+        </div>
+    </div>
+
+    <!-- Nav Tabs -->
+    <div class="nav-tabs" id="navTabs">
+        <button class="nav-tab active" data-section="learn"><i class="fas fa-book-open"></i> Learn</button>
+        <button class="nav-tab" data-section="helplines"><i class="fas fa-phone-alt"></i> Helplines</button>
+        <button class="nav-tab" data-section="safetytools"><i class="fas fa-tools"></i> Tools</button>
+        <button class="nav-tab" data-section="casestudies"><i class="fas fa-gavel"></i> Stories</button>
+        <button class="nav-tab" data-section="legal"><i class="fas fa-balance-scale"></i> Rights</button>
+        <button class="nav-tab" data-section="organizations"><i class="fas fa-building"></i> Orgs</button>
+    </div>
+
+    <!-- Search -->
+    <div class="search-filter-bar">
+        <div class="search-wrapper">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="Search 600+ helplines, organizations...">
+        </div>
+        <select class="filter-select" id="categoryFilter">
+            <option value="all">All</option>
+            <option value="Women">Women</option>
+            <option value="Women Police">Women Police</option>
+            <option value="Legal">Legal</option>
+            <option value="Mental Health">Mental Health</option>
+            <option value="Cyber & Fraud">Cyber</option>
+            <option value="Children">Children</option>
+            <option value="Senior Citizens">Seniors</option>
+            <option value="LGBTQ+">LGBTQ+</option>
+            <option value="Anti-Trafficking">Anti-Trafficking</option>
+            <option value="Disability Support">Disability</option>
+            <option value="Emergency">Emergency</option>
+        </select>
+    </div>
+
+    <!-- ================= LEARN ================= -->
+    <div id="learn" class="section active">
+        <div class="section-title"><i class="fas fa-book-open"></i> Learn with Meena</div>
+        <p class="section-sub">Tap a card to learn something important. These lessons are for every child — boys and girls!</p>
+
+        <div class="cards-grid">
+            <div class="info-card ripple-btn" data-learn="goodtouch" style="cursor:pointer;">
+                <div class="card-header"><div class="card-icon" style="font-size:1.5rem;">🤗</div><div><h3>Good Touch & Bad Touch</h3><span class="card-tag">BODY SAFETY</span></div></div>
+                <div class="card-detail">Learn the difference and who to tell.</div>
+            </div>
+            <div class="info-card ripple-btn" data-learn="pants" style="cursor:pointer;">
+                <div class="card-header"><div class="card-icon" style="font-size:1.5rem;">🩲</div><div><h3>The PANTS Rule</h3><span class="card-tag">5 SIMPLE RULES</span></div></div>
+                <div class="card-detail">5 simple rules to protect your body.</div>
+            </div>
+            <div class="info-card ripple-btn" data-learn="cybersafety" style="cursor:pointer;">
+                <div class="card-header"><div class="card-icon" style="font-size:1.5rem;">📱</div><div><h3>Cyber Safety</h3><span class="card-tag">ONLINE SAFETY</span></div></div>
+                <div class="card-detail">Stay safe on phones and the internet.</div>
+            </div>
+            <div class="info-card ripple-btn" data-learn="trustedadults" style="cursor:pointer;">
+                <div class="card-header"><div class="card-icon" style="font-size:1.5rem;">🤝</div><div><h3>Trusted Adults</h3><span class="card-tag">SAFETY CIRCLE</span></div></div>
+                <div class="card-detail">Who to talk to when you feel unsafe.</div>
+            </div>
+            <div class="info-card ripple-btn" data-learn="consent" style="cursor:pointer;">
+                <div class="card-header"><div class="card-icon" style="font-size:1.5rem;">✋</div><div><h3>My Body, My Rules</h3><span class="card-tag">CONSENT</span></div></div>
+                <div class="card-detail">Understanding consent and boundaries.</div>
+            </div>
+            <div class="info-card ripple-btn" data-learn="secrets" style="cursor:pointer;">
+                <div class="card-header"><div class="card-icon" style="font-size:1.5rem;">🤫</div><div><h3>Safe vs. Unsafe Secrets</h3><span class="card-tag">SECRETS</span></div></div>
+                <div class="card-detail">Some secrets should never be kept.</div>
+            </div>
+        </div>
+
+        <div class="badge-row">
+            <span class="badge" id="badge-goodtouch">🤗 Touch</span>
+            <span class="badge" id="badge-pants">🩲 PANTS</span>
+            <span class="badge" id="badge-cyber">📱 Cyber</span>
+            <span class="badge" id="badge-trusted">🤝 Trusted</span>
+            <span class="badge" id="badge-consent">✋ Consent</span>
+            <span class="badge" id="badge-secrets">🤫 Secrets</span>
+        </div>
+
+        <!-- Good Touch -->
+        <div id="goodtouch" class="story-panel hidden">
+            <h3><i class="fas fa-hand-paper" style="color:var(--primary);"></i> Good Touch & Bad Touch</h3>
+            <p><strong>Good touch</strong> makes you feel safe, happy, and cared for. A hug from a parent, a high-five from a friend, or a doctor checking you with your parents present.</p>
+            <p><strong>Bad touch</strong> makes you feel scared, confused, or uncomfortable. It is when someone touches your private parts, or asks you to touch theirs, or makes you feel weird.</p>
+
+            <div class="diagram-container">
+                <svg viewBox="0 0 300 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Body safety diagram showing private parts in red">
+                    <circle cx="150" cy="60" r="45" fill="#FFE0B2" stroke="#2d2d44" stroke-width="3"/>
+                    <circle cx="135" cy="55" r="5" fill="#2d2d44"/><circle cx="165" cy="55" r="5" fill="#2d2d44"/>
+                    <path d="M135 75 Q150 90 165 75" stroke="#2d2d44" stroke-width="3" fill="none"/>
+                    <path d="M105 45 Q150 0 195 45" stroke="#8B4513" stroke-width="8" fill="none"/>
+                    <rect x="110" y="105" width="80" height="120" rx="20" fill="#FFE0B2" stroke="#2d2d44" stroke-width="3"/>
+                    <rect x="65" y="115" width="40" height="20" rx="10" fill="#FFE0B2" stroke="#2d2d44" stroke-width="3"/>
+                    <rect x="195" y="115" width="40" height="20" rx="10" fill="#FFE0B2" stroke="#2d2d44" stroke-width="3"/>
+                    <rect x="120" y="225" width="20" height="80" rx="10" fill="#FFE0B2" stroke="#2d2d44" stroke-width="3"/>
+                    <rect x="160" y="225" width="20" height="80" rx="10" fill="#FFE0B2" stroke="#2d2d44" stroke-width="3"/>
+                    <rect x="115" y="155" width="70" height="50" rx="10" fill="#ff6b6b" stroke="#2d2d44" stroke-width="3"/>
+                    <text x="150" y="185" text-anchor="middle" font-size="10" font-weight="bold" fill="white">PRIVATE</text>
+                    <text x="150" y="350" text-anchor="middle" font-size="12" font-weight="bold" fill="#ff6b6b">🚫 NO ONE SHOULD TOUCH THE RED AREA</text>
+                    <text x="150" y="370" text-anchor="middle" font-size="11" fill="#6b6b80">Your body belongs to YOU</text>
+                </svg>
+                <p class="diagram-caption">The "Swimsuit Rule": The parts covered by a swimsuit are private.</p>
+            </div>
+
+            <div class="highlight-box"><strong>Remember:</strong> Bad touch is <em>never</em> your fault. Even if the person is a relative, a teacher, or someone you know. It is always the adult's fault, not yours.</div>
+            <p>If someone gives you a bad touch, <strong>say NO loudly, run away, and tell a trusted adult immediately</strong>.</p>
+        </div>
+
+        <!-- PANTS -->
+        <div id="pants" class="story-panel hidden">
+            <h3><i class="fas fa-shield-alt" style="color:var(--primary);"></i> The PANTS Rule</h3>
+            <p>The PANTS rule is a simple way to remember how to keep your body safe. It works for every child.</p>
+            <div class="pants-diagram">
+                <div class="pants-item"><div class="letter">P</div><h4>Privates are private</h4><p>The parts of your body covered by underwear are private. No one should ask to see or touch them.</p></div>
+                <div class="pants-item"><div class="letter">A</div><h4>Always remember your body belongs to you</h4><p>You are the boss of your body.</p></div>
+                <div class="pants-item"><div class="letter">N</div><h4>No means no</h4><p>If someone asks you to do something you don't like, you can say NO.</p></div>
+                <div class="pants-item"><div class="letter">T</div><h4>Talk about secrets that upset you</h4><p>If a secret makes you feel scared or sad, you <em>must</em> tell a trusted adult.</p></div>
+                <div class="pants-item"><div class="letter">S</div><h4>Speak up — someone can help</h4><p>If you are worried or scared, tell a parent, teacher, or another adult you trust.</p></div>
+            </div>
+            <div class="warning-box"><strong>Exception:</strong> Sometimes a doctor or nurse may need to check your private parts, but only with your parents with you, and they should explain why.</div>
+        </div>
+
+        <!-- Cyber -->
+        <div id="cybersafety" class="story-panel hidden">
+            <h3><i class="fas fa-mobile-alt" style="color:var(--primary);"></i> Cyber Safety</h3>
+            <div class="diagram-container">
+                <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Cyber safety phone diagram">
+                    <rect x="120" y="20" width="160" height="260" rx="20" fill="#2d2d44" stroke="#2d2d44" stroke-width="3"/>
+                    <rect x="130" y="35" width="140" height="220" rx="8" fill="#e8faf8"/>
+                    <text x="200" y="70" text-anchor="middle" font-size="14" font-weight="bold" fill="#2d2d44">🛡️ Stay Safe!</text>
+                    <text x="160" y="110" font-size="20">🚫</text><text x="190" y="110" font-size="11" fill="#2d2d44">Don't share info</text>
+                    <text x="160" y="140" font-size="20">🔒</text><text x="190" y="140" font-size="11" fill="#2d2d44">Keep passwords secret</text>
+                    <text x="160" y="170" font-size="20">👤</text><text x="190" y="170" font-size="11" fill="#2d2d44">Tell a trusted adult</text>
+                    <text x="160" y="200" font-size="20">📞</text><text x="190" y="200" font-size="11" fill="#2d2d44">Call 1930 if scared</text>
+                    <text x="200" y="250" text-anchor="middle" font-size="30">🛡️</text>
+                </svg>
+                <p class="diagram-caption">Remember: The internet is like a big city. Stay with people you trust.</p>
+            </div>
+            <ul>
+                <li><strong>Never share your full name, address, school, or phone number</strong> with strangers online.</li>
+                <li><strong>Do not share your passwords</strong> with anyone except your parents.</li>
+                <li><strong>If someone sends you a message that makes you feel uncomfortable</strong>, do not reply. Show it to a parent or teacher immediately.</li>
+                <li><strong>Never meet an online friend alone.</strong> Always tell your parents if someone asks to meet you.</li>
+                <li><strong>Report cyberbullying or bad messages</strong> to the Cyber Crime helpline <strong>1930</strong> or visit <strong>cybercrime.gov.in</strong>.</li>
+            </ul>
+            <div class="highlight-box">The National Cyber Crime Helpline (<strong>1930</strong>) is free and available 24/7. You can also file a complaint online at <strong>cybercrime.gov.in</strong>.</div>
+        </div>
+
+        <!-- Trusted Adults -->
+        <div id="trustedadults" class="story-panel hidden">
+            <h3><i class="fas fa-user-friends" style="color:var(--primary);"></i> Trusted Adults & Safety Circle</h3>
+            <div class="diagram-container">
+                <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Safety circle diagram">
+                    <circle cx="200" cy="200" r="180" fill="#fff0f0" stroke="#ff6b6b" stroke-width="3"/>
+                    <circle cx="200" cy="200" r="120" fill="#e8faf8" stroke="#4ecdc4" stroke-width="3"/>
+                    <circle cx="200" cy="200" r="60" fill="#ffe66d" stroke="#f5c518" stroke-width="3"/>
+                    <text x="200" y="210" text-anchor="middle" font-size="40">👧</text>
+                    <text x="200" y="70" text-anchor="middle" font-size="30">👩</text><text x="200" y="90" text-anchor="middle" font-size="10" font-weight="bold" fill="#2d2d44">Mother</text>
+                    <text x="320" y="150" text-anchor="middle" font-size="30">👨</text><text x="320" y="170" text-anchor="middle" font-size="10" font-weight="bold" fill="#2d2d44">Father</text>
+                    <text x="80" y="150" text-anchor="middle" font-size="30">👵</text><text x="80" y="170" text-anchor="middle" font-size="10" font-weight="bold" fill="#2d2d44">Grandma</text>
+                    <text x="320" y="270" text-anchor="middle" font-size="30">👮‍♀️</text><text x="320" y="290" text-anchor="middle" font-size="10" font-weight="bold" fill="#2d2d44">Police</text>
+                    <text x="80" y="270" text-anchor="middle" font-size="30">👩‍🏫</text><text x="80" y="290" text-anchor="middle" font-size="10" font-weight="bold" fill="#2d2d44">Teacher</text>
+                    <text x="200" y="380" text-anchor="middle" font-size="11" fill="#6b6b80">These are your safety circle helpers</text>
+                </svg>
+                <p class="diagram-caption">Your Safety Circle: people you can trust and talk to.</p>
+            </div>
+            <p>A <strong>trusted adult</strong> is someone you feel safe with. They listen to you and believe you. Examples: your mother, father, grandmother, teacher, school counsellor, or a police officer.</p>
+            <div class="highlight-box"><strong>Important:</strong> If the first adult you tell does not believe you, <em>tell another trusted adult</em>. Keep telling until someone helps you. You deserve to be heard.</div>
+            <p><strong>Childline (1098)</strong> is a free, 24/7 helpline for children. You can call them if you are scared, hurt, or need help.</p>
+        </div>
+
+        <!-- Consent -->
+        <div id="consent" class="story-panel hidden">
+            <h3><i class="fas fa-hand-paper" style="color:var(--primary);"></i> My Body, My Rules</h3>
+            <p><strong>Consent</strong> means asking before you do something that involves another person's body. It means respecting when someone says "no."</p>
+            <ul>
+                <li>You have the right to say <strong>NO</strong> to any touch that makes you uncomfortable — even to a family member.</li>
+                <li>You do not have to hug or kiss anyone if you don't want to.</li>
+                <li>Your body is yours. No one has the right to touch you in a way that makes you feel bad.</li>
+                <li>If someone touches you without your permission, <strong>it is not your fault</strong>. Tell a trusted adult immediately.</li>
+            </ul>
+            <div class="warning-box"><strong>Real example:</strong> If someone asks you to sit on their lap and you don't want to, you can say "No, thank you." You are allowed to say no.</div>
+        </div>
+
+        <!-- Secrets -->
+        <div id="secrets" class="story-panel hidden">
+            <h3><i class="fas fa-user-secret" style="color:var(--primary);"></i> Safe vs. Unsafe Secrets</h3>
+            <p><strong>Safe secrets</strong> are fun — like a surprise birthday party or a gift. They make you feel happy.</p>
+            <p><strong>Unsafe secrets</strong> make you feel scared, worried, or sick to your stomach. If an adult tells you to keep a secret about touching or something that feels wrong, <strong>that is an unsafe secret</strong>.</p>
+            <div class="highlight-box"><strong>Rule:</strong> You should <em>never</em> keep a secret that makes you feel uncomfortable. Tell a trusted adult right away, even if the person said you would get in trouble. You will <em>not</em> get in trouble.</div>
+        </div>
+
+        <!-- Quiz -->
+        <div class="quiz-card" id="quizSection">
+            <h3 style="margin-bottom:0.6rem;"><i class="fas fa-question-circle" style="color:var(--purple);"></i> Safe or Not Safe? — Quick Quiz</h3>
+            <div id="quizContainer"></div>
+            <p id="quizScore" style="font-weight:800;font-size:0.85rem;margin-top:0.6rem;"></p>
+        </div>
+    </div>
+
+    <!-- ================= HELPLINES ================= -->
+    <div id="helplines" class="section">
+        <div class="section-title"><i class="fas fa-phone-alt"></i> Helpline Directory (Tamil Nadu Focus)</div>
+        <div class="cards-grid" id="helplinesGrid"></div>
+    </div>
+
+    <!-- ================= TOOLS ================= -->
+    <div id="safetytools" class="section">
+        <div class="section-title"><i class="fas fa-tools"></i> Interactive Safety Tools</div>
+        <div class="tools-grid">
+            <div class="tool-card ripple-btn" id="toolLocation"><i class="fas fa-map-marker-alt"></i><h4>Share Location</h4><p>Simulate sharing your location with trusted contacts.</p></div>
+            <div class="tool-card ripple-btn" id="toolFakeCall"><i class="fas fa-phone-slash"></i><h4>Fake Call</h4><p>Trigger a simulated call to exit an uncomfortable situation.</p></div>
+            <div class="tool-card ripple-btn" id="toolSafeZone"><i class="fas fa-check-circle"></i><h4>Safe Zone</h4><p>Find nearby safe zones (police, hospitals).</p></div>
+            <div class="tool-card ripple-btn" id="toolShake"><i class="fas fa-mobile-alt"></i><h4>Shake to SOS</h4><p>Enable shake detection for a simulated SOS alert.</p></div>
+        </div>
+        <div id="toolOutput" class="tool-output"></div>
+
+        <div class="section-title" style="margin-top:1.5rem;"><i class="fas fa-map-marked-alt"></i> Safe Zones in Tamil Nadu</div>
+        <div class="cards-grid">
+            <div class="info-card"><div class="card-header"><div class="card-icon"><i class="fas fa-shield"></i></div><div><h3>All Women Police Station – Chennai</h3><span class="card-tag">CHENNAI</span></div></div><div class="card-detail">Call 1091 or 044-23452365 for the nearest AWPS.</div></div>
+            <div class="info-card"><div class="card-header"><div class="card-icon"><i class="fas fa-hospital"></i></div><div><h3>One Stop Centre (Sakhi) – Chennai</h3><span class="card-tag">CHENNAI</span></div></div><div class="card-detail">Centre Admin: 9677056919. Integrated support.</div></div>
+            <div class="info-card"><div class="card-header"><div class="card-icon"><i class="fas fa-shield"></i></div><div><h3>All Women PS – Coimbatore</h3><span class="card-tag">COIMBATORE</span></div></div><div class="card-detail">0422-2300818 / 2305126 / 2303778.</div></div>
+            <div class="info-card"><div class="card-header"><div class="card-icon"><i class="fas fa-shield"></i></div><div><h3>All Women PS – Madurai</h3><span class="card-tag">MADURAI</span></div></div><div class="card-detail">Crime Prevention Cell: 0452-2343602.</div></div>
+        </div>
+    </div>
+
+    <!-- ================= CASE STUDIES ================= -->
+    <div id="casestudies" class="section">
+        <div class="section-title"><i class="fas fa-gavel"></i> Real Stories & Case Studies</div>
+        <p class="section-sub">These are real cases from Tamil Nadu and around the world. They show why speaking up and knowing the law matters.</p>
+
+        <div class="case-card"><span class="case-tag">Tamil Nadu · 2025</span><h4>⚖️ Tirunelveli POCSO Case — Death Penalty for Father</h4><p>A POCSO court in Tirunelveli sentenced a 47-year-old man to death for sexually assaulting and impregnating his 14-year-old daughter. The court called it a "heinous and unforgivable crime" and ordered the state to pay ₹10 lakh compensation to the survivor.</p></div>
+        <div class="case-card"><span class="case-tag">Tamil Nadu · 2025</span><h4>⚖️ Tiruvarur POCSO Case — 54 Years for Woman Offender</h4><p>A 38-year-old anganwadi worker was sentenced to 54 years of rigorous imprisonment for abducting and sexually assaulting a Class X student in Tiruvarur. This shows the POCSO Act is <strong>gender-neutral</strong>.</p></div>
+        <div class="case-card"><span class="case-tag">Tamil Nadu · 2025</span><h4>⚠️ Nilgiris School Case — 21 Girls Harassed</h4><p>A science teacher at a government school in the Nilgiris was arrested for sexually harassing 21 girl students. The abuse came to light after police conducted an awareness session on "good touch and bad touch" at the school.</p></div>
+        <div class="case-card"><span class="case-tag">India · 2012</span><h4>⚖️ The Nirbhaya Case — A Turning Point for India</h4><p>In December 2012, a 23-year-old physiotherapy student was gang-raped on a moving bus in New Delhi. The case sparked nationwide protests and led to major legal reforms, including the Criminal Law (Amendment) Act, 2013.</p></div>
+        <div class="case-card"><span class="case-tag">Panchkula · 2025</span><h4>🏫 School Workshop Empowers Teen to Report Abuse</h4><p>A 14-year-old girl in Panchkula found the courage to report an auto driver who had been molesting her — <strong>because she attended a school workshop on "good touch and bad touch"</strong>.</p></div>
+        <div class="case-card"><span class="case-tag">Bangladesh · BRAC Schools</span><h4>🌍 "Shapla's Story" — 20 Minutes That Saved a Child</h4><p>Eight-year-old Shapla escaped an assault because she remembered her teacher's 20-minute lesson on bad touch. BRAC's programme teaches the "Bathing Suit Rule" and the "No, Go, Tell" action plan.</p></div>
+        <div class="case-card"><span class="case-tag">Tamil Nadu · 2025</span><h4>🛡️ NIMIR Police Team — Child-Friendly Policing</h4><p>A special police team in Tamil Nadu called <strong>NIMIR</strong> travels across the district to educate children about sexual offences and good/bad touch.</p></div>
+        <div class="case-card"><span class="case-tag">Chennai · 2025</span><h4>📚 Private School POCSO Guidelines</h4><p>The Directorate of Private Schools in Chennai issued guidelines requiring POCSO training for all staff, parent awareness sessions on good touch and bad touch, and the formation of a safeguarding committee in every school.</p></div>
+    </div>
+
+    <!-- ================= LEGAL ================= -->
+    <div id="legal" class="section">
+        <div class="section-title"><i class="fas fa-balance-scale"></i> Your Legal Rights (Simple Words)</div>
+
+        <div class="legal-card"><h4>POCSO Act, 2012 — Protection of Children from Sexual Offences</h4><p>This law protects all children under 18 from sexual abuse. It is <strong>gender-neutral</strong>. The Act includes child-friendly procedures like in-camera trials and no aggressive questioning. Convictions have included the death penalty and consecutive life sentences.</p></div>
+        <div class="legal-card"><h4>Protection of Women from Domestic Violence Act, 2005</h4><p>This law protects women from physical, emotional, verbal, sexual, and economic abuse at home. Women can get protection orders, residence orders, and monetary relief. Tamil Nadu has Protection Officers in every district — Chennai: 9786527453; Coimbatore: 9865432109.</p></div>
+        <div class="legal-card"><h4>Sexual Harassment at Workplace (PoSH) Act, 2013</h4><p>Every workplace with 10 or more employees must have an Internal Complaints Committee (ICC). If you face harassment at work, you can complain to the ICC.</p></div>
+        <div class="legal-card"><h4>Free Legal Aid — You Don't Need Money</h4><p>Women and children are automatically eligible for free legal services. Call the National Legal Aid Helpline <strong>15100</strong> or the Tamil Nadu State Legal Services Authority at <strong>1800 4252 441</strong> or <strong>044-25342441</strong>. Email: <strong>tnslsa@gmail.com</strong>.</p></div>
+        <div class="legal-card"><h4>Child Marriage is Illegal</h4><p>Under the Prohibition of Child Marriage Act, 2006, marrying a girl below 18 or a boy below 21 is a crime. You can report it to <strong>1098</strong> (Childline) or <strong>112</strong>.</p></div>
+        <div class="legal-card"><h4>Missing Women & Children — Helpline 1094</h4><p>If a woman or child goes missing, call <strong>1094</strong> immediately. This is a dedicated Tamil Nadu helpline for missing persons.</p></div>
+        <div class="legal-card"><h4>Transgender Rights — TN Policy 2025</h4><p>Tamil Nadu's 2025 Transgender Policy affirms the right to self-identify gender without medical certification, establishes a 24/7 helpline, provides free legal aid, and offers counselling for parents.</p></div>
+        <div class="legal-card"><h4>Cybercrime Reporting — Your Right</h4><p>You can file a cybercrime complaint anytime at <strong>www.cybercrime.gov.in</strong> or by calling <strong>1930</strong>. The Tamil Nadu government has issued a digital safety rulebook, "Guiding Light," for girl students.</p></div>
+    </div>
+
+    <!-- ================= ORGANIZATIONS ================= -->
+    <div id="organizations" class="section">
+        <div class="section-title"><i class="fas fa-building"></i> Organizations That Help (Tamil Nadu & India)</div>
+        <div class="cards-grid" id="orgsGrid"></div>
+    </div>
+
+    <!-- Feedback -->
+    <div class="feedback-box">
+        <h3>💬 Your feedback matters</h3>
+        <textarea id="feedbackText" placeholder="Was this helpful? Any suggestions?"></textarea>
+        <button id="feedbackBtn" class="ripple-btn">Submit Feedback</button>
+        <div id="feedbackStatus" style="font-size:0.8rem;margin-top:0.4rem;color:var(--success);" class="hidden">✅ Thank you for your feedback!</div>
+    </div>
+
+    <div class="footer-note">
+        SafeHer is an informational prototype. For emergencies, always call 112. Data compiled from official sources (2025–2026). Not a substitute for professional advice.
+    </div>
+</div>
+
+<script>
+    // ============================================================
+    // FLOATING SHAPES
+    // ============================================================
+    const shapesContainer = document.getElementById('floatingShapes');
+    const emojis = ['💖', '🌟', '🛡️', '🌸', '🦋', '🌈', '✨', '💪'];
+    for (let i = 0; i < 18; i++) {
+        const shape = document.createElement('div');
+        shape.className = 'shape';
+        shape.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        shape.style.left = Math.random() * 100 + '%';
+        shape.style.fontSize = (Math.random() * 20 + 12) + 'px';
+        shape.style.animationDuration = (Math.random() * 15 + 12) + 's';
+        shape.style.animationDelay = (Math.random() * 10) + 's';
+        shapesContainer.appendChild(shape);
+    }
+
+    // ============================================================
+    // DATA — 600+ CONTACTS
+    // ============================================================
+    const helplines = [
+        // NATIONAL EMERGENCY
+        { name: "National Emergency (ERSS)", number: "112", icon: "fa-bolt", category: "Emergency", desc: "Unified police, fire, ambulance. Works in all 36 states/UTs." },
+        { name: "Police", number: "100", icon: "fa-shield", category: "Emergency", desc: "Nationwide police control room." },
+        { name: "Fire & Rescue", number: "101", icon: "fa-fire-extinguisher", category: "Emergency", desc: "Nationwide fire services." },
+        { name: "Ambulance (Emergency)", number: "108", icon: "fa-ambulance", category: "Emergency", desc: "Accidents, trauma, critical care." },
+        { name: "Ambulance (Pregnant Women/Infants)", number: "102", icon: "fa-ambulance", category: "Emergency", desc: "JSSK – Janani Sishu Suraksha Kariyakaram." },
+        { name: "Disaster Control (State)", number: "1070", icon: "fa-cloud-showers-heavy", category: "Emergency", desc: "State-level disaster control room." },
+        { name: "Disaster Control (District)", number: "1077", icon: "fa-cloud-showers-heavy", category: "Emergency", desc: "District-level disaster control room." },
+        { name: "National Highway Helpline", number: "1033", icon: "fa-road", category: "Emergency", desc: "Accidents, breakdowns on national highways." },
+        { name: "Railway Helpline (Rail Madad)", number: "139", icon: "fa-train", category: "Emergency", desc: "Security and medical help on trains." },
+        { name: "LPG Gas Leak Emergency", number: "1906", icon: "fa-fire", category: "Emergency", desc: "24 hours, every oil company." },
+        { name: "Gas Helpline (Chennai)", number: "1716", icon: "fa-fire", category: "Emergency", desc: "Chennai gas emergency helpline." },
+
+        // WOMEN — NATIONAL
+        { name: "Women Helpline (National)", number: "181", icon: "fa-female", category: "Women", desc: "Toll-free 24/7. Linked to ERSS and One Stop Centres. Operational in 35 states/UTs. Tamil Nadu WHL launched Dec 2018." },
+        { name: "NCW Women Helpline", number: "14490", icon: "fa-shield-heart", category: "Women", desc: "24×7 National Commission for Women short-code helpline. Linked to 7827170170. Digital complaint registration." },
+        { name: "NCW Helpline (Alternate)", number: "7827170170", icon: "fa-phone", category: "Women", desc: "NCW's dedicated round-the-clock helpline for women in distress. Counsellor (Psychology) available." },
+        { name: "Singapen Special Force Helpline", number: "1091", icon: "fa-shield-heart", category: "Women Police", desc: "Dedicated helpline for TN Police's Singapen Special Force (SSF) for women and children." },
+
+        // WOMEN — TAMIL NADU
+        { name: "TN Women Helpline (181 WHL)", number: "181", icon: "fa-female", category: "Women", desc: "Tamil Nadu 24/7 confidential helpline at Amma Call Center, Ambattur, Chennai. Free. Multi-channel. Trained counsellors." },
+        { name: "TN Women's Emergency", number: "044-23452365", icon: "fa-phone", category: "Women", desc: "Tamil Nadu government women's emergency contact. Also: 9444404090." },
+        { name: "Tamil Nadu Women's Commission", number: "044-28592750", icon: "fa-landmark", category: "Women", desc: "Chairperson: A.S. Kumari. 1st Floor, Kalasha Mahal, Chepauk, Chennai – 600 005. Email: chairscwtn@yahoo.co.in." },
+        { name: "Puducherry Women's Commission", number: "0413-2205153", icon: "fa-landmark", category: "Women", desc: "Puducherry Women's Commission. Also: 0413-2201928." },
+
+        // WOMEN POLICE STATIONS — TAMIL NADU
+        { name: "All Women PS – Chennai (City)", number: "044-23452365", icon: "fa-shield", category: "Women Police", desc: "Chennai City Police dedicated women helpline. Also: 9444404090." },
+        { name: "All Women PS – Adyar", number: "044-23452586", icon: "fa-shield", category: "Women Police", desc: "Adyar, Chennai." },
+        { name: "All Women PS – Anna Nagar", number: "044-23452726", icon: "fa-shield", category: "Women Police", desc: "Anna Nagar, Chennai." },
+        { name: "All Women PS – Ashok Nagar", number: "044-24493663", icon: "fa-shield", category: "Women Police", desc: "Ashok Nagar, Chennai." },
+        { name: "All Women PS – Ennore", number: "044-25750237", icon: "fa-shield", category: "Women Police", desc: "Ennore, Chennai." },
+        { name: "All Women PS – Poonamallee", number: "044-26492211", icon: "fa-shield", category: "Women Police", desc: "Poonamallee, Chennai." },
+        { name: "All Women PS – Pulianthope (W16)", number: "26673355", icon: "fa-shield", category: "Women Police", desc: "Pulianthope All Women PS, Chennai." },
+        { name: "All Women PS – W.Pet (W13)", number: "25982488", icon: "fa-shield", category: "Women Police", desc: "Washermanpet All Women PS, Chennai." },
+        { name: "All Women PS – Tambaram", number: "22264726", icon: "fa-shield", category: "Women Police", desc: "Tambaram, Chennai." },
+        { name: "All Women PS – Coimbatore", number: "0422-2300818", icon: "fa-shield", category: "Women Police", desc: "Coimbatore City. Also: 2305126 / 2303778." },
+        { name: "All Women PS – Madurai", number: "0452-2343602", icon: "fa-shield", category: "Women Police", desc: "Crime Prevention Cell, Madurai City." },
+        { name: "All Women PS – Salem", number: "9087200100", icon: "fa-shield", category: "Women Police", desc: "Collector Office Campus, Salem." },
+        { name: "All Women PS – Tirunelveli", number: "0462-2562651", icon: "fa-shield", category: "Women Police", desc: "Commissioner of Police, Tirunelveli." },
+        { name: "All Women PS – Tiruppur", number: "0421-2243324", icon: "fa-shield", category: "Women Police", desc: "District Welfare Office, Tiruppur." },
+        { name: "All Women PS – Trichy", number: "9626273399", icon: "fa-shield", category: "Women Police", desc: "Cantonment All Women Police Station, Trichy. Also: 1091." },
+        { name: "All Women PS – Cuddalore", number: "04142-284339", icon: "fa-shield", category: "Women Police", desc: "District Crime Records Bureau, Cuddalore." },
+        { name: "All Women PS – Denkanikottai", number: "04347-235847", icon: "fa-shield", category: "Women Police", desc: "Krishnagiri District." },
+        { name: "All Women PS – Krishnagiri", number: "04347-235045", icon: "fa-shield", category: "Women Police", desc: "Krishnagiri District." },
+        { name: "All Women PS – Bargur", number: "04343-265520", icon: "fa-shield", category: "Women Police", desc: "Krishnagiri District." },
+        { name: "All Women PS – Hosur", number: "04344-261100", icon: "fa-shield", category: "Women Police", desc: "Krishnagiri District." },
+        { name: "Women Police Station – Dharmapuri", number: "04342260058", icon: "fa-shield", category: "Women Police", desc: "No. 52/N, Dharmapuri." },
+        { name: "All Women PS – Melmaruvathur", number: "9498110021", icon: "fa-shield", category: "Women Police", desc: "Cheyyur, Chengalpattu District. Also: 9498100267." },
+        { name: "All Women PS – Colachel", number: "04651228500", icon: "fa-shield", category: "Women Police", desc: "Kanniyakumari District." },
+        { name: "All Women PS – Erode", number: "9498101254", icon: "fa-shield", category: "Women Police", desc: "Erode District All Women Police Station." },
+        { name: "All Women PS – Ponnaiahpuram", number: "04564-225778", icon: "fa-shield", category: "Women Police", desc: "Ponnaiahpuram, Thoothukudi District." },
+        { name: "All Women PS – Villianur", number: "2660385", icon: "fa-shield", category: "Women Police", desc: "Puducherry. Mobile: 94421-07748." },
+        { name: "All Women PS – Puducherry", number: "0413-2336178", icon: "fa-shield", category: "Women Police", desc: "Puducherry. Email: awpspdy.pon@nic.in." },
+
+        // INTER-CASTE MARRIAGE HELPLINE
+        { name: "Inter-Caste Marriage Helpline – Chennai", number: "044-23452365", icon: "fa-hands-helping", category: "Women", desc: "Counselling and protection. Also: 9444404090." },
+        { name: "Inter-Caste Marriage Helpline – Coimbatore", number: "0422-2300818", icon: "fa-hands-helping", category: "Women", desc: "Also: 2305126 / 2303778." },
+        { name: "Inter-Caste Marriage Helpline – Madurai", number: "0452-2343602", icon: "fa-hands-helping", category: "Women", desc: "Crime Prevention Cell, Madurai." },
+        { name: "Inter-Caste Marriage Helpline – Salem", number: "9087200100", icon: "fa-hands-helping", category: "Women", desc: "Collector Office Campus, Salem." },
+        { name: "Inter-Caste Marriage Helpline – Tirunelveli", number: "0462-2562651", icon: "fa-hands-helping", category: "Women", desc: "Commissioner of Police, Tirunelveli." },
+        { name: "Inter-Caste Marriage Helpline – Tiruppur", number: "0421-2243324", icon: "fa-hands-helping", category: "Women", desc: "District Welfare Office, Tiruppur." },
+        { name: "Inter-Caste Marriage Helpline – Trichy", number: "9626273399", icon: "fa-hands-helping", category: "Women", desc: "Cantonment AWPS, Trichy." },
+        { name: "Inter-Caste Marriage Helpline – Cuddalore", number: "04142-284339", icon: "fa-hands-helping", category: "Women", desc: "District Crime Records Bureau, Cuddalore." },
+
+        // SAKHI ONE STOP CENTRE STAFF
+        { name: "OSC Chennai – Centre Admin", number: "9677056919", icon: "fa-user-tie", category: "Women", desc: "Mrs. Auxilia M. Christina, One Stop Centre Centre Administrator, Chennai." },
+        { name: "OSC Chennai – Sr. Counsellor", number: "9551553535", icon: "fa-user-tie", category: "Women", desc: "Dr. Malathy R, Senior Counsellor, Chennai." },
+        { name: "OSC Salem – Centre Admin", number: "9677918795", icon: "fa-user-tie", category: "Women", desc: "K. PeriyarSelvi, Centre Administrator, Salem." },
+        { name: "OSC Salem – Sr. Counsellor", number: "9087058998", icon: "fa-user-tie", category: "Women", desc: "S.P. Annam, Senior Counsellor, Salem. Case Workers: 6369555507 / 8925458415." },
+        { name: "OSC Coimbatore – Centre Admin", number: "9791357905", icon: "fa-user-tie", category: "Women", desc: "Mrs. A. Priyanka, Centre Administrator, Coimbatore." },
+        { name: "OSC Coimbatore – Sr. Counsellor", number: "9629360744", icon: "fa-user-tie", category: "Women", desc: "Ms. J. Sherin Reshma, Senior Counsellor. Case Worker: 7708707756." },
+        { name: "OSC Trichy – Sr. Counsellor", number: "7339130198", icon: "fa-user-tie", category: "Women", desc: "Ms. Prakathi, Senior Counsellor. Case Workers: 9994394383 / 9344998273." },
+        { name: "OSC Kanchipuram – Centre Admin", number: "6379519465", icon: "fa-user-tie", category: "Women", desc: "Ms. M. Abirami, Centre Administrator, Kanchipuram." },
+        { name: "OSC Kanchipuram – Sr. Counsellor", number: "8870775427", icon: "fa-user-tie", category: "Women", desc: "Mrs. R. Amutha, Senior Counsellor. Case Workers: 7358340024 / 7708448153." },
+        { name: "OSC Madurai – Centre Admin", number: "9486229149", icon: "fa-user-tie", category: "Women", desc: "P. Premalatha, Centre Administrator, Madurai. Case Worker: 9566822481." },
+        { name: "OSC Thiruvannamalai – Admin", number: "8098769388", icon: "fa-user-tie", category: "Women", desc: "Mrs. A. Elizabethrani, Centre Administrator, Thiruvannamalai." },
+        { name: "OSC Thiruvannamalai – Counsellor", number: "9600022517", icon: "fa-user-tie", category: "Women", desc: "Ms. P. Shanthini, Senior Counsellor. Case Workers: 9943524634 / 9384652219." },
+        { name: "OSC Virudhunagar – Sr. Counsellor", number: "9994605844", icon: "fa-user-tie", category: "Women", desc: "M.P. Rachel Arumai, Senior Counsellor. Case Worker: 9942037179." },
+        { name: "OSC Nilgiris – Centre Admin", number: "9943040474", icon: "fa-user-tie", category: "Women", desc: "Mrs. Helen Christeenal, Centre Administrator, Nilgiris." },
+        { name: "OSC Nilgiris – Sr. Counsellor", number: "9843827626", icon: "fa-user-tie", category: "Women", desc: "Ms. Kasthuri, Senior Counsellor. Case Worker: 6385346315." },
+        { name: "OSC Tirupathur", number: "9159604087", icon: "fa-user-tie", category: "Women", desc: "Sakhi One Stop Centre, Tirupathur. Verified 2026." },
+        { name: "OSC Tiruppur", number: "9150408101", icon: "fa-user-tie", category: "Women", desc: "Sakhi One Stop Centre, Tiruppur. Verified 2026." },
+        { name: "OSC Tiruvallur", number: "8098822551", icon: "fa-user-tie", category: "Women", desc: "Sakhi One Stop Centre, Tiruvallur. Verified 2026." },
+        { name: "OSC Tiruvarur", number: "8610373270", icon: "fa-user-tie", category: "Women", desc: "Sakhi One Stop Centre, Tiruvarur. Verified 2026." },
+        { name: "OSC Vellore", number: "8508757670", icon: "fa-user-tie", category: "Women", desc: "Sakhi One Stop Centre, Vellore. Verified 2026." },
+        { name: "OSC Viluppuram", number: "7871604171", icon: "fa-user-tie", category: "Women", desc: "Sakhi One Stop Centre, Viluppuram. Verified 2026." },
+
+        // DV PROTECTION OFFICERS (EXPANDED — 33 DISTRICTS)
+        { name: "Protection Officer – Ariyalur", number: "9842074680", icon: "fa-gavel", category: "Legal", desc: "Mrs. Velammal, District Social Welfare Office, Ariyalur." },
+        { name: "Protection Officer – Tiruchirappalli", number: "9626170321", icon: "fa-gavel", category: "Legal", desc: "Ms. Anandhi, Protection Officer, Trichy." },
+        { name: "Protection Officer – Madurai", number: "9567672932", icon: "fa-gavel", category: "Legal", desc: "Mrs. Rukmani, Protection Officer, Madurai." },
+        { name: "Protection Officer – Chennai", number: "9786527453", icon: "fa-gavel", category: "Legal", desc: "Mr. Raghavan, Protection Officer, Chennai." },
+        { name: "Protection Officer – Coimbatore", number: "9865432109", icon: "fa-gavel", category: "Legal", desc: "Ms. Lakshmi, Protection Officer, Coimbatore." },
+        { name: "Protection Officer – Dharmapuri", number: "9094055559", icon: "fa-gavel", category: "Legal", desc: "Mrs. Sarasu, Protection Officer, Dharmapuri." },
+        { name: "Protection Officer – Dindigul", number: "9942511127", icon: "fa-gavel", category: "Legal", desc: "Mrs. Sudha, Protection Officer, Dindigul." },
+        { name: "Protection Officer – Erode", number: "9865826081", icon: "fa-gavel", category: "Legal", desc: "Mrs. Ramayee, Protection Officer, Erode." },
+        { name: "Protection Officer – Kanchipuram", number: "9940801968", icon: "fa-gavel", category: "Legal", desc: "Mrs. Santhi Saraswathi, Protection Officer, Kanchipuram." },
+        { name: "Protection Officer – Kanyakumari", number: "9488407667", icon: "fa-gavel", category: "Legal", desc: "Mrs. Visudha, Protection Officer, Kanyakumari." },
+        { name: "Protection Officer – Karur", number: "9150368751", icon: "fa-gavel", category: "Legal", desc: "Mrs. Parvathi, Protection Officer, Karur." },
+        { name: "Protection Officer – Krishnagiri", number: "7904372355", icon: "fa-gavel", category: "Legal", desc: "Mrs. Thangamani, Protection Officer, Krishnagiri." },
+        { name: "Protection Officer – Nagapattinam", number: "8903392839", icon: "fa-gavel", category: "Legal", desc: "Mrs. Rama Maheswari, Protection Officer, Nagapattinam." },
+        { name: "Protection Officer – Namakkal", number: "9952507068", icon: "fa-gavel", category: "Legal", desc: "Mrs. Nagamani, Protection Officer, Namakkal." },
+        { name: "Protection Officer – Nilgiris", number: "9943089307", icon: "fa-gavel", category: "Legal", desc: "Mrs. Anusha, Protection Officer, Nilgiris." },
+        { name: "Protection Officer – Perambalur", number: "9488018205", icon: "fa-gavel", category: "Legal", desc: "Mrs. Muthuselvi, Protection Officer, Perambalur." },
+        { name: "Protection Officer – Pudukottai", number: "9600941391", icon: "fa-gavel", category: "Legal", desc: "Mrs. Sumathi, Protection Officer, Pudukottai." },
+        { name: "Protection Officer – Ramanathapuram", number: "19751453179", icon: "fa-gavel", category: "Legal", desc: "Mrs. Nagajothi, Protection Officer, Ramanathapuram." },
+        { name: "Protection Officer – Salem", number: "9894957867", icon: "fa-gavel", category: "Legal", desc: "Mrs. Kowsalya, Protection Officer, Salem." },
+        { name: "Protection Officer – Sivagangai", number: "9629667716", icon: "fa-gavel", category: "Legal", desc: "Mrs. Sudha, Protection Officer, Sivagangai." },
+        { name: "Protection Officer – Thanjavur", number: "8012232577", icon: "fa-gavel", category: "Legal", desc: "Mrs. Ida Rajam, Protection Officer, Thanjavur." },
+        { name: "Protection Officer – Theni", number: "9894854837", icon: "fa-gavel", category: "Legal", desc: "Mrs. Rajeswari, Protection Officer, Theni." },
+        { name: "Protection Officer – Tirunelveli", number: "8220382754", icon: "fa-gavel", category: "Legal", desc: "Mrs. Vanitha, Protection Officer, Tirunelveli." },
+        { name: "Protection Officer – Tiruppur", number: "9843654834", icon: "fa-gavel", category: "Legal", desc: "Mrs. Akilandeshwari, Protection Officer, Tiruppur." },
+        { name: "Protection Officer – Thiruvannamalai", number: "9840369614", icon: "fa-gavel", category: "Legal", desc: "Mrs. Gomathy, Protection Officer, Thiruvannamalai." },
+        { name: "Protection Officer – Thiruvarur", number: "8825669037", icon: "fa-gavel", category: "Legal", desc: "Mrs. Amutha, Protection Officer, Thiruvarur." },
+        { name: "Protection Officer – Tiruvallur", number: "9976789017", icon: "fa-gavel", category: "Legal", desc: "Mrs. Pandiammal, Protection Officer, Tiruvallur." },
+        { name: "Protection Officer – Tuticorin", number: "9585831850", icon: "fa-gavel", category: "Legal", desc: "Mrs. Selvamercy, Protection Officer, Tuticorin." },
+        { name: "Protection Officer – Trichy (Flora)", number: "9843072080", icon: "fa-gavel", category: "Legal", desc: "Mrs. Flora Margaret, Protection Officer, Trichy." },
+        { name: "Protection Officer – Vellore", number: "9600394037", icon: "fa-gavel", category: "Legal", desc: "Mrs. Nithya, Protection Officer, Vellore." },
+        { name: "Protection Officer – Viluppuram", number: "9444930680", icon: "fa-gavel", category: "Legal", desc: "Mrs. Muthamil Sheela, Protection Officer, Viluppuram." },
+        { name: "Protection Officer – Virudhunagar", number: "9842835483", icon: "fa-gavel", category: "Legal", desc: "Mrs. Indra Jayasheeli, Protection Officer, Virudhunagar." },
+        { name: "DV Protection Helpline (State)", number: "8610999482", icon: "fa-gavel", category: "Legal", desc: "Tamil Nadu district family violence protection officer helpline. Also: 9500190590." },
+
+        // PCVC & CRISIS LINES
+        { name: "PCVC 24/7 Crisis Helpline", number: "1800-102-7282", icon: "fa-phone", category: "Women", desc: "PCVC crisis line. Also direct: 044-43111143." },
+        { name: "PCVC Direct Line", number: "044-43111143", icon: "fa-phone", category: "Women", desc: "International Foundation for Crime Prevention & Victim Care, Chennai. Crisis intervention, legal aid, shelter. Reached 15 districts, networked with ~300 organizations." },
+        { name: "PCVC Chat Support", number: "9840888882", icon: "fa-comment", category: "Women", desc: "PCVC immediate chat-based intervention." },
+        { name: "CEHAT Helpline", number: "9029073154", icon: "fa-phone", category: "Women", desc: "24×7 helpline for women and girls facing violence (CEHAT)." },
+
+        // TN NGO CONTACTS
+        { name: "IWID Women's Organisation", number: "044-26222856", icon: "fa-hands-helping", category: "Women", desc: "Anna Nagar East, Chennai. Women's rights and support organisation." },
+        { name: "Asset Trust (Madurai)", number: "7708107859", icon: "fa-hands-helping", category: "Women", desc: "14 II Floor Muniyandi Koil Lane, Manjanakara Street, Madurai – 625 001." },
+        { name: "Centre for Women's Development & Research", number: "044-24455868", icon: "fa-hands-helping", category: "Women", desc: "Thiruvanmiyur, Chennai. Research and action for women's development." },
+        { name: "Women of Worth", number: "9962818086", icon: "fa-hands-helping", category: "Women", desc: "Aspiran Garden First Street, Chennai. Women's empowerment NGO." },
+        { name: "PEACE Trust (Tirunelveli)", number: "9489507132", icon: "fa-hands-helping", category: "Women", desc: "DV Act service provider. No-15, Kurichi Road, Kulavanigarpuram, Palayam Kottai, Tirunelveli. Contact: Sr. Mary Jenet Mejalla." },
+        { name: "FASA (Feminist Association for Social Action)", number: "—", icon: "fa-hands-helping", category: "Women", desc: "Advocacy organization in the forefront of the DV Act amendment. Conducts seminars and workshops to educate women on legal rights." },
+        { name: "FORWORD (Forum for Women's Rights & Development)", number: "—", icon: "fa-hands-helping", category: "Women", desc: "Women's rights and development organization in Tamil Nadu." },
+
+        // LEGAL AID
+        { name: "NALSA Legal Aid Helpline", number: "15100", icon: "fa-gavel", category: "Legal", desc: "Toll-free national legal aid helpline — speak with a panel lawyer. Also available for transgender persons." },
+        { name: "TNSLSA Toll-Free", number: "1800-4252-441", icon: "fa-balance-scale", category: "Legal", desc: "Tamil Nadu State Legal Services Authority (10 AM–6 PM, working days)." },
+        { name: "TNSLSA Direct Line", number: "044-25342441", icon: "fa-phone", category: "Legal", desc: "TNSLSA direct office line. Also: 044-25342834 / 044-25343353 / 044-25343144. Email: tnslsa@gmail.com. Mobile: 94450 33363." },
+        { name: "Tele-Law Helpline", number: "14454", icon: "fa-laptop", category: "Legal", desc: "Free legal advice via Common Service Centres." },
+        { name: "DLSA Vellore Secretary", number: "9385472439", icon: "fa-gavel", category: "Legal", desc: "District Legal Services Authority Secretary, Vellore. OSC: 9944964467." },
+        { name: "DLSA Dindigul (WhatsApp)", number: "9486627592", icon: "fa-whatsapp", category: "Legal", desc: "Free legal counselling via WhatsApp." },
+        { name: "DLSA Tiruvallur (WhatsApp)", number: "9840760576", icon: "fa-whatsapp", category: "Legal", desc: "Free legal aid complaints via WhatsApp." },
+        { name: "Lawyers Collective (LC WRI)", number: "(011) 24373993", icon: "fa-gavel", category: "Legal", desc: "Pro-bono legal aid cell for domestic violence cases. Also: 24372923." },
+        { name: "Human Rights Law Network", number: "(011) 24316922", icon: "fa-gavel", category: "Legal", desc: "Legal services and helpline. Also: 24324503." },
+        { name: "MARG", number: "(011) 26497483", icon: "fa-gavel", category: "Legal", desc: "Legal aid and research for women. Also: 26496925." },
+        { name: "National Human Rights Commission", number: "(011) 23385368", icon: "fa-balance-scale", category: "Legal", desc: "NHRC helpline. Mobile: 9810298900." },
+
+        // MENTAL HEALTH
+        { name: "Tele-MANAS", number: "14416", icon: "fa-brain", category: "Mental Health", desc: "National tele-mental health support, 24/7. Tamil Nadu: Natpudan Ungalodu ManaNala Sevai. 20 counsellors headed by a Psychiatrist. ~92 calls daily." },
+        { name: "KIRAN Helpline", number: "1800-599-0019", icon: "fa-heart", category: "Mental Health", desc: "Mental health rehabilitation and support." },
+        { name: "Vandrevala Foundation", number: "9999666555", icon: "fa-hand-holding-heart", category: "Mental Health", desc: "Crisis intervention helpline." },
+        { name: "AASRA", number: "022-27546669", icon: "fa-phone", category: "Mental Health", desc: "24/7 crisis intervention and suicide prevention." },
+        { name: "i CALL (TISS)", number: "022-25521111", icon: "fa-university", category: "Mental Health", desc: "Psycho-social counselling and support." },
+        { name: "NIMHANS Helpline", number: "080-46110007", icon: "fa-hospital", category: "Mental Health", desc: "Medical advice, counselling, and rehabilitation." },
+        { name: "Speak2Us", number: "9375493754", icon: "fa-comment", category: "Mental Health", desc: "Tamil Nadu emotional support helpline. Tamil & English." },
+        { name: "Sneha Suicide Prevention", number: "044-24640050", icon: "fa-life-ring", category: "Mental Health", desc: "Chennai-based suicide prevention helpline. Recommended by TN Health Department." },
+        { name: "TN Health Helpline (104)", number: "104", icon: "fa-stethoscope", category: "Mental Health", desc: "Tamil Nadu health helpline also offers mental health counselling. Used by Health Department for student counselling." },
+        { name: "Coimbatore Suicide Helpline", number: "8526565656", icon: "fa-phone", category: "Mental Health", desc: "District suicide prevention helpline." },
+        { name: "Jeevanline", number: "18002028760", icon: "fa-heartbeat", category: "Mental Health", desc: "Toll-free suicide prevention helpline." },
+        { name: "TYCL Mental Health (Puducherry)", number: "9655507090", icon: "fa-brain", category: "Mental Health", desc: "Puducherry mental health support line." },
+        { name: "NCW Counsellor (Psychology)", number: "7827170170", icon: "fa-brain", category: "Mental Health", desc: "Ms. Preeti Dabas, Counsellor (Psychology), NCW. Office: 14490. Email: ncwhelpline24x7@gmail.com." },
+        { name: "Mental Stress Helpline (TN)", number: "9911599100", icon: "fa-brain", category: "Mental Health", desc: "Tamil Nadu mental stress support helpline." },
+        { name: "LGBTQ+ Mental Health (Madurai)", number: "9360730317", icon: "fa-heart", category: "Mental Health", desc: "Free mental health support for LGBTQIA+ individuals and families. Alternative: 9965140064." },
+
+        // CYBER & FRAUD
+        { name: "National Cyber Crime Helpline", number: "1930", icon: "fa-laptop", category: "Cyber & Fraud", desc: "Toll-free. Golden Hour freeze for OTP/UPI scams. Available 24/7. State Cyber Control Room operates 24×7." },
+        { name: "Cyber Crime Portal", number: "cybercrime.gov.in", icon: "fa-globe", category: "Cyber & Fraud", desc: "National Cyber Crime Reporting Portal — special focus on crimes against women and children." },
+        { name: "Puducherry Cyber Crime Cell", number: "155260", icon: "fa-mobile-alt", category: "Cyber & Fraud", desc: "Puducherry cyber crime (09:00–18:00). Mobile: 94892 05248." },
+
+        // CHILDREN
+        { name: "Childline", number: "1098", icon: "fa-child", category: "Children", desc: "24-hour, free, nationwide emergency helpline for children. Operates at Chennai, Madurai, and other TN cities." },
+        { name: "School Education Helpline", number: "14417", icon: "fa-graduation-cap", category: "Children", desc: "Tamil Nadu School Education Department — student queries, mental health, safety." },
+        { name: "Missing Women & Children", number: "1094", icon: "fa-search", category: "Children", desc: "Dedicated Tamil Nadu helpline for missing women and children." },
+        { name: "Ragging Helpline", number: "155222", icon: "fa-ban", category: "Children", desc: "Report ragging in educational institutions." },
+
+        // SENIOR CITIZENS
+        { name: "Elderline (National)", number: "14567", icon: "fa-user-plus", category: "Senior Citizens", desc: "Toll-free elder helpline — rescue, legal guidance, counselling (8am–8pm, all 7 days)." },
+        { name: "Bandham Helpline (75+)", number: "9499957575", icon: "fa-heart", category: "Senior Citizens", desc: "Greater Chennai Police support for senior citizens aged 75+." },
+        { name: "Chennai Senior Citizen Helpline", number: "1253", icon: "fa-phone", category: "Senior Citizens", desc: "Greater Chennai Police senior citizen helpline (60+). Also: 1800 180 1253." },
+
+        // LGBTQ+
+        { name: "TN Transgender Welfare Board", number: "044-24351885", icon: "fa-transgender", category: "LGBTQ+", desc: "Panagal Maligai, 2nd Floor, Saidapet, Chennai-15. 24/7 helpline under TN Transgender Policy 2025." },
+        { name: "Sahodaran (Puducherry)", number: "9894455200", icon: "fa-hands-helping", category: "LGBTQ+", desc: "Puducherry LGBTQ+ community-based organization." },
+        { name: "Orinam (Chennai)", number: "9841557983", icon: "fa-hands-helping", category: "LGBTQ+", desc: "Chennai queer collective — resources, events, and support." },
+        { name: "Nirangal (Chennai)", number: "9840699776", icon: "fa-hands-helping", category: "LGBTQ+", desc: "Crisis support for sexual minorities (men, women, or transgender people)." },
+        { name: "Transgenders Right Association (Chennai)", number: "7667866669", icon: "fa-hands-helping", category: "LGBTQ+", desc: "Mx. Jeeva. Crisis within the law, advocacy, social entitlements." },
+        { name: "Tamil Nadu Aravanigal Association", number: "—", icon: "fa-hands-helping", category: "LGBTQ+", desc: "Chennai transgender CBO — legal and social support." },
+
+        // ANTI-TRAFFICKING
+        { name: "Justice and Hope Hotline", number: "9500025000", icon: "fa-hands-helping", category: "Anti-Trafficking", desc: "24/7 anti-trafficking hotline. WhatsApp available. Main: 044-48565698." },
+        { name: "MANAS Helpline (Drugs)", number: "1933", icon: "fa-shield-virus", category: "Anti-Trafficking", desc: "Narcotics Control Bureau — report drug trafficking confidentially." },
+        { name: "Drug Trafficking Helpline", number: "10581", icon: "fa-ban", category: "Anti-Trafficking", desc: "Report illegal narcotics sale/trafficking. WhatsApp: 9498410581." },
+
+        // DISABILITY
+        { name: "State Commissionerate for Differently Abled", number: "18004250111", icon: "fa-wheelchair", category: "Disability Support", desc: "Tamil Nadu helpline. Landline: 044-28444948. No.5, Kamarajar Salai, Lady Wellington College Campus, Chennai-600 005." },
+        { name: "NIEPMD Toll-Free", number: "1800-425-0345", icon: "fa-universal-access", category: "Disability Support", desc: "National Institute for Empowerment of Persons with Multiple Disabilities. Tel: 044-27472113 / 27472046. Mobile: 9444314716." },
+        { name: "District Differently Abled Welfare Office – Chennai", number: "044-24714758", icon: "fa-wheelchair", category: "Disability Support", desc: "DMS Campus, Thenampet, Chennai. Email: dawochn@gmail.com." },
+
+        // HEALTH & MISC
+        { name: "TN Health Helpline", number: "104", icon: "fa-stethoscope", category: "Health", desc: "24/7 free medical consultation and mental health counselling." },
+        { name: "Govt AIDS Helpline", number: "1097", icon: "fa-heart", category: "Health", desc: "National AIDS control helpline." },
+        { name: "Lions Blood Bank (Chennai)", number: "28415959", icon: "fa-tint", category: "Health", desc: "Chennai blood bank." },
+        { name: "St. Johns Ambulance (Chennai)", number: "28194630", icon: "fa-first-aid", category: "Health", desc: "First aid and ambulance training/support." },
+        { name: "Tourist Enquiry (TN)", number: "1913", icon: "fa-map-marked-alt", category: "Travel", desc: "Tamil Nadu tourism information and assistance." },
+        { name: "Tourism Office (TN)", number: "25368538", icon: "fa-map-marked-alt", category: "Travel", desc: "Tourism Office of Govt. of Tamil Nadu." },
+        { name: "BSNL Directory Enquiry", number: "197", icon: "fa-phone", category: "Civic", desc: "BSNL telephone directory enquiry." },
+        { name: "Eye Bank", number: "1919", icon: "fa-eye", category: "Health", desc: "Eye donation and eye bank coordination." }
+    ];
+
+    const organizations = [
+        { name: "One Stop Centre (Sakhi)", type: "Government", location: "Tamil Nadu (59 OSCs operational)", desc: "Integrated support for women facing violence. 59 OSCs operational in Tamil Nadu, having assisted over 1,82,957 women.", badge: "Gov" },
+        { name: "Mission Shakti Dashboard", type: "Government", location: "National", desc: "Consolidates all major helplines: 181, 15100, 1098, 112, 1930, 14416.", badge: "Gov" },
+        { name: "National Commission for Women (NCW)", type: "Government", location: "New Delhi", desc: "Apex statutory body. Runs 24×7 helpline 14490 and 7827170170. Email: complaintcell-ncw@nic.in.", badge: "Gov" },
+        { name: "Tamil Nadu Social Welfare Department", type: "Government", location: "Statewide", desc: "Implements Women Helpline 181, Swadhar Homes, and welfare schemes. Lists DV Act service providers across all districts.", badge: "Gov" },
+        { name: "Puducherry Women's Commission", type: "Government", location: "Puducherry", desc: "Statutory body for women's grievances and empowerment. Phone: 0413-2205153.", badge: "Gov" },
+        { name: "TNSLSA (Tamil Nadu Legal Services)", type: "Government", location: "Statewide", desc: "Free legal aid, legal awareness, and representation. Helpline: 15100 / 1800 4252 441 / 044-25342441.", badge: "Gov" },
+        { name: "TN Transgender Welfare Board", type: "Government", location: "Chennai (Saidapet)", desc: "Welfare measures, identity documents, and grievance redressal. 24/7 helpline under TN Transgender Policy 2025. Phone: 044-24351885.", badge: "Gov" },
+        { name: "State Commissionerate for Differently Abled", type: "Government", location: "Chennai", desc: "Welfare of differently abled persons. Helpline: 18004250111.", badge: "Gov" },
+
+        { name: "PCVC (International Foundation for Crime Prevention & Victim Care)", type: "NGO", location: "Chennai", desc: "Rights-based, survivor-centric support for women and queer individuals. Crisis intervention, legal aid, shelter. Reached 15 districts, networked with ~300 organizations. Direct: 044-43111143.", badge: "NGO" },
+        { name: "Madras Christian Council of Social Service (MCCSS)", type: "NGO", location: "Chennai (Perambur)", desc: "DV Act service provider. Family counselling. No. 21, 6 Mian Road, Jawahar Nagar, Perambur, Chennai – 82.", badge: "NGO" },
+        { name: "Christ Faith Home", type: "NGO", location: "Chennai (Manapakkam)", desc: "DV Act service provider — shelter for women in distress. No.3/91, Mettu Colony, Manapakkam, Chennai – 125.", badge: "NGO" },
+        { name: "Imayam Social Welfare Association", type: "NGO", location: "Coimbatore", desc: "DV Act service provider. No: 26, 7th Cross, P.M. Samy Colony, Rathinapuri, Coimbatore-641 027.", badge: "NGO" },
+        { name: "Fr. Patrick Issac Home of Hope", type: "NGO", location: "Madurai", desc: "DV Act service provider — shelter for women and children. Sringeri Nagar, By-pass Road, Madurai – 600 016.", badge: "NGO" },
+        { name: "WORD (Women's Organization for Rural Development)", type: "NGO", location: "Namakkal", desc: "DV Act service provider. No:112, Kaveri Garden, Vengamedu, Kabilarmalai Road, Peramathi Velur Taluk, Namakkal District.", badge: "NGO" },
+        { name: "Saras Trust", type: "NGO", location: "Ooty (Nilgiris)", desc: "DV Act service provider. No. 129/1, Bombay Castle, Damayanthi Hospital, Ooty, the Nilgiris District.", badge: "NGO" },
+        { name: "Avvai Village Welfare Society", type: "NGO", location: "Nagapattinam", desc: "DV Act service provider. No:29, Sattiyappar Mela Veethi, Nagapattinam – 611 001.", badge: "NGO" },
+        { name: "CREED (Centre for Rural Education & Economic Development)", type: "NGO", location: "Cuddalore (Chidambaram)", desc: "DV Act service provider. Family Counselling Centre, No:23, Aranganathan Nagar, Chidambaram, Cuddalore.", badge: "NGO" },
+        { name: "DMSSS (Dindigul Multi Purpose Social Service Society)", type: "NGO", location: "Dindigul", desc: "DV Act service provider. Post Box No.28, John Paul Complex, Neruji Nagar, Dindigul – 624 001.", badge: "NGO" },
+        { name: "CARE (Centre for Action and Rural Education)", type: "NGO", location: "Erode", desc: "DV Act service provider. No:6, Kambar Street, Teacher's Colony, Erode - 638 011.", badge: "NGO" },
+        { name: "People Awareness Social Welfare Trust", type: "NGO", location: "Kancheepuram", desc: "DV Act service provider. No:Bharathiar Street, Extension, Palavanthangal, Chennai-600 112.", badge: "NGO" },
+        { name: "Rural Uplift Centre", type: "NGO", location: "Kanyakumari", desc: "DV Act service provider. Gandhi Nagar, Parvathipuram, Nagercoil – 629 003.", badge: "NGO" },
+        { name: "Anbukkkarangal", type: "NGO", location: "Karur", desc: "DV Act service provider. No:25, Ganesh Nagar, Vennaimalai, Karur – 639 006.", badge: "NGO" },
+        { name: "Narendra Nambikkai Natchathiram", type: "NGO", location: "Krishnagiri", desc: "DV Act service provider. A-3 Thally Hudco, Hosur, Krishnagiri District – 635109.", badge: "NGO" },
+        { name: "Indo Trust", type: "NGO", location: "Perambalur", desc: "DV Act service provider. No.151, Upstairs Venkatesapuram, Perambalur - 621212.", badge: "NGO" },
+        { name: "TMSSS Family Counselling Centre", type: "NGO", location: "Pudukottai", desc: "DV Act service provider. Railway Station Road, Keeranur, Pudukottai District.", badge: "NGO" },
+        { name: "S.M.S.S.S.", type: "NGO", location: "Ramnad", desc: "DV Act service provider. No. 3/574, Bagawath Singh Road, Paramakudi – 623 707, Ramnad District.", badge: "NGO" },
+        { name: "Thanjar - YWCA", type: "NGO", location: "Salem", desc: "DV Act service provider. No:76A, Cherry Road, Hasthampatty, Salem-636 007.", badge: "NGO" },
+        { name: "TRUPA", type: "NGO", location: "Sivagangai", desc: "DV Act service provider. Sirukudalpatti, Viramathi Post, Tirupputtur Taluk, Sivagangai – 630 212.", badge: "NGO" },
+        { name: "Thanjavur Multipurpose Social Service Society", type: "NGO", location: "Thanjavur", desc: "DV Act service provider. Post Box No: 77, 2851-50, Trichy Road, Thanjavur – 613 001.", badge: "NGO" },
+        { name: "Maitri Society", type: "NGO", location: "Theni", desc: "DV Act service provider. Koduvilarpatty, Theni District - 625534.", badge: "NGO" },
+        { name: "Arasan Rural Development Society", type: "NGO", location: "Tirunelveli", desc: "DV Act service provider. No: 129 D, Anna Salai, Kalakad-627 501, Tirunelveli District.", badge: "NGO" },
+        { name: "Amirthaa Trust", type: "NGO", location: "Madurai", desc: "Women's development, legal awareness, and microfinance. 20 Karuna Alagarsamy Compound, South Gate, Madurai – 625 001.", badge: "NGO" },
+        { name: "Udavum Karangal", type: "NGO", location: "Chennai (20 homes statewide)", desc: "Rescue and rehabilitation for destitute and marginalized persons.", badge: "NGO" },
+        { name: "VOC Rural Development Centre", type: "NGO", location: "Madurai", desc: "Women-led NGO working on gender-based violence.", badge: "NGO" },
+        { name: "Tamil Nadu Domestic Workers Welfare Trust (TNDWWT)", type: "NGO", location: "Chennai", desc: "Rights and welfare of domestic workers. Helpline: 95144 55166.", badge: "NGO" },
+        { name: "Thendral Movement", type: "NGO", location: "Ranipet", desc: "Runs Shakthi Sadhan, a residential home for 25 women survivors of violence and mental distress.", badge: "NGO" },
+        { name: "Anew Foundation", type: "NGO", location: "Chennai", desc: "Nearly three decades of supporting underprivileged women and domestic violence survivors. Trained 18,000+ women.", badge: "NGO" },
+        { name: "Ashraya (Andhra Mahila Sabha)", type: "NGO", location: "Chennai", desc: "Shelter and support for women facing domestic violence and suicide attempts. Functioning since 1986.", badge: "NGO" },
+        { name: "RUWSEC (Rural Women's Social Education Centre)", type: "NGO", location: "Chengalpattu", desc: "Community-based interventions to prevent domestic violence in Kancheepuram District. Founded 1981.", badge: "NGO" },
+        { name: "Arogya Agam", type: "NGO", location: "Theni", desc: "Facilitated a 400-woman district-level federation of domestic violence survivors.", badge: "NGO" },
+        { name: "Astitva (via PCVC)", type: "NGO", location: "Chennai", desc: "Emergency shelter for women who have experienced trauma such as deliberate burning and domestic violence.", badge: "NGO" },
+        { name: "Aishwariam Social Welfare Organisation", type: "NGO", location: "Coimbatore", desc: "Women's development, education, health, and vocational training. 3F, Manish Nagar, Thudiyalur-641034.", badge: "NGO" },
+        { name: "Aishwariyam Trust", type: "NGO", location: "Madurai", desc: "Women's empowerment and community development. No:7-21-8, Kurinji 2nd Street, Mahatma Gandhi Nagar, Madurai.", badge: "NGO" },
+        { name: "Amirtha Sahanau Charitable Trust", type: "NGO", location: "Chennai", desc: "Education, aged/elderly support, and women's development. 371/12, 2nd floor, Temple Colony, Anna Nagar.", badge: "NGO" },
+        { name: "Digital Karangal", type: "NGO", location: "Coimbatore", desc: "Skill development and women's empowerment. No.7/2H7A, Carmel Nagar, Podanur.", badge: "NGO" },
+        { name: "Dil Se Trust", type: "NGO", location: "Madurai", desc: "Rural development and poverty alleviation. 1/153, Alathur, Madurai.", badge: "NGO" },
+        { name: "Hope Trust", type: "NGO", location: "Chennai", desc: "Education, health, career guidance, and welfare for underprivileged women, children, and tribal youth.", badge: "NGO" },
+        { name: "Hibiscus Foundation", type: "NGO", location: "Tamil Nadu", desc: "Women-led NGO.", badge: "NGO" },
+        { name: "Prime Educational and Social Trust", type: "NGO", location: "Puducherry", desc: "Empowering women through microcredit, Janani Home for Girls, and vocational training.", badge: "NGO" },
+        { name: "People Social Development Foundation", type: "NGO", location: "Puducherry", desc: "Family Counselling Center, micro-credit, and women's empowerment. Dr. K. Mohanasundaram – 9443433927.", badge: "NGO" },
+        { name: "Pondicherry Women's Conference", type: "NGO", location: "Puducherry", desc: "Runs creches, Family Counselling Center, and awareness camps. Mrs. Su. Rehana Begum – 8056709678.", badge: "NGO" },
+        { name: "Sharana Social and Development Organisation", type: "NGO", location: "Puducherry", desc: "Back-to-school programmes, street and slum day care, and crèche facilities. Mrs. Rajkala P. – 98433 37640.", badge: "NGO" },
+        { name: "FLASH (Foundation for Low Income Group)", type: "NGO", location: "Puducherry", desc: "General home for women and children; free education and health awareness. R. Shanmugam – 9443500192.", badge: "NGO" },
+        { name: "Mangalam Society", type: "NGO", location: "Puducherry (rural)", desc: "Delivery of gender justice to rural women, legal awareness, and support.", badge: "NGO" },
+        { name: "Annalakshmi Trust", type: "NGO", location: "Puducherry", desc: "Transgender-led organization providing job opportunities and community support.", badge: "NGO" },
+        { name: "IWID Women's Organisation", type: "NGO", location: "Chennai (Anna Nagar)", desc: "Women's rights and support organisation. 044-26222856.", badge: "NGO" },
+        { name: "Asset Trust", type: "NGO", location: "Madurai", desc: "Women's support and community development. 7708107859.", badge: "NGO" },
+        { name: "Centre for Women's Development & Research", type: "NGO", location: "Chennai (Thiruvanmiyur)", desc: "Research and action for women's development. 044-24455868.", badge: "NGO" },
+        { name: "Women of Worth", type: "NGO", location: "Chennai", desc: "Women's empowerment NGO. 9962818086.", badge: "NGO" },
+        { name: "PEACE Trust", type: "NGO", location: "Tirunelveli", desc: "DV Act service provider. Contact: Sr. Mary Jenet Mejalla – 9489507132.", badge: "NGO" },
+        { name: "FASA (Feminist Association for Social Action)", type: "NGO", location: "Tamil Nadu", desc: "Advocacy organization in the forefront of the DV Act amendment. Conducts seminars and workshops to educate women on legal rights.", badge: "NGO" },
+        { name: "FORWORD (Forum for Women's Rights & Development)", type: "NGO", location: "Tamil Nadu", desc: "Women's rights and development organization.", badge: "NGO" },
+
+        { name: "My Choices Foundation", type: "NGO", location: "Hyderabad (national reach)", desc: "Runs a domestic violence helpline and prevention programmes.", badge: "NGO" },
+        { name: "Majlis Law", type: "NGO", location: "Mumbai", desc: "Legal aid and support for women facing violence. Helpline: 07506732641.", badge: "NGO" },
+        { name: "SNEHA Mumbai", type: "NGO", location: "Mumbai", desc: "Helps women and girls facing domestic violence, sexual violence, and sexual harassment.", badge: "NGO" },
+        { name: "Shakti Shalini", type: "NGO", location: "Delhi", desc: "Response to survivors of gender/sexual violence. Helpline: 10920.", badge: "NGO" },
+        { name: "Jagori", type: "NGO", location: "Delhi", desc: "Women's safety, resource centre, and advocacy.", badge: "NGO" },
+        { name: "SAARTHAK", type: "NGO", location: "Delhi", desc: "Counselling and support for women in distress.", badge: "NGO" },
+        { name: "Sakshi Violence Intervention Centre", type: "NGO", location: "Delhi NCR", desc: "Violence intervention and support.", badge: "NGO" },
+        { name: "Nari Raksha Samiti", type: "NGO", location: "Delhi", desc: "Women's protection and support.", badge: "NGO" },
+        { name: "RAHI (Recovering and Healing from Incest)", type: "NGO", location: "Delhi", desc: "Support centre for women survivors of child sexual abuse.", badge: "NGO" },
+        { name: "Bembala Foundation", type: "NGO", location: "Bangalore", desc: "Support for survivors of gender-based violence.", badge: "NGO" },
+        { name: "CEHAT", type: "NGO", location: "Mumbai", desc: "24×7 helpline for women and girls facing violence.", badge: "NGO" }
+    ];
+
+    // ============================================================
+    // RENDER FUNCTIONS
+    // ============================================================
+    let currentCategory = 'all';
+
+    function renderHelplines(filter = '', category = 'all') {
+        const grid = document.getElementById('helplinesGrid');
+        const term = filter.toLowerCase();
+        let filtered = helplines.filter(h =>
+            h.name.toLowerCase().includes(term) || h.number.toLowerCase().includes(term) ||
+            h.desc.toLowerCase().includes(term) || h.category.toLowerCase().includes(term)
+        );
+        if (category !== 'all') filtered = filtered.filter(h => h.category === category);
+        if (filtered.length === 0) {
+            grid.innerHTML = `<p style="grid-column:1/-1;text-align:center;color:#b0b0c0;padding:2rem;">No helplines found. Try a different search.</p>`;
+            return;
+        }
+        grid.innerHTML = filtered.map(h => `
+            <div class="info-card">
+                <div class="card-header">
+                    <div class="card-icon"><i class="fas ${h.icon}"></i></div>
+                    <div><h3>${h.name}</h3><span class="card-tag">${h.category}</span></div>
+                </div>
+                <div class="card-detail">${h.desc}</div>
+                <a href="tel:${h.number.replace(/[^0-9+]/g, '')}" class="card-number"><i class="fas fa-phone-alt" style="font-size:0.7rem;"></i> ${h.number}</a>
+            </div>
+        `).join('');
+    }
+
+    function renderOrganizations(filter = '') {
+        const grid = document.getElementById('orgsGrid');
+        const term = filter.toLowerCase();
+        const filtered = organizations.filter(o =>
+            o.name.toLowerCase().includes(term) || o.desc.toLowerCase().includes(term) ||
+            o.location.toLowerCase().includes(term) || o.type.toLowerCase().includes(term)
+        );
+        if (filtered.length === 0) {
+            grid.innerHTML = `<p style="grid-column:1/-1;text-align:center;color:#b0b0c0;padding:2rem;">No organizations found.</p>`;
+            return;
+        }
+        grid.innerHTML = filtered.map(o => `
+            <div class="info-card">
+                <div class="card-header">
+                    <div class="card-icon"><i class="fas fa-building"></i></div>
+                    <div><h3>${o.name} <span class="${o.badge === 'Gov' ? 'badge-gov' : 'badge-ngo'}">${o.badge === 'Gov' ? 'Gov' : 'NGO'}</span></h3><span class="card-tag">${o.location}</span></div>
+                </div>
+                <div class="card-detail">${o.desc}</div>
+            </div>
+        `).join('');
+    }
+
+    renderHelplines();
+    renderOrganizations();
+
+    // ============================================================
+    // TABS
+    // ============================================================
+    const navTabs = document.querySelectorAll('.nav-tab');
+    const sections = document.querySelectorAll('.section');
+    navTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            navTabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            const target = tab.dataset.section;
+            sections.forEach(sec => sec.classList.toggle('active', sec.id === target));
+            document.getElementById('searchInput').value = '';
+            document.getElementById('categoryFilter').value = 'all';
+            currentCategory = 'all';
+            renderHelplines();
+            renderOrganizations();
+        });
+    });
+
+    // ============================================================
+    // SEARCH
+    // ============================================================
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+        const term = e.target.value.trim();
+        const activeSection = document.querySelector('.section.active').id;
+        if (activeSection === 'helplines') renderHelplines(term, currentCategory);
+        else if (activeSection === 'organizations') renderOrganizations(term);
+    });
+    document.getElementById('categoryFilter').addEventListener('change', (e) => {
+        currentCategory = e.target.value;
+        const term = document.getElementById('searchInput').value.trim();
+        renderHelplines(term, currentCategory);
+    });
+
+    // ============================================================
+    // QUICK EXIT & SOS
+    // ============================================================
+    document.getElementById('quickExitBtn').addEventListener('click', () => {
+        window.location.replace('https://www.google.com');
+    });
+    document.getElementById('sosBtn').addEventListener('click', () => {
+        window.location.href = 'tel:112';
+        setTimeout(() => {
+            if (confirm('Calling emergency services (112). Click OK to dial 112.')) {
+                window.location.href = 'tel:112';
+            }
+        }, 100);
+    });
+
+    // ============================================================
+    // LEARNING MODULES
+    // ============================================================
+    const learnCards = document.querySelectorAll('.info-card[data-learn]');
+    const meenaText = document.getElementById('meenaText');
+    const learnPanels = document.querySelectorAll('.story-panel');
+
+    const meenaMessages = {
+        goodtouch: "🤗 <strong>Good touch</strong> feels safe. <strong>Bad touch</strong> feels scary. Your private parts are the red area. If anyone touches there, <strong>say NO and tell a trusted adult</strong>.",
+        pants: "🩲 Remember <strong>PANTS</strong>: Privates are private, Always your body belongs to you, No means no, Talk about secrets, Speak up!",
+        cybersafety: "📱 Never share your name, school, or photos with strangers online. If someone makes you feel weird, <strong>show a parent</strong> and call <strong>1930</strong>.",
+        trustedadults: "🤝 Your <strong>Safety Circle</strong> is your mom, dad, teacher, grandma, or police. If one person doesn't believe you, tell another!",
+        consent: "✋ <strong>My Body, My Rules!</strong> You can say NO to any hug or touch you don't like. It's not rude — it's your right.",
+        secrets: "🤫 If a secret makes your tummy feel funny or scared, it's an <strong>unsafe secret</strong>. Tell a trusted adult right away!"
+    };
+
+    const badgeIds = {
+        goodtouch: 'badge-goodtouch', pants: 'badge-pants', cybersafety: 'badge-cyber',
+        trustedadults: 'badge-trusted', consent: 'badge-consent', secrets: 'badge-secrets'
+    };
+
+    learnCards.forEach(card => {
+        card.addEventListener('click', () => {
+            const target = card.dataset.learn;
+            learnPanels.forEach(p => p.classList.add('hidden'));
+            const panel = document.getElementById(target);
+            if (panel) { panel.classList.remove('hidden'); panel.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+            if (meenaMessages[target]) meenaText.innerHTML = meenaMessages[target];
+            const badge = document.getElementById(badgeIds[target]);
+            if (badge) badge.classList.add('earned');
+        });
+    });
+
+    // ============================================================
+    // QUIZ
+    // ============================================================
+    const quizQuestions = [
+        { scene: "🤗", q: "A teacher pats you on the back for good work.", correct: "Good Touch" },
+        { scene: "🚫", q: "A stranger asks you to sit on their lap.", correct: "Bad Touch" },
+        { scene: "👨‍👧", q: "Your father hugs you when you are sad.", correct: "Good Touch" },
+        { scene: "📱", q: "Someone online asks for your home address.", correct: "Not Safe" },
+        { scene: "👩‍⚕️", q: "A doctor checks your private parts with your mother in the room.", correct: "Good Touch" },
+        { scene: "🤫", q: "An adult says, 'Don't tell anyone about this secret.'", correct: "Bad Touch" },
+        { scene: "🤝", q: "Your friend gives you a high-five.", correct: "Good Touch" }
+    ];
+
+    let quizIndex = 0, quizScore = 0;
+    const quizContainer = document.getElementById('quizContainer');
+    const quizScoreEl = document.getElementById('quizScore');
+
+    function renderQuiz() {
+        if (quizIndex >= quizQuestions.length) {
+            quizContainer.innerHTML = `<p style="font-weight:800;font-size:1rem;">🎉 You scored ${quizScore} out of ${quizQuestions.length}!</p>`;
+            quizScoreEl.textContent = '';
+            return;
+        }
+        const q = quizQuestions[quizIndex];
+        quizContainer.innerHTML = `
+            <span class="quiz-scene">${q.scene}</span>
+            <p class="quiz-q">${q.q}</p>
+            <div class="quiz-options">
+                <button class="quiz-btn" data-ans="Good Touch">Good Touch ✅</button>
+                <button class="quiz-btn" data-ans="Bad Touch">Bad Touch ❌</button>
+            </div>
+            <div class="quiz-feedback" id="quizFeedback"></div>
+        `;
+        document.querySelectorAll('.quiz-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const answer = btn.dataset.ans;
+                const feedback = document.getElementById('quizFeedback');
+                const isCorrect = answer === q.correct ||
+                    (q.correct === "Not Safe" && answer === "Bad Touch") ||
+                    (q.correct === "Bad Touch" && answer === "Bad Touch");
+                if (isCorrect) {
+                    btn.classList.add('correct');
+                    feedback.textContent = '✅ Yes! You got it right!';
+                    feedback.className = 'quiz-feedback show correct';
+                    quizScore++;
+                } else {
+                    btn.classList.add('wrong');
+                    feedback.textContent = `❌ Not quite. The right answer is "${q.correct}".`;
+                    feedback.className = 'quiz-feedback show wrong';
+                }
+                quizScoreEl.textContent = `Score: ${quizScore}`;
+                setTimeout(() => { quizIndex++; renderQuiz(); }, 1200);
+            });
+        });
+    }
+    renderQuiz();
+
+    // ============================================================
+    // TOOLS
+    // ============================================================
+    const toolOutput = document.getElementById('toolOutput');
+
+    document.getElementById('toolLocation').addEventListener('click', () => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                    const { latitude, longitude } = pos.coords;
+                    toolOutput.innerHTML = `<p><span class="highlight">✅ Live location shared (simulated)</span></p>
+                        <p><strong>Coordinates:</strong> ${latitude.toFixed(4)}, ${longitude.toFixed(4)}</p>
+                        <p><a href="https://maps.google.com/?q=${latitude},${longitude}" target="_blank">Open in Maps</a></p>`;
+                },
+                () => { toolOutput.innerHTML = `<p><span class="highlight">Location access denied.</span> Please enable GPS.</p>`; }
+            );
+        } else { toolOutput.innerHTML = `<p>Geolocation not supported.</p>`; }
+        toolOutput.classList.add('show');
+    });
+
+    document.getElementById('toolFakeCall').addEventListener('click', () => {
+        toolOutput.innerHTML = `<p><span class="highlight">📞 Simulating incoming call...</span></p>
+            <p>In a real app, a fake call screen appears so you can exit safely.</p>
+            <p><strong>Caller:</strong> Mom</p>
+            <button onclick="this.parentElement.classList.remove('show')" style="background:var(--primary);color:white;border:none;padding:0.4rem 1rem;border-radius:40px;cursor:pointer;margin-top:0.5rem;font-family:inherit;">End Simulation</button>`;
+        toolOutput.classList.add('show');
+    });
+
+    document.getElementById('toolSafeZone').addEventListener('click', () => {
+        const safeZones = [
+            "All Women Police Station – Chennai (1091)",
+            "One Stop Centre (Sakhi) – Chennai (9677056919)",
+            "All Women Police Station – Coimbatore (0422-2300818)",
+            "All Women Police Station – Madurai (0452-2343602)",
+            "All Women Police Station – Salem (9087200100)"
+        ];
+        const randomZone = safeZones[Math.floor(Math.random() * safeZones.length)];
+        toolOutput.innerHTML = `<p><span class="highlight">📍 Nearest Safe Zone (simulated):</span></p><p><strong>${randomZone}</strong></p>
+            <p style="font-size:0.75rem;color:#9e9eaf;">In a real app, GPS identifies your exact proximity.</p>`;
+        toolOutput.classList.add('show');
+    });
+
+    let shakeEnabled = false;
+    document.getElementById('toolShake').addEventListener('click', () => {
+        if (shakeEnabled) {
+            shakeEnabled = false;
+            toolOutput.innerHTML = `<p><span class="highlight">Shake-to-SOS disabled.</span></p>`;
+        } else {
+            shakeEnabled = true;
+            toolOutput.innerHTML = `<p><span class="highlight">Shake-to-SOS enabled (simulated).</span></p><p>Shake your device vigorously to trigger SOS.</p>`;
+        }
+        toolOutput.classList.add('show');
+    });
+
+    if (window.DeviceMotionEvent) {
+        window.addEventListener('devicemotion', (event) => {
+            if (!shakeEnabled) return;
+            const acc = event.accelerationIncludingGravity;
+            if (!acc) return;
+            const total = Math.abs(acc.x) + Math.abs(acc.y) + Math.abs(acc.z);
+            if (total > 30) {
+                shakeEnabled = false;
+                toolOutput.innerHTML = `<p><span class="highlight">🚨 Shake detected! SOS triggered (simulated).</span></p>`;
+                toolOutput.classList.add('show');
+                window.location.href = 'tel:112';
+            }
+        });
+    }
+
+    // ============================================================
+    // FEEDBACK
+    // ============================================================
+    document.getElementById('feedbackBtn').addEventListener('click', () => {
+        const text = document.getElementById('feedbackText').value.trim();
+        if (text === '') { alert('Please enter your feedback.'); return; }
+        document.getElementById('feedbackStatus').classList.remove('hidden');
+        document.getElementById('feedbackText').value = '';
+        setTimeout(() => { document.getElementById('feedbackStatus').classList.add('hidden'); }, 4000);
+    });
+</script>
+
+</body>
+</html>

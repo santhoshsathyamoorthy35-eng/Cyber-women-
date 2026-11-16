@@ -1,0 +1,243 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global safety net: deny all reads and writes by default.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // ================= PRIMITIVES =================
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // ================= SCHEMA VALIDATION HELPERS =================
+    function isValidUserProfile(data, userId) {
+      return data.userId is string && data.userId == userId && data.userId.size() <= 128 &&
+             data.displayName is string && data.displayName.size() >= 1 && data.displayName.size() <= 80 &&
+             (!('email' in data) || data.email == null || (data.email is string && data.email.size() <= 120)) &&
+             data.preferredLanguage in ['en', 'ta'] &&
+             data.selectedCity is string && data.selectedCity.size() >= 1 && data.selectedCity.size() <= 80 &&
+             data.shakeToSosEnabled is bool &&
+             data.customSosMessage is string && data.customSosMessage.size() <= 280;
+    }
+
+    function isValidTrustedContact(data, userId) {
+      return data.userId is string && data.userId == userId && data.userId.size() <= 128 &&
+             data.name is string && data.name.size() >= 1 && data.name.size() <= 80 &&
+             data.phone is string && data.phone.size() >= 3 && data.phone.size() <= 25 &&
+             data.relationship is string && data.relationship.size() >= 1 && data.relationship.size() <= 40 &&
+             data.priority is int && data.priority >= 1 && data.priority <= 10 &&
+             data.isPrimary is bool;
+    }
+
+    function isValidSosEvent(data, userId) {
+      return data.userId is string && data.userId == userId && data.userId.size() <= 128 &&
+             data.status in ['created', 'queued_local', 'logged_cloud', 'cancelled', 'resolved'] &&
+             data.triggerType in ['button', 'hold', 'shake', 'ai_escalation'] &&
+             data.lat is number && data.lat >= -90 && data.lat <= 90 &&
+             data.lon is number && data.lon >= -180 && data.lon <= 180 &&
+             data.accuracyMeters is number && data.accuracyMeters >= 0 && data.accuracyMeters <= 100000 &&
+             data.locationLabel is string && data.locationLabel.size() <= 120 &&
+             data.message is string && data.message.size() <= 320 &&
+             data.contactIds is list && data.contactIds.size() <= 10 &&
+             (data.contactIds.size() == 0 || (data.contactIds[0] is string && data.contactIds[0].size() <= 128)) &&
+             data.deliveryNote is string && data.deliveryNote.size() <= 240;
+    }
+
+    function isValidCitizenReport(data, userId) {
+      return data.userId is string && data.userId == userId && data.userId.size() <= 128 &&
+             data.category is string && data.category.size() >= 1 && data.category.size() <= 60 &&
+             data.description is string && data.description.size() >= 1 && data.description.size() <= 600 &&
+             data.lat is number && data.lat >= -90 && data.lat <= 90 &&
+             data.lon is number && data.lon >= -180 && data.lon <= 180 &&
+             data.nearestStation is string && data.nearestStation.size() >= 1 && data.nearestStation.size() <= 80 &&
+             data.severity is int && data.severity >= 1 && data.severity <= 5 &&
+             data.status in ['received', 'acknowledged'];
+    }
+
+    function isValidUserFeedback(data, userId) {
+      return data.userId is string && data.userId == userId && data.userId.size() <= 128 &&
+             data.message is string && data.message.size() >= 1 && data.message.size() <= 800;
+    }
+
+    // ================= COLLECTIONS =================
+    match /users/{userId} {
+      allow get: if isOwner(userId) && isValidId(userId);
+      allow list: if isOwner(userId) && isValidId(userId);
+
+      allow create: if isOwner(userId) &&
+                       isValidId(userId) &&
+                       incoming().keys().hasAll([
+                         'userId', 'displayName', 'preferredLanguage', 'selectedCity',
+                         'shakeToSosEnabled', 'customSosMessage', 'createdAt', 'updatedAt'
+                       ]) &&
+                       incoming().keys().hasOnly([
+                         'userId', 'displayName', 'email', 'preferredLanguage', 'selectedCity',
+                         'shakeToSosEnabled', 'customSosMessage', 'createdAt', 'updatedAt'
+                       ]) &&
+                       incoming().createdAt is timestamp && incoming().createdAt <= request.time &&
+                       incoming().updatedAt is timestamp && incoming().updatedAt <= request.time &&
+                       isValidUserProfile(incoming(), userId);
+
+      allow update: if isOwner(userId) &&
+                       isValidId(userId) &&
+                       isValidUserProfile(incoming(), userId) &&
+                       incoming().userId == existing().userId &&
+                       incoming().createdAt == existing().createdAt &&
+                       incoming().updatedAt is timestamp && incoming().updatedAt <= request.time &&
+                       incoming().diff(existing()).affectedKeys().hasOnly([
+                         'displayName', 'email', 'preferredLanguage', 'selectedCity',
+                         'shakeToSosEnabled', 'customSosMessage', 'updatedAt'
+                       ]);
+
+      allow delete: if isOwner(userId) && isValidId(userId);
+
+      // Trusted Contacts subcollection
+      match /trusted_contacts/{contactId} {
+        allow get: if isOwner(userId) && isValidId(userId) && isValidId(contactId);
+        allow list: if isOwner(userId) && isValidId(userId);
+
+        allow create: if isOwner(userId) &&
+                         isValidId(userId) &&
+                         isValidId(contactId) &&
+                         incoming().keys().hasAll([
+                           'userId', 'name', 'phone', 'relationship', 'priority',
+                           'isPrimary', 'createdAt', 'updatedAt'
+                         ]) &&
+                         incoming().keys().hasOnly([
+                           'userId', 'name', 'phone', 'relationship', 'priority',
+                           'isPrimary', 'createdAt', 'updatedAt'
+                         ]) &&
+                         incoming().createdAt is timestamp && incoming().createdAt <= request.time &&
+                         incoming().updatedAt is timestamp && incoming().updatedAt <= request.time &&
+                         isValidTrustedContact(incoming(), userId);
+
+        allow update: if isOwner(userId) &&
+                         isValidId(userId) &&
+                         isValidId(contactId) &&
+                         isValidTrustedContact(incoming(), userId) &&
+                         incoming().userId == existing().userId &&
+                         incoming().createdAt == existing().createdAt &&
+                         incoming().updatedAt is timestamp && incoming().updatedAt <= request.time &&
+                         incoming().diff(existing()).affectedKeys().hasOnly([
+                           'name', 'phone', 'relationship', 'priority', 'isPrimary', 'updatedAt'
+                         ]);
+
+        allow delete: if isOwner(userId) && isValidId(userId) && isValidId(contactId);
+      }
+
+      // SOS Events subcollection (with terminal-state lock)
+      match /sos_events/{eventId} {
+        allow get: if isOwner(userId) && isValidId(userId) && isValidId(eventId);
+        allow list: if isOwner(userId) && isValidId(userId);
+
+        allow create: if isOwner(userId) &&
+                         isValidId(userId) &&
+                         isValidId(eventId) &&
+                         incoming().keys().hasAll([
+                           'userId', 'status', 'triggerType', 'lat', 'lon', 'accuracyMeters',
+                           'locationLabel', 'message', 'contactIds', 'deliveryNote',
+                           'createdAt', 'updatedAt'
+                         ]) &&
+                         incoming().keys().hasOnly([
+                           'userId', 'status', 'triggerType', 'lat', 'lon', 'accuracyMeters',
+                           'locationLabel', 'message', 'contactIds', 'deliveryNote',
+                           'createdAt', 'updatedAt'
+                         ]) &&
+                         incoming().createdAt is timestamp && incoming().createdAt <= request.time &&
+                         incoming().updatedAt is timestamp && incoming().updatedAt <= request.time &&
+                         isValidSosEvent(incoming(), userId);
+
+        // Terminal-state locking: cancelled/resolved events cannot transition again.
+        allow update: if isOwner(userId) &&
+                         isValidId(userId) &&
+                         isValidId(eventId) &&
+                         isValidSosEvent(incoming(), userId) &&
+                         !(existing().status in ['cancelled', 'resolved']) &&
+                         incoming().userId == existing().userId &&
+                         incoming().triggerType == existing().triggerType &&
+                         incoming().createdAt == existing().createdAt &&
+                         incoming().updatedAt is timestamp && incoming().updatedAt <= request.time &&
+                         (
+                           (incoming().status in ['logged_cloud', 'cancelled', 'resolved'] &&
+                            incoming().diff(existing()).affectedKeys().hasOnly([
+                              'status', 'deliveryNote', 'lat', 'lon', 'accuracyMeters',
+                              'locationLabel', 'updatedAt'
+                            ]))
+                         );
+
+        allow delete: if isOwner(userId) && isValidId(userId) && isValidId(eventId);
+      }
+
+      // Citizen Reports subcollection
+      match /citizen_reports/{reportId} {
+        allow get: if isOwner(userId) && isValidId(userId) && isValidId(reportId);
+        allow list: if isOwner(userId) && isValidId(userId);
+
+        allow create: if isOwner(userId) &&
+                         isValidId(userId) &&
+                         isValidId(reportId) &&
+                         incoming().keys().hasAll([
+                           'userId', 'category', 'description', 'lat', 'lon',
+                           'nearestStation', 'severity', 'status', 'createdAt', 'updatedAt'
+                         ]) &&
+                         incoming().keys().hasOnly([
+                           'userId', 'category', 'description', 'lat', 'lon',
+                           'nearestStation', 'severity', 'status', 'createdAt', 'updatedAt'
+                         ]) &&
+                         incoming().status == 'received' &&
+                         incoming().createdAt is timestamp && incoming().createdAt <= request.time &&
+                         incoming().updatedAt is timestamp && incoming().updatedAt <= request.time &&
+                         isValidCitizenReport(incoming(), userId);
+
+        allow update: if isOwner(userId) &&
+                         isValidId(userId) &&
+                         isValidId(reportId) &&
+                         isValidCitizenReport(incoming(), userId) &&
+                         existing().status == 'received' &&
+                         incoming().status == 'acknowledged' &&
+                         incoming().userId == existing().userId &&
+                         incoming().createdAt == existing().createdAt &&
+                         incoming().updatedAt is timestamp && incoming().updatedAt <= request.time &&
+                         incoming().diff(existing()).affectedKeys().hasOnly(['status', 'updatedAt']);
+
+        allow delete: if isOwner(userId) && isValidId(userId) && isValidId(reportId);
+      }
+
+      // Feedback subcollection (append-only)
+      match /feedback/{feedbackId} {
+        allow get: if isOwner(userId) && isValidId(userId) && isValidId(feedbackId);
+        allow list: if isOwner(userId) && isValidId(userId);
+
+        allow create: if isOwner(userId) &&
+                         isValidId(userId) &&
+                         isValidId(feedbackId) &&
+                         incoming().keys().hasAll(['userId', 'message', 'createdAt']) &&
+                         incoming().keys().hasOnly(['userId', 'message', 'createdAt']) &&
+                         incoming().createdAt is timestamp && incoming().createdAt <= request.time &&
+                         isValidUserFeedback(incoming(), userId);
+
+        allow update, delete: if false;
+      }
+    }
+  }
+}
